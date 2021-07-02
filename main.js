@@ -13,9 +13,9 @@ const STAR = "S";
 const WIND = "W";
 
 const FULL_CIRC = "CuCuCuCu";
-const FULL_RECT = "RuRuRuRu";
-const LOGO = "RuCw--Cw:----Ru--";
-const ROCKET = "CbCuCbCu:Sr------:--CrSrCr:CwCwCwCw";
+const HALF_RECT = "RuRu----";
+const LOGO = "RuCw--Cw:----Ru--";  // 0x004B
+const ROCKET = "CbCuCbCu:Sr------:--CrSrCr:CwCwCwCw";  // 0xFE1F
 
 function codeToHex(code) {
     const hex = code.toString(16).padStart(4, "0");
@@ -65,10 +65,21 @@ function baseCode(code) {
 function rotate(code, steps) {
     const lShift = steps & 0x3;
     const rShift = 4 - lShift;
-
     const mask = (0xF >>> rShift) * 0x1111;
     const result = (code >>> rShift & mask) | (code << lShift & ~mask & 0xFFFF);
     return result;
+}
+
+function right(code) {
+    return rotate(code, 1);
+}
+
+function uturn(code) {
+    return rotate(code, 2);
+}
+
+function left(code) {
+    return rotate(code, 3);
 }
 
 function flip(code) {
@@ -85,10 +96,36 @@ function main() {
     console.log(Date());
     console.log();
 
+    runTests();
+
     let code = 0x4321;
     console.debug(codeToHex(code), codeToShape(code));
     code = baseCode(code);
     console.debug(codeToHex(code), codeToShape(code));
+}
+
+function runTests() {
+    const TESTS = [
+        [left, 0x0001, 0x0008],
+        [right, 0x0001, 0x0002],
+        [uturn, 0x0001, 0x0004],
+        [left, 0x1248, 0x8124],
+        [flip, 0x1234, 0x84C2],
+    ];
+
+    let testNum = 0;
+    for (const [op, arg, exp] of TESTS) {
+        testNum++;
+        const result = op(arg);
+        const pass = (result == exp);
+        console.log("#" + testNum, pass ? "PASS" : "FAIL", op.name + "(" + codeToHex(arg) + ") returned", codeToHex(result));
+        if (!pass) {
+            console.log("  expected", codeToHex(exp));
+            console.log(codeToHex(arg), codeToShape(arg));
+            console.log(codeToHex(result), codeToShape(result));
+            console.log(codeToHex(exp), codeToShape(exp));
+        }
+    }
 }
 
 main();

@@ -51,7 +51,7 @@ function codeToShape(code) {
     return result;
 }
 
-function baseCode(code) {
+function keyCode(code) {
     let fcode = flip(code);
     let result = Math.min(code, fcode);
 
@@ -85,10 +85,30 @@ function left(code) {
 function flip(code) {
     let result = 0;
     for (let i = 0; i < 4; i++) {
-        result = result << 1 | (code & 0x1111);
+        result = (result << 1) | (code & 0x1111);
         code >>>= 1;
     }
     return result;
+}
+
+function cut(code) {
+    let left = 0;
+    let right = 0;
+    let val = 0;
+
+    // remove empty layers
+    for (let i = 0; i < 4; i++) {
+        val = code & 0x3000;
+        if (val != 0) {
+            left = (left << 4) | (val >>> 12);
+        }
+        val = code & 0xC000;
+        if (val != 0) {
+            right = (right << 4) | (val >>> 12);
+        }
+        code <<= 4;
+    }
+    return [left, right];
 }
 
 function main() {
@@ -97,11 +117,17 @@ function main() {
     console.log();
 
     runTests();
+}
 
-    let code = 0x4321;
-    console.debug(codeToHex(code), codeToShape(code));
-    code = baseCode(code);
-    console.debug(codeToHex(code), codeToShape(code));
+// pretty print
+function pp(value) {
+    if (typeof value === "number") {
+        return codeToHex(value);
+    }
+    if (typeof value === "object" && Array.isArray(value)) {
+        return '[' + value.map(v => pp(v)).join() + ']';
+    }
+    return JSON.stringify(value);
 }
 
 function runTests() {
@@ -111,19 +137,24 @@ function runTests() {
         [uturn, 0x0001, 0x0004],
         [left, 0x1248, 0x8124],
         [flip, 0x1234, 0x84C2],
+        [keyCode, 0x4321, 0x1624],
+        [codeToShape, 0x004B, "RrRr--Rr:----Rg--:--------:--------"],
+        [cut, 0x5AFF, [0x1233, 0x48CC]],
+        [cut, 0x936C, [0x0132, 0x084C]],
     ];
 
     let testNum = 0;
-    for (const [op, arg, exp] of TESTS) {
+    for (let [op, arg, exp] of TESTS) {
         testNum++;
-        const result = op(arg);
-        const pass = (result == exp);
-        console.log("#" + testNum, pass ? "PASS" : "FAIL", op.name + "(" + codeToHex(arg) + ") returned", codeToHex(result));
+        let result = op(arg);
+        const pass = (JSON.stringify(result) == JSON.stringify(exp));
+
+        console.log("#" + testNum, pass ? "PASS" : "FAIL", op.name + "(" + pp(arg) + ") returned", pp(result));
         if (!pass) {
-            console.log("  expected", codeToHex(exp));
-            console.log(codeToHex(arg), codeToShape(arg));
-            console.log(codeToHex(result), codeToShape(result));
-            console.log(codeToHex(exp), codeToShape(exp));
+            console.log("  expected", pp(exp));
+            // console.log(codeToHex(arg), codeToShape(arg));
+            // console.log(codeToHex(result), codeToShape(result));
+            // console.log(codeToHex(exp), codeToShape(exp));
         }
     }
 }

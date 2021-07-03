@@ -111,6 +111,40 @@ function cut(code) {
     return [left, right];
 }
 
+function stack(top, bottom) {
+    let result = 0;
+    let offset = -6;
+    let mask = 0x1111;
+    let bits = 0;
+    for (let quad = 0; quad < 4; quad++) {
+        // find top of bottom
+        bits = bottom & mask;
+        let max = -1;
+        for (let layer = 3; layer >= 0; layer--) {
+            if ((bits & 0xF000) != 0) {
+                max = layer;
+                break;
+            }
+            bits <<= 4;
+        }
+        // find bottom of top
+        bits = top & mask;
+        let min = 4;
+        for (let layer = 0; layer < 4; layer++) {
+            if ((bits & 0x000F) != 0) {
+                min = layer;
+                break;
+            }
+            bits >>>= 4;
+        }
+        offset = Math.max(offset, max - min);
+        mask <<= 1;
+    }
+    offset = 4 * (offset + 1);
+    result = (top << offset | bottom) & 0xFFFF;
+    return result;
+}
+
 function main() {
     console.log(APP_NAME);
     console.log(Date());
@@ -132,24 +166,27 @@ function pp(value) {
 
 function runTests() {
     const TESTS = [
-        [left, 0x0001, 0x0008],
-        [right, 0x0001, 0x0002],
-        [uturn, 0x0001, 0x0004],
-        [left, 0x1248, 0x8124],
-        [flip, 0x1234, 0x84C2],
-        [keyCode, 0x4321, 0x1624],
-        [codeToShape, 0x004B, "RrRr--Rr:----Rg--:--------:--------"],
-        [cut, 0x5AFF, [0x1233, 0x48CC]],
-        [cut, 0x936C, [0x0132, 0x084C]],
+        [left, [0x0001], 0x0008],
+        [right, [0x0001], 0x0002],
+        [uturn, [0x0001], 0x0004],
+        [left, [0x1248], 0x8124],
+        [flip, [0x1234], 0x84C2],
+        [keyCode, [0x4321], 0x1624],
+        [codeToShape, [0x004B], "RrRr--Rr:----Rg--:--------:--------"],
+        [cut, [0x5AFF], [0x1233, 0x48CC]],
+        [cut, [0x936C], [0x0132, 0x084C]],
+        [stack, [0x000F, 0x000F], 0x00FF],
+        [stack, [0x1111, 0x2222], 0x3333],
+        [stack, [0xFFF5, 0xAFFF], 0xFFFF],
     ];
 
     let testNum = 0;
-    for (let [op, arg, exp] of TESTS) {
+    for (let [op, args, exp] of TESTS) {
         testNum++;
-        let result = op(arg);
+        let result = op(...args);
         const pass = (JSON.stringify(result) == JSON.stringify(exp));
 
-        console.log("#" + testNum, pass ? "PASS" : "FAIL", op.name + "(" + pp(arg) + ") returned", pp(result));
+        console.log("#" + testNum, pass ? "PASS" : "FAIL", op.name + "(" + args.map(v => pp(v)).join() + ") returned", pp(result));
         if (!pass) {
             console.log("  expected", pp(exp));
             // console.log(codeToHex(arg), codeToShape(arg));

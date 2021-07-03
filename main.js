@@ -91,23 +91,22 @@ function flip(code) {
     return result;
 }
 
-function cut(code) {
-    let left = 0;
-    let right = 0;
-    let val = 0;
-
-    // remove empty layers
+// Remove empty layers
+function collapse(code) {
+    let result = 0;
     for (let i = 0; i < 4; i++) {
-        val = code & 0x3000;
+        val = code & 0xF000;
         if (val != 0) {
-            left = (left << 4) | (val >>> 12);
-        }
-        val = code & 0xC000;
-        if (val != 0) {
-            right = (right << 4) | (val >>> 12);
+            result = (result << 4) | (val >>> 12);
         }
         code <<= 4;
     }
+    return result;
+}
+
+function cut(code) {
+    const left = collapse(code & 0xCCCC);
+    const right = collapse(code & 0x3333);
     return [left, right];
 }
 
@@ -148,11 +147,11 @@ function runTests() {
         [flip, [0x1234], 0x84C2],
         [keyCode, [0x4321], 0x1624],
         [codeToShape, [0x004B], "RrRr--Rr:----Rg--:--------:--------"],
-        [cut, [0x5AFF], [0x1233, 0x48CC]],
-        [cut, [0x936C], [0x0132, 0x084C]],
+        [cut, [0x5AFF], [0x48CC, 0x1233]],
+        [cut, [0x936C], [0x084C, 0x0132]],
         [stack, [0x000F, 0x000F], 0x00FF],
         [stack, [0x1111, 0x2222], 0x3333],
-        [stack, [0xFFF5, 0xAFFF], 0xFFFF],
+        [stack, [0xFFF5, 0xA111], 0xF111],
     ];
 
     let testNum = 0;

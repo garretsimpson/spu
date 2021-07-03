@@ -112,37 +112,12 @@ function cut(code) {
 }
 
 function stack(top, bottom) {
-    let result = 0;
-    let offset = -6;
-    let mask = 0x1111;
-    let bits = 0;
-    for (let quad = 0; quad < 4; quad++) {
-        // find top of bottom
-        bits = bottom & mask;
-        let max = -1;
-        for (let layer = 3; layer >= 0; layer--) {
-            if ((bits & 0xF000) != 0) {
-                max = layer;
-                break;
-            }
-            bits <<= 4;
+    for (let offset = 4; offset > 0; offset--) {
+        if (((top << (offset - 1) * 4) & bottom) != 0) {
+            return (top << offset * 4 | bottom) & 0xFFFF;
         }
-        // find bottom of top
-        bits = top & mask;
-        let min = 4;
-        for (let layer = 0; layer < 4; layer++) {
-            if ((bits & 0x000F) != 0) {
-                min = layer;
-                break;
-            }
-            bits >>>= 4;
-        }
-        offset = Math.max(offset, max - min);
-        mask <<= 1;
     }
-    offset = 4 * (offset + 1);
-    result = (top << offset | bottom) & 0xFFFF;
-    return result;
+    return top | bottom;
 }
 
 function main() {

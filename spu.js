@@ -47,7 +47,11 @@ export class Spu {
   }
 
   output() {
-    const shape = this.state.pop();
+    if (this.state.length < 1) {
+        console.error("Output requires 1 entry.");
+        return;
+      }
+      const shape = this.state.pop();
     this.out.push(shape);
   }
 
@@ -63,17 +67,29 @@ export class Spu {
   }
 
   left() {
-    const end = this.state.length - 1;
+    if (this.state.length < 1) {
+        console.error("Left requires 1 entry.");
+        return;
+      }
+      const end = this.state.length - 1;
     this.state[end] = this.state[end].left();
   }
 
   uturn() {
-    const end = this.state.length - 1;
+    if (this.state.length < 1) {
+        console.error("Uturn requires 1 entry.");
+        return;
+      }
+      const end = this.state.length - 1;
     this.state[end] = this.state[end].uturn();
   }
 
   right() {
-    const end = this.state.length - 1;
+    if (this.state.length < 1) {
+        console.error("Right requires 1 entry.");
+        return;
+      }
+      const end = this.state.length - 1;
     this.state[end] = this.state[end].right();
   }
 
@@ -111,7 +127,7 @@ export class Spu {
     console.log("Program:", prog);
     for (let op of prog) {
       this[Spu.OPS[op]]();
-      console.log(op, Spu.OPS[op], Shape.pp(this.state));
+      console.log(op, Spu.OPS[op].padEnd(8), Shape.pp(this.state));
     }
   }
 
@@ -123,6 +139,6 @@ export class Spu {
     spu.run(PROG);
 
     const shape = spu.out.pop();
-    console.log("\n>>>", shape.toString());
+    console.log("\nOutput:", shape.toString());
   }
 }

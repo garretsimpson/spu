@@ -1,0 +1,9 @@
+{
+    "name" : "spu",
+    "description" : "Shape Processing Unit",
+    "author" : "Garret Simpson",
+    "repository" : {"url": "git://github.com/garretsimpson/spu"},
+    "main" : "main.js",
+    "type": "module",
+    "version" : "0.1"
+  }

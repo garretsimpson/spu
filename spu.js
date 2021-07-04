@@ -31,9 +31,9 @@ export class Spu {
   static MOVE_OPS = "0123456789";
 
   constructor() {
-    this.state = [];
     this.in = [];
     this.out = [];
+    this.state = [];
   }
 
   /**
@@ -59,17 +59,6 @@ export class Spu {
     }
     const shape = this.state.pop();
     this.out.push(shape);
-  }
-
-  swap() {
-    if (this.state.length < 2) {
-      console.error("Swap requires 2 entries.");
-      return;
-    }
-    const end = this.state.length - 1;
-    const temp = this.state[end];
-    this.state[end] = this.state[end - 1];
-    this.state[end - 1] = temp;
   }
 
   /**
@@ -163,7 +152,8 @@ export class Spu {
         const index = Spu.MOVE_OPS.indexOf(op);
         this[opName](index);
       } else {
-        console.log("Unknown operation:", op);
+        console.error("Unknown operation:", op);
+        return;
       }
       console.log(op, opName.padEnd(8), Shape.pp(this.state));
     }

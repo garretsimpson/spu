@@ -1,13 +1,17 @@
 /***
- * Shape Processing Unit (SPU)
- * Author: Garret Simpson
- *
- * Created for Shapez.io: https://github.com/tobspr/shapez.io
- *
- */
+ * Shape - Shape handling primitives
+ * 
+ * - A shape has 4 possible layers.  Each layer has 4 positions (quads).
+ * - A shape is represented internally by 16 bit integer (shape code), one bit for each possible position.
+ * - The order of the bits is simply the reverse order of the game's shape string.
+ * - Shape piece types (C, R, S, W) and colors are currently not used.
+ * - The constructor takes a 16 bit integer (shape code).
+ * - Basic shape operations: rotate(left, uturn, right), cut, stack
+ * - The flip and keyCode functions are used to compute a canonical shape code.
+*/
 
-const FULL_CIRC = "CuCuCuCu";
-const HALF_RECT = "RuRu----";
+const FULL_CIRC = "CuCuCuCu";  // 0x000F
+const HALF_RECT = "RuRu----";  // 0x0003
 const LOGO = "RuCw--Cw:----Ru--"; // 0x004B
 const ROCKET = "CbCuCbCu:Sr------:--CrSrCr:CwCwCwCw"; // 0xFE1F
 
@@ -30,7 +34,8 @@ export class Shape {
 
   static codeToHex(code) {
     const hex = code.toString(16).padStart(4, "0");
-    return "0x" + hex;
+    return hex;
+    //return "0x" + hex;
   }
 
   /**

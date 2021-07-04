@@ -1,27 +1,25 @@
 /***
  *
- * SPU - This is a state-based Shape Processing Unit
+ * SPU - State-based Shape Processing Unit
  *
  * Instructions
- *        F - flush state
+ *        F - flush stack
  *        I - input
  *        O - ouput
- *      <n> - move shape at index <n> to top of state
+ *      <n> - move shape at index <n> to top of stack
  *    L,U,R - rotate 90, 180, 270
  *        C - cut
- *        S - state
+ *        S - stack
  *        X - trash
  */
 
 import { Shape } from "./shape.js";
 
 export class Spu {
-  // TODO: Use regex
-  static OPS = {
+  static BASE_OPS = {
     F: "flush",
     I: "input",
     O: "output",
-    1: "swap",
     L: "left",
     U: "uturn",
     R: "right",
@@ -29,6 +27,8 @@ export class Spu {
     S: "stack",
     X: "trash",
   };
+
+  static MOVE_OPS = "0123456789";
 
   constructor() {
     this.state = [];
@@ -40,7 +40,7 @@ export class Spu {
    * @param {Array} data
    */
   setInput(data) {
-    this.in = data.reverse();
+    this.in = data.slice().reverse();
   }
 
   flush() {
@@ -70,6 +70,20 @@ export class Spu {
     const temp = this.state[end];
     this.state[end] = this.state[end - 1];
     this.state[end - 1] = temp;
+  }
+
+  /**
+   * Move item at index to top of stack
+   * @param {number} index
+   */
+  move(index) {
+    if (this.state.length < index) {
+      console.error("Move requires", index, "entries.");
+      return;
+    }
+    const end = this.state.length - 1;
+    const items = this.state.splice(end - index, 1);
+    this.state.push(items[0]);
   }
 
   left() {
@@ -129,14 +143,29 @@ export class Spu {
     this.state.pop();
   }
 
+  /**
+   * Run a program
+   * @param {String} prog
+   */
   run(prog) {
     console.log("Program:", prog);
     console.log("Input:", Shape.pp(this.in));
     console.log("");
 
+    const BASE_KEYS = Object.keys(Spu.BASE_OPS);
+    let opName = "";
     for (let op of prog) {
-      this[Spu.OPS[op]]();
-      console.log(op, Spu.OPS[op].padEnd(8), Shape.pp(this.state));
+      if (BASE_KEYS.includes(op)) {
+        opName = Spu.BASE_OPS[op];
+        this[opName]();
+      } else if (Spu.MOVE_OPS.includes(op)) {
+        opName = "move";
+        const index = Spu.MOVE_OPS.indexOf(op);
+        this[opName](index);
+      } else {
+        console.log("Unknown operation:", op);
+      }
+      console.log(op, opName.padEnd(8), Shape.pp(this.state));
     }
   }
 
@@ -155,7 +184,7 @@ export class Spu {
     const pass = shape.toString() == EXP;
     console.log("Test", pass ? "PASS" : "FAIL");
     if (!pass) {
-      console.log("  expected", EXP);
+      console.log("  expected:", EXP);
     }
   }
 }

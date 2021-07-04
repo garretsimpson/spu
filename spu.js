@@ -36,22 +36,28 @@ export class Spu {
     this.out = [];
   }
 
+  /**
+   * @param {Array} data
+   */
+  setInput(data) {
+    this.in = data.reverse();
+  }
+
   flush() {
     this.state.length = 0;
   }
 
   input() {
-    // Default input shape code
-    const CODE = 0x000f;
-    this.state.push(new Shape(CODE));
+    const shape = new Shape(this.in.pop());
+    this.state.push(shape);
   }
 
   output() {
     if (this.state.length < 1) {
-        console.error("Output requires 1 entry.");
-        return;
-      }
-      const shape = this.state.pop();
+      console.error("Output requires 1 entry.");
+      return;
+    }
+    const shape = this.state.pop();
     this.out.push(shape);
   }
 
@@ -68,28 +74,28 @@ export class Spu {
 
   left() {
     if (this.state.length < 1) {
-        console.error("Left requires 1 entry.");
-        return;
-      }
-      const end = this.state.length - 1;
+      console.error("Left requires 1 entry.");
+      return;
+    }
+    const end = this.state.length - 1;
     this.state[end] = this.state[end].left();
   }
 
   uturn() {
     if (this.state.length < 1) {
-        console.error("Uturn requires 1 entry.");
-        return;
-      }
-      const end = this.state.length - 1;
+      console.error("Uturn requires 1 entry.");
+      return;
+    }
+    const end = this.state.length - 1;
     this.state[end] = this.state[end].uturn();
   }
 
   right() {
     if (this.state.length < 1) {
-        console.error("Right requires 1 entry.");
-        return;
-      }
-      const end = this.state.length - 1;
+      console.error("Right requires 1 entry.");
+      return;
+    }
+    const end = this.state.length - 1;
     this.state[end] = this.state[end].right();
   }
 
@@ -125,6 +131,9 @@ export class Spu {
 
   run(prog) {
     console.log("Program:", prog);
+    console.log("Input:", Shape.pp(this.in));
+    console.log("");
+
     for (let op of prog) {
       this[Spu.OPS[op]]();
       console.log(op, Spu.OPS[op].padEnd(8), Shape.pp(this.state));
@@ -132,13 +141,21 @@ export class Spu {
   }
 
   static runTests() {
+    const DATA = [0xf, 0xf];
     const PROG = "ICLCRS1LSCXIC1XSO";
     const EXP = "RrRr--Rr:----Rg--:--------:--------";
 
     const spu = new Spu();
+    spu.setInput(DATA);
     spu.run(PROG);
 
     const shape = spu.out.pop();
     console.log("\nOutput:", shape.toString());
+
+    const pass = shape.toString() == EXP;
+    console.log("Test", pass ? "PASS" : "FAIL");
+    if (!pass) {
+      console.log("  expected", EXP);
+    }
   }
 }

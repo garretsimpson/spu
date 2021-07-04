@@ -215,9 +215,9 @@ export class Shape {
 
   static testLogo() {
     const EXP = "RrRr--Rr:----Rg--:--------:--------";
-    const INPUT = new Shape(0x000f);
     let shape0, shape1, shape2;
 
+    const INPUT = new Shape(0x000f);
     [shape0, shape1] = INPUT.cut();
     [shape1, shape2] = shape1.left().cut();
     shape1 = shape2.right().stack(shape1);

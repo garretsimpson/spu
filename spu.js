@@ -11,9 +11,52 @@
  *        C - cut
  *        S - stack
  *        X - trash
+ *
+ * Search for shapes
+ * - Input: A string of shapes, probably use full one-layer shapes.
+ * - Output: List all shapes (codes) that can be made with the input. (possible shapes)
+ * - For each possible/canonical shape, list all programs that can build that shape.
+ * - Highlight the shortest program.
+ * - Count number of possible shapes.
+ * - Count number of canonical shapes (key codes).
+ * Example
+ * - How many (possible) shapes can be made with 4 pieces (one full layer)?
+ * - How many unique (canonical) shapes?
+ * Secondary
+ * - How many different ways to make Logo?
+ * - What's the shortest program to do so?
+ * Issues
+ * - How to measure cost of build?  length of program?  with/without move instructions?
+ * - What if cut and/or stack works with ouput / input in the reverse order?
+ *
+ * Plan
+ * - Use a recursive function to search all possible programs.
+ * - Store the state on the (Javascript) stack.
+ * - State includes: stack history, program, current input (if not input at the start).
+ * - All stacks seen in a build sequence (stack history) are kept to check for loops.
+ * - If no loop detected, then save the shape on top of stack and current build (program).
+ * - After all programs found, then aggregate the shapes and compute counts.
  */
 
 import { Shape } from "./shape.js";
+
+const allShapes = new Map();
+
+class SpuState {
+  constructor(prog = "", stack = [], history = []) {
+    this.prog = prog;
+    this.stack = stack;
+    this.history = history;
+  }
+
+  toString() {
+    return this.prog + " " + Shape.pp(this.stack);
+  }
+
+  copy() {
+    return new SpuState(this.prog, this.stack.slice(), this.history.slice());
+  }
+}
 
 export class Spu {
   static BASE_OPS = {
@@ -27,8 +70,10 @@ export class Spu {
     S: "stack",
     X: "trash",
   };
-
+  static ROTATE_OPS = "LUR";
   static MOVE_OPS = "0123456789";
+
+  static MAX_LENGTH = 8;
 
   constructor() {
     this.in = [];
@@ -47,17 +92,17 @@ export class Spu {
     this.state.length = 0;
   }
 
-  input() {
+  input(stack) {
     const shape = new Shape(this.in.pop());
-    this.state.push(shape);
+    stack.push(shape);
   }
 
-  output() {
-    if (this.state.length < 1) {
+  output(stack) {
+    if (stack.length < 1) {
       console.error("Output requires 1 entry.");
       return;
     }
-    const shape = this.state.pop();
+    const shape = stack.pop();
     this.out.push(shape);
   }
 
@@ -65,71 +110,71 @@ export class Spu {
    * Move item at index to top of stack
    * @param {number} index
    */
-  move(index) {
-    if (this.state.length < index) {
-      console.error("Move requires", index, "entries.");
+  move(stack, index) {
+    if (stack.length < index) {
+      console.error("Move requires", index + 1, "entries.");
       return;
     }
-    const end = this.state.length - 1;
-    const items = this.state.splice(end - index, 1);
-    this.state.push(items[0]);
+    const end = stack.length - 1;
+    const items = stack.splice(end - index, 1);
+    stack.push(items[0]);
   }
 
-  left() {
-    if (this.state.length < 1) {
+  left(stack) {
+    if (stack.length < 1) {
       console.error("Left requires 1 entry.");
       return;
     }
-    const end = this.state.length - 1;
-    this.state[end] = this.state[end].left();
+    const end = stack.length - 1;
+    stack[end] = stack[end].left();
   }
 
-  uturn() {
-    if (this.state.length < 1) {
+  uturn(stack) {
+    if (stack.length < 1) {
       console.error("Uturn requires 1 entry.");
       return;
     }
-    const end = this.state.length - 1;
-    this.state[end] = this.state[end].uturn();
+    const end = stack.length - 1;
+    stack[end] = stack[end].uturn();
   }
 
-  right() {
-    if (this.state.length < 1) {
+  right(stack) {
+    if (stack.length < 1) {
       console.error("Right requires 1 entry.");
       return;
     }
-    const end = this.state.length - 1;
-    this.state[end] = this.state[end].right();
+    const end = stack.length - 1;
+    stack[end] = stack[end].right();
   }
 
-  cut() {
-    if (this.state.length < 1) {
+  cut(stack) {
+    if (stack.length < 1) {
       console.error("Cut requires 1 entry.");
       return;
     }
-    const shape = this.state.pop();
+    const shape = stack.pop();
     const [left, right] = shape.cut();
-    this.state.push(left);
-    this.state.push(right);
+    left.code != 0 && stack.push(left);
+    right.code != 0 && stack.push(right);
   }
 
-  stack() {
-    if (this.state.length < 2) {
+  stack(stack) {
+    if (stack.length < 2) {
       console.error("Stack requires 2 entries.");
       return;
     }
-    const top = this.state.pop();
-    const bottom = this.state.pop();
+    const top = stack.pop();
+    const bottom = stack.pop();
     const shape = bottom.stack(top);
-    this.state.push(shape);
+    stack.push(shape);
   }
 
-  trash() {
-    if (this.state.length < 1) {
+  trash(stack) {
+    if (stack.length < 1) {
       console.error("Trash requires 1 entry.");
       return;
     }
-    this.state.pop();
+    stack.pop();
   }
 
   /**
@@ -156,6 +201,165 @@ export class Spu {
         return;
       }
       console.log(op, opName.padEnd(8), Shape.pp(this.state));
+    }
+  }
+
+  /**
+   * Recursive search for shapes
+   * @param {SpuState} state
+   */
+  search(state) {
+    // if stack is empty, return
+    const stackLen = state.stack.length;
+    if (stackLen == 0) {
+      return;
+    }
+
+    // if program exceeds max length, return
+    if (state.prog.length > Spu.MAX_LENGTH) {
+      console.log("Max length exceeded");
+      return;
+    }
+
+    const stackStr = Shape.pp(state.stack);
+    const seen = state.history.includes(stackStr);
+    // display state
+    console.log("state:", state.toString(), seen ? "" : "NEW");
+
+    // loop detection - if this state has been seen before, return
+    if (seen) {
+      return;
+    }
+    // else store the state
+    state.history.push(stackStr);
+
+    // store shape on top of stack
+    const prog = state.prog + "O";
+    // TODO: Put this stuff in a function
+    const shape = state.stack[state.stack.length - 1];
+    const code = shape.code;
+    const progList = allShapes.get(code);
+    if (progList == undefined) {
+      allShapes.set(code, [prog]);
+    } else {
+      progList.push(prog);
+    }
+
+    let newState;
+    let lastOp = state.prog.slice(-1);
+
+    // Try rotate - only one of each
+    if (!Spu.ROTATE_OPS.includes(lastOp)) {
+      newState = state.copy();
+      newState.prog += "R";
+      this.right(newState.stack);
+      this.search(newState);
+
+      newState = state.copy();
+      newState.prog += "U";
+      this.uturn(newState.stack);
+      this.search(newState);
+
+      newState = state.copy();
+      newState.prog += "L";
+      this.left(newState.stack);
+      this.search(newState);
+    }
+
+    // Try cut
+    newState = state.copy();
+    newState.prog += "C";
+    this.cut(newState.stack);
+    this.search(newState);
+
+    // Try stack
+    if (stackLen >= 2) {
+      newState = state.copy();
+      newState.prog += "S";
+      this.stack(newState.stack);
+      this.search(newState);
+    }
+
+    // Try trash
+    if (stackLen >= 2) {
+      newState = state.copy();
+      newState.prog += "X";
+      this.trash(newState.stack);
+      this.search(newState);
+    }
+
+    // Try move
+    for (let i = 1; i < stackLen; i++) {
+      newState = state.copy();
+      newState.prog += String(i);
+      this.move(newState.stack, i);
+      this.search(newState);
+    }
+
+    // TODO: Delete current state to save memory?
+  }
+
+  static runSearch() {
+    const DATA = [0x3]; // 1 piece
+    const spu = new Spu();
+    const state = new SpuState();
+
+    console.log("Max program length:", Spu.MAX_LENGTH);
+    console.log("Input data:", Shape.pp(DATA));
+    console.log("");
+
+    // insert all input data
+    spu.setInput(DATA);
+    const len = DATA.length;
+    for (let i = 0; i < len; i++) {
+      state.prog += "I";
+      spu.input(state.stack);
+    }
+
+    // start the search
+    spu.search(state);
+
+    // Aggregate results
+    let numPieces = 0;
+    for (let item of DATA) {
+      for (let bit of item.toString(2)) {
+        if (bit == 1) numPieces++;
+      }
+    }
+    const unique = new Map();
+    for (let [code, progList] of allShapes.entries()) {
+      const shape = new Shape(code);
+      const keyCode = shape.keyCode();
+      let shortProg = unique.get(keyCode);
+      for (let prog of progList) {
+        if (shortProg == undefined || prog.length < shortProg.length) {
+          shortProg = prog;
+        }
+      }
+      unique.set(keyCode, shortProg);
+    }
+
+    // display results
+    console.log("\nShapes");
+    const codes = Array.from(allShapes.keys()).sort((a, b) => a - b);
+    for (let code of codes) {
+      const shape = new Shape(code);
+      console.log(
+        Shape.pp(code),
+        Shape.pp(shape.keyCode()),
+        allShapes.get(code).length.toString().padStart(4)
+      );
+    }
+
+    console.log("");
+    console.log("Pieces:", numPieces);
+    console.log("Shapes found:", allShapes.size);
+    console.log("Unique shapes found:", unique.size);
+
+    console.log("\nUnique shapes");
+    const keys = Array.from(unique.keys()).sort((a, b) => a - b);
+    for (let key of keys) {
+      console.log(Shape.pp(key), JSON.stringify(unique.get(key)));
     }
   }
 

@@ -16,9 +16,11 @@ function main() {
   console.log(Date());
   console.log("");
 
-  //   Shape.runTests();
-  //   Shape.testLogo();
-  Spu.runTests();
+  // Shape.runTests();
+  // Shape.testPerf();
+  // Shape.testLogo();
+  // Spu.runTests();
+  Spu.runSearch();
 }
 
 main();

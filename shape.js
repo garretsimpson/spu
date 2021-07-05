@@ -1,6 +1,6 @@
 /***
  * Shape - Shape handling primitives
- * 
+ *
  * - A shape has 4 possible layers.  Each layer has 4 positions (quads).
  * - A shape is represented internally by 16 bit integer (shape code), one bit for each possible position.
  * - The order of the bits is simply the reverse order of the game's shape string.
@@ -8,10 +8,10 @@
  * - The constructor takes a 16 bit integer (shape code).
  * - Basic shape operations: rotate(left, uturn, right), cut, stack
  * - The flip and keyCode functions are used to compute a canonical shape code.
-*/
+ */
 
-const FULL_CIRC = "CuCuCuCu";  // 0x000F
-const HALF_RECT = "RuRu----";  // 0x0003
+const FULL_CIRC = "CuCuCuCu"; // 0x000F
+const HALF_RECT = "RuRu----"; // 0x0003
 const LOGO = "RuCw--Cw:----Ru--"; // 0x004B
 const ROCKET = "CbCuCbCu:Sr------:--CrSrCr:CwCwCwCw"; // 0xFE1F
 
@@ -201,21 +201,32 @@ export class Shape {
 
   static testPerf() {
     let result = 0;
+    let name, pass;
     let reps = 100000;
-    const shape = new Shape(0x5111);
-    console.time("stack");
-    for (let i = 0; i < reps; i++) {
-      result = shape.stack(0xfffa);
-      //   console.log(Shape.pp(result));
-    }
-    console.timeEnd("stack");
 
-    console.time("stackCode");
+    const topCode = 0xfffa;
+    const bottomCode = 0x5111;
+    const expCode = 0xf111;
+
+    name = "stackCode";
+    console.time(name);
     for (let i = 0; i < reps; i++) {
-      result = Shape.stackCode(0xfffa, 0x5111);
-      //   console.log(Shape.pp(result));
+      result = Shape[name](topCode, bottomCode);
     }
-    console.timeEnd("stackCode");
+    console.timeEnd(name);
+    pass = result == expCode;
+    console.log(name, pass ? "PASS" : "FAIL");
+
+    const top = new Shape(topCode);
+    const bottom = new Shape(bottomCode);
+    name = "stack";
+    console.time(name);
+    for (let i = 0; i < reps; i++) {
+      result = bottom[name](top);
+    }
+    console.timeEnd(name);
+    pass = result.code == expCode;
+    console.log(name, pass ? "PASS" : "FAIL");
   }
 
   static testLogo() {

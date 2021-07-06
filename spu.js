@@ -231,13 +231,6 @@ export class Spu {
       console.log(stats.nodes, "state:", state.toString(), seen ? "" : "NEW");
     }
 
-    // if program exceeds max length, return
-    if (state.prog.length > Spu.MAX_LENGTH) {
-      // console.log("Max length exceeded");
-      stats.prunes++;
-      return;
-    }
-
     // loop detection - if this state has been seen before, return
     if (seen) {
       stats.loops++;
@@ -259,6 +252,13 @@ export class Spu {
       progList.push(prog);
     }
     stats.builds++;
+
+    // if program exceeds max length, return
+    if (state.prog.length > Spu.MAX_LENGTH) {
+      // console.log("Max length exceeded");
+      stats.prunes++;
+      return;
+    }
 
     let newState;
     let lastOp = state.prog.slice(-1);

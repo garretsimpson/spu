@@ -73,7 +73,7 @@ export class Spu {
   static ROTATE_OPS = "LUR";
   static MOVE_OPS = "0123456789";
 
-  static MAX_LENGTH = 8;
+  static MAX_LENGTH = 10;
 
   constructor() {
     this.in = [];
@@ -300,7 +300,7 @@ export class Spu {
   }
 
   static runSearch() {
-    const DATA = [0x3]; // 1 piece
+    const DATA = [0xf, 0xf];
     const spu = new Spu();
     const state = new SpuState();
 
@@ -352,9 +352,11 @@ export class Spu {
     }
 
     console.log("");
-    console.log("Pieces:", numPieces);
+    console.log("Input data:", Shape.pp(DATA));
+    console.log("Max steps:", Spu.MAX_LENGTH - DATA.length);
+    console.log("Number of pieces:", numPieces);
     console.log("Shapes found:", allShapes.size);
-    console.log("Unique shapes found:", unique.size);
+    console.log("Unique shapes:", unique.size);
 
     console.log("\nUnique shapes");
     const keys = Array.from(unique.keys()).sort((a, b) => a - b);

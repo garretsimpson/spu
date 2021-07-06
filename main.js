@@ -19,8 +19,8 @@ function main() {
   // Shape.runTests();
   // Shape.testPerf();
   // Shape.testLogo();
-  // Spu.runTests();
   Spu.runSearch();
+  Spu.runTests();
 }
 
 main();

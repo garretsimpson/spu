@@ -272,9 +272,9 @@ export class Spu {
 
     // Try rotate - max 1
     if (!Spu.ROTATE_OPS.includes(lastOp)) {
-      ops.push("R");
-      ops.push("U");
-      ops.push("L");
+      for (let op of Spu.ROTATE_OPS) {
+        ops.push(op);
+      }
     }
 
     // Try cut
@@ -311,8 +311,8 @@ export class Spu {
   }
 
   static runSearch() {
-    const DATA = [0xf, 0xf, 0xf, 0xf];
-    const MAX_LENGTH = 16;
+    const DATA = [0xf, 0xf];
+    const MAX_LENGTH = 14;
     const spu = new Spu();
     const state = new SpuState();
 
@@ -356,7 +356,7 @@ export class Spu {
       console.log(Shape.pp(key), JSON.stringify(unique.get(key)));
     }
 
-    const width = 8;
+    const width = 10;
     console.log("\nStats");
     console.log("Nodes: ", stats.nodes.toString().padStart(width));
     console.log("Builds:", stats.builds.toString().padStart(width));
@@ -369,11 +369,11 @@ export class Spu {
     );
 
     console.log("\nResults");
-    console.log("Input data:", Shape.pp(DATA));
+    console.log("Input data:      ", Shape.pp(DATA));
     console.log("Number of pieces:", numPieces);
-    console.log("Max steps:", MAX_LENGTH - DATA.length - 1);
-    console.log("Shapes found:", allShapes.size);
-    console.log("Unique shapes:", unique.size);
+    console.log("Max steps:       ", MAX_LENGTH - DATA.length - 1);
+    console.log("Shapes found:    ", allShapes.size);
+    console.log("Unique shapes:   ", unique.size);
 
     // look for Logo
     console.log("");

@@ -14,13 +14,12 @@ const APP_NAME = "Shape Processing Unit 0.1";
 function main() {
   console.log(APP_NAME);
   console.log(Date());
-  console.log("");
 
   // Shape.runTests();
   // Shape.testPerf();
   // Shape.testLogo();
+  Spu.runTests();
   Spu.runSearch();
-  // Spu.runTests();
 }
 
 main();

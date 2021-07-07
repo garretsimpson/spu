@@ -1,9 +1,14 @@
 {
-    "name" : "spu",
-    "description" : "Shape Processing Unit",
-    "author" : "Garret Simpson",
-    "repository" : {"url": "git://github.com/garretsimpson/spu"},
-    "main" : "main.js",
+    "name": "spu",
+    "description": "Shape Processing Unit",
+    "author": "Garret Simpson",
+    "repository": {
+        "url": "git://github.com/garretsimpson/spu"
+    },
+    "main": "main.js",
     "type": "module",
-    "version" : "0.1"
-  }
+    "version": "0.1",
+    "dependencies": {
+        "paralleljs": "^1.1.0"
+    }
+}

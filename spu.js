@@ -39,6 +39,9 @@
  */
 
 import { Shape } from "./shape.js";
+import Parallel from "paralleljs";
+
+const DEFAULT_MAX_LENGTH = 8;
 
 const allShapes = new Map();
 
@@ -49,6 +52,9 @@ class SpuState {
     this.prog = prog;
     this.stack = stack;
     this.history = history;
+    this.in = [];
+    this.out = [];
+    this.maxLength = DEFAULT_MAX_LENGTH;
   }
 
   toString() {
@@ -56,13 +62,21 @@ class SpuState {
   }
 
   copy() {
-    return new SpuState(this.prog, this.stack.slice(), this.history.slice());
+    const result = new SpuState(
+      this.prog,
+      this.stack.slice(),
+      this.history.slice()
+    );
+    result.maxLength = this.maxLength;
+    return result;
   }
 
   clear() {
     this.prog = "";
     this.stack = [];
     this.history = [];
+    this.in = [];
+    this.out = [];
   }
 }
 
@@ -81,42 +95,57 @@ export class Spu {
   static ROTATE_OPS = "LUR";
   static MOVE_OPS = "0123456789abcdef";
 
-  constructor() {
-    this.in = [];
-    this.out = [];
-    this.state = [];
+  static state = new SpuState();
+
+  static clearState() {
+    Spu.state = {
+      prog: "",
+      stack: [],
+      history: [],
+      in: [],
+      out: [],
+      maxLength: Spu.DEFAULT_MAX_LENGTH,
+    };
+  }
+
+  static init() {
+    // Spu.clearState();
   }
 
   /**
    * @param {Array} data
    */
-  setInput(data) {
-    this.in = data.slice().reverse();
+  static setInput(data) {
+    Spu.state.in = data.slice().reverse();
   }
 
-  flush() {
-    this.state.length = 0;
+  static getOutput() {
+    return Spu.state.out.pop();
   }
 
-  input(stack) {
-    const shape = new Shape(this.in.pop());
-    stack.push(shape);
+  static flush(stack) {
+    stack.length = 0;
   }
 
-  output(stack) {
+  static input(stack) {
+    const code = Spu.state.in.pop();
+    stack.push(code);
+  }
+
+  static output(stack) {
     if (stack.length < 1) {
       console.error("Output requires 1 entry.");
       return;
     }
-    const shape = stack.pop();
-    this.out.push(shape);
+    const code = stack.pop();
+    Spu.state.out.push(code);
   }
 
   /**
    * Move item at index to top of stack
    * @param {number} index
    */
-  move(stack, index) {
+  static move(stack, index) {
     if (stack.length < index) {
       console.error("Move requires", index + 1, "entries.");
       return;
@@ -126,56 +155,56 @@ export class Spu {
     stack.push(items[0]);
   }
 
-  left(stack) {
+  static left(stack) {
     if (stack.length < 1) {
       console.error("Left requires 1 entry.");
       return;
     }
     const end = stack.length - 1;
-    stack[end] = stack[end].left();
+    stack[end] = Shape.leftCode(stack[end]);
   }
 
-  uturn(stack) {
+  static uturn(stack) {
     if (stack.length < 1) {
       console.error("Uturn requires 1 entry.");
       return;
     }
     const end = stack.length - 1;
-    stack[end] = stack[end].uturn();
+    stack[end] = Shape.uturnCode(stack[end]);
   }
 
-  right(stack) {
+  static right(stack) {
     if (stack.length < 1) {
       console.error("Right requires 1 entry.");
       return;
     }
     const end = stack.length - 1;
-    stack[end] = stack[end].right();
+    stack[end] = Shape.rightCode(stack[end]);
   }
 
-  cut(stack) {
+  static cut(stack) {
     if (stack.length < 1) {
       console.error("Cut requires 1 entry.");
       return;
     }
-    const shape = stack.pop();
-    const [left, right] = shape.cut();
-    left.code != 0 && stack.push(left);
-    right.code != 0 && stack.push(right);
+    const code = stack.pop();
+    const [left, right] = Shape.cutCode(code);
+    left != 0 && stack.push(left);
+    right != 0 && stack.push(right);
   }
 
-  stack(stack) {
+  static stack(stack) {
     if (stack.length < 2) {
       console.error("Stack requires 2 entries.");
       return;
     }
     const top = stack.pop();
     const bottom = stack.pop();
-    const shape = bottom.stack(top);
-    stack.push(shape);
+    const code = Shape.stackCode(top, bottom);
+    stack.push(code);
   }
 
-  trash(stack) {
+  static trash(stack) {
     if (stack.length < 1) {
       console.error("Trash requires 1 entry.");
       return;
@@ -188,16 +217,16 @@ export class Spu {
    * @param {String} op
    * @param {Array} stack
    */
-  runStep(op, stack) {
+  static runStep(op, stack) {
     const BASE_KEYS = Object.keys(Spu.BASE_OPS);
     let opName = "";
     if (BASE_KEYS.includes(op)) {
       opName = Spu.BASE_OPS[op];
-      this[opName](stack);
+      Spu[opName](stack);
     } else if (Spu.MOVE_OPS.includes(op)) {
       opName = "move";
       const index = Spu.MOVE_OPS.indexOf(op);
-      this[opName](stack, index);
+      Spu[opName](stack, index);
     } else {
       console.error("Unknown operation:", op);
       return;
@@ -209,16 +238,15 @@ export class Spu {
    * Run a program
    * @param {String} prog
    */
-  run(prog) {
+  static run(prog) {
     console.log("");
     console.log("Program:", prog);
-    console.log("Input:", Shape.pp(this.in));
+    console.log("Input:", Shape.pp(Spu.state.in));
     console.log("");
 
-    let opName = "";
-    const stack = this.state;
+    const stack = Spu.state.stack;
     for (let op of prog) {
-      opName = this.runStep(op, stack);
+      const opName = Spu.runStep(op, stack);
       console.log(op, opName.padEnd(8), Shape.pp(stack));
     }
   }
@@ -227,7 +255,7 @@ export class Spu {
    * Recursive search for shapes
    * @param {SpuState} state
    */
-  search(state, maxLength) {
+  static search(state) {
     const stackLen = state.stack.length;
     // if stack is empty, return
     if (stackLen == 0) {
@@ -239,7 +267,7 @@ export class Spu {
     const seen = state.history.includes(stackStr);
     // display state
     if (stats.nodes % 10000000 == 0) {
-      console.log(stats.nodes, "state:", state.toString(), seen ? "" : "NEW");
+      console.log(stats.nodes, state.prog, stackStr, seen ? "" : "NEW");
     }
 
     // loop detection - if this state has been seen before, return
@@ -252,8 +280,7 @@ export class Spu {
 
     // store shape on top of stack
     const prog = state.prog + "O";
-    const shape = state.stack[state.stack.length - 1];
-    const code = shape.code;
+    const code = state.stack[state.stack.length - 1];
     const oldProg = allShapes.get(code);
     if (oldProg == undefined || prog.length < oldProg.length) {
       allShapes.set(code, prog);
@@ -261,7 +288,7 @@ export class Spu {
     stats.builds++;
 
     // if program exceeds max length, return
-    if (state.prog.length + 1 >= maxLength) {
+    if (state.prog.length + 1 >= state.maxLength) {
       stats.prunes++;
       return;
     }
@@ -305,7 +332,7 @@ export class Spu {
       const newState = state.copy();
       this.runStep(op, newState.stack);
       newState.prog += op;
-      this.search(newState, maxLength);
+      this.search(newState);
       newState.clear(); // attempt to save memory
     }
   }
@@ -313,22 +340,26 @@ export class Spu {
   static runSearch() {
     const DATA = [0xf, 0xf];
     const MAX_LENGTH = 14;
-    const spu = new Spu();
-    const state = new SpuState();
 
+    Spu.init();
+    const state = Spu.state;
+    state.maxLength = MAX_LENGTH;
+
+    console.log("");
+    console.log("Searching for shapes...");
     console.log("Max program length:", MAX_LENGTH);
     console.log("Input data:", Shape.pp(DATA));
 
     // insert all input data
-    spu.setInput(DATA);
+    Spu.setInput(DATA);
     for (let i = 0; i < DATA.length; i++) {
       state.prog += "I";
-      spu.input(state.stack);
+      Spu.input(state.stack);
     }
 
     // start the search
     const startTime = Date.now();
-    spu.search(state, MAX_LENGTH);
+    Spu.search(state);
     const endTime = Date.now();
 
     // aggregate results
@@ -340,8 +371,7 @@ export class Spu {
     }
     const unique = new Map();
     for (let [code, prog] of allShapes.entries()) {
-      const shape = new Shape(code);
-      const keyCode = shape.keyCode();
+      const keyCode = Shape.keyCode(code);
       const progList = unique.get(keyCode);
       if (progList == undefined) {
         unique.set(keyCode, [prog]);
@@ -388,17 +418,18 @@ export class Spu {
 
   static runTests() {
     let DATA, PROG, EXP;
-    let spu, shape, pass;
+    let code, shape, pass;
 
     DATA = [0xf, 0xf];
     PROG = "ICLCRS1LSCXIC1XSO";
     EXP = "RrRr--Rr:----Rg--:--------:--------";
-    spu = new Spu();
-    spu.setInput(DATA);
-    spu.run(PROG);
-    shape = spu.out.pop();
-    console.log("\nOutput:", shape.toString());
-    pass = shape.toString() == EXP;
+    Spu.init();
+    Spu.setInput(DATA);
+    Spu.run(PROG);
+    code = Spu.getOutput();
+    shape = Shape.toShape(code);
+    console.log("\nOutput:", shape);
+    pass = shape == EXP;
     console.log("Test", pass ? "PASS" : "FAIL");
     if (!pass) {
       console.log("  expected:", EXP);
@@ -407,12 +438,13 @@ export class Spu {
     DATA = [0xf, 0xf];
     PROG = "IICR2CLSSC2SUOF";
     EXP = "RrRr--Rr:----Rg--:--------:--------";
-    spu = new Spu();
-    spu.setInput(DATA);
-    spu.run(PROG);
-    shape = spu.out.pop();
-    console.log("\nOutput:", shape.toString());
-    pass = shape.toString() == EXP;
+    Spu.init();
+    Spu.setInput(DATA);
+    Spu.run(PROG);
+    code = Spu.getOutput();
+    shape = Shape.toShape(code);
+    console.log("\nOutput:", shape);
+    pass = shape == EXP;
     console.log("Test", pass ? "PASS" : "FAIL");
     if (!pass) {
       console.log("  expected:", EXP);

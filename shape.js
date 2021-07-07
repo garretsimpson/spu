@@ -10,6 +10,8 @@
  * - The flip and keyCode functions are used to compute a canonical shape code.
  */
 
+import { Spu } from "./spu.js";
+
 const FULL_CIRC = "CuCuCuCu"; // 0x000F
 const HALF_RECT = "RuRu----"; // 0x0003
 const LOGO = "RuCw--Cw:----Ru--"; // 0x004B
@@ -29,7 +31,7 @@ export class Shape {
   }
 
   toString() {
-    return this.toShape();
+    return Shape.toShape(this.code);
   }
 
   static codeToHex(code) {
@@ -43,13 +45,13 @@ export class Shape {
    * Uses a fixed shape for each piece and a different color for each layer.
    * @returns {String}
    */
-  toShape() {
+  static toShape(code) {
     const COLORS = ["r", "g", "b", "y"];
     const SHAPE = Shape.RECT;
     const EMPTY = "--";
     const SEP = ":";
 
-    const bin = this.code.toString(2).padStart(16, "0");
+    const bin = code.toString(2).padStart(16, "0");
     let result = "";
     for (let i = 0; i < 16; i++) {
       let val = EMPTY;
@@ -66,19 +68,18 @@ export class Shape {
     return result;
   }
 
-  keyCode() {
-    const code = this.code;
-    const fcode = this.flip();
+  static keyCode(code) {
+    const fcode = Shape.flipCode(code);
     let result = Math.min(code, fcode);
 
     for (let i = 1; i < 4; i++) {
-      result = Math.min(result, this.rotate(code, i));
-      result = Math.min(result, this.rotate(fcode, i));
+      result = Math.min(result, Shape.rotateCode(code, i));
+      result = Math.min(result, Shape.rotateCode(fcode, i));
     }
     return result;
   }
 
-  rotate(code, steps) {
+  static rotateCode(code, steps) {
     const lShift = steps & 0x3;
     const rShift = 4 - lShift;
     const mask = (0xf >>> rShift) * 0x1111;
@@ -87,20 +88,31 @@ export class Shape {
     return result;
   }
 
+  static rightCode(code) {
+    return Shape.rotateCode(code, 1);
+  }
+
   right() {
-    return new Shape(this.rotate(this.code, 1));
+    return new Shape(Shape.rightCode(this.code));
+  }
+
+  static uturnCode(code) {
+    return Shape.rotateCode(code, 2);
   }
 
   uturn() {
-    return new Shape(this.rotate(this.code, 2));
+    return new Shape(Shape.uturnCode(this.code));
+  }
+
+  static leftCode(code) {
+    return Shape.rotateCode(code, 3);
   }
 
   left() {
-    return new Shape(this.rotate(this.code, 3));
+    return new Shape(Shape.leftCode(this.code));
   }
 
-  flip() {
-    let code = this.code;
+  static flipCode(code) {
     let result = 0;
     for (let i = 0; i < 4; i++) {
       result = (result << 1) | (code & 0x1111);
@@ -110,7 +122,7 @@ export class Shape {
   }
 
   // Remove empty layers
-  collapse(code) {
+  static collapse(code) {
     let result = 0;
     for (let i = 0; i < 4; i++) {
       const val = code & 0xf000;
@@ -122,21 +134,15 @@ export class Shape {
     return result;
   }
 
-  cut() {
-    const left = this.collapse(this.code & 0xcccc);
-    const right = this.collapse(this.code & 0x3333);
-    return [new Shape(left), new Shape(right)];
+  static cutCode(code) {
+    const left = Shape.collapse(code & 0xcccc);
+    const right = Shape.collapse(code & 0x3333);
+    return [left, right];
   }
 
-  stack(shape) {
-    const top = shape.code;
-    const bottom = this.code;
-    for (let offset = 4; offset > 0; offset--) {
-      if (((top << ((offset - 1) * 4)) & bottom) != 0) {
-        return new Shape(((top << (offset * 4)) | bottom) & 0xffff);
-      }
-    }
-    return new Shape(top | bottom);
+  cut() {
+    const [left, right] = Shape.cutCode(this.code);
+    return [new Shape(left), new Shape(right)];
   }
 
   static stackCode(top, bottom) {
@@ -146,6 +152,13 @@ export class Shape {
       }
     }
     return top | bottom;
+  }
+
+  stack(shape) {
+    const top = shape.code;
+    const bottom = this.code;
+    const result = Shape.stackCode(top, bottom);
+    return new Shape(result);
   }
 
   // pretty print
@@ -164,33 +177,30 @@ export class Shape {
 
   static runTests() {
     const TESTS = [
-      ["left", [0x0001], 0x0008],
-      ["right", [0x0001], 0x0002],
-      ["uturn", [0x0001], 0x0004],
-      ["left", [0x1248], 0x8124],
-      ["flip", [0x1234], 0x84c2],
+      ["leftCode", [0x0001], 0x0008],
+      ["rightCode", [0x0001], 0x0002],
+      ["uturnCode", [0x0001], 0x0004],
+      ["leftCode", [0x1248], 0x8124],
+      ["flipCode", [0x1234], 0x84c2],
       ["keyCode", [0x4321], 0x1624],
       ["toShape", [0x004b], "RrRr--Rr:----Rg--:--------:--------"],
-      ["cut", [0x5aff], [0x48cc, 0x1233]],
-      ["cut", [0x936c], [0x084c, 0x0132]],
-      ["stack", [0x000f, 0x000f], 0x00ff],
-      ["stack", [0x1111, 0x2222], 0x3333],
-      ["stack", [0x5111, 0xfffa], 0xf111],
+      ["cutCode", [0x5aff], [0x48cc, 0x1233]],
+      ["cutCode", [0x936c], [0x084c, 0x0132]],
+      ["stackCode", [0x000f, 0x000f], 0x00ff],
+      ["stackCode", [0x1111, 0x2222], 0x3333],
+      ["stackCode", [0xfffa, 0x5111], 0xf111],
     ];
 
     let testNum = 0;
-    for (let [op, ins, exp] of TESTS) {
+    for (let [op, args, exp] of TESTS) {
       testNum++;
-      const code = ins[0];
-      const shape = new Shape(code);
-      const args = ins.slice(1);
-      const result = shape[op](...args.map((v) => new Shape(v)));
+      const result = Shape[op](...args);
       const pass = Shape.pp(result) == Shape.pp(exp);
 
       console.log(
         "#" + testNum,
         pass ? "PASS" : "FAIL",
-        op + "(" + ins.map((v) => Shape.pp(v)).join() + ") returned",
+        op + "(" + args.map((v) => Shape.pp(v)).join(",") + ") returned",
         Shape.pp(result)
       );
       if (!pass) {
@@ -242,7 +252,7 @@ export class Shape {
     [shape1, shape2] = INPUT.cut();
     shape0 = shape0.stack(shape2);
 
-    const result = shape0.toShape();
+    const result = Shape.toShape(shape0.code);
     const pass = result == EXP;
     console.log("Logo:", pass ? "PASS" : "FAIL", "returned", result);
     if (!pass) {

@@ -79,7 +79,7 @@ export class Spu {
   static ROTATE_OPS = "LUR";
   static MOVE_OPS = "0123456789abcdef";
 
-  static MAX_LENGTH = 14;
+  static MAX_LENGTH = 12;
 
   constructor() {
     this.in = [];
@@ -217,8 +217,8 @@ export class Spu {
    * @param {SpuState} state
    */
   search(state) {
-    // if stack is empty, return
     const stackLen = state.stack.length;
+    // if stack is empty, return
     if (stackLen == 0) {
       return;
     }
@@ -374,16 +374,16 @@ export class Spu {
 
     console.log("\nStats");
     console.log("Nodes: ", stats.nodes.toString().padStart(8));
-    console.log("Prunes:", stats.prunes.toString().padStart(8));
-    console.log("Loops: ", stats.loops.toString().padStart(8));
     console.log("Builds:", stats.builds.toString().padStart(8));
+    console.log("Loops: ", stats.loops.toString().padStart(8));
+    console.log("Prunes:", stats.prunes.toString().padStart(8));
     console.log("Shapes:", stats.shapes.toString().padStart(8));
     console.log("Time:  ", ((endTime - startTime) / 1000).toString().padStart(8), "seconds");
 
     console.log("\nResults");
     console.log("Input data:", Shape.pp(DATA));
     console.log("Number of pieces:", numPieces);
-    console.log("Max steps:", Spu.MAX_LENGTH - DATA.length);
+    console.log("Max steps:", Spu.MAX_LENGTH - DATA.length + 1);
     console.log("Shapes found:", allShapes.size);
     console.log("Unique shapes:", unique.size);
 

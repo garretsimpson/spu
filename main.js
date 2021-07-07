@@ -20,7 +20,7 @@ function main() {
   // Shape.testPerf();
   // Shape.testLogo();
   Spu.runSearch();
-  Spu.runTests();
+  // Spu.runTests();
 }
 
 main();

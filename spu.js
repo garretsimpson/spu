@@ -37,7 +37,7 @@
  */
 
 import { Shape } from "./shape.js";
-import Parallel from "paralleljs";
+// import Parallel from "paralleljs";
 
 const allShapes = new Map();
 
@@ -248,6 +248,7 @@ export class Spu {
    */
   static search(state) {
     const result = { states: [], loop: false };
+    if (state == undefined) return result;
     const prog = state.prog;
     const stack = state.stack;
     const stackLen = stack.length;
@@ -335,7 +336,7 @@ export class Spu {
 
   static async runSearch() {
     const DATA = [0xf, 0xf, 0xf, 0xf];
-    const MAX_LENGTH = 8;
+    const MAX_LENGTH = 12;
     const states = [];
     const stats = { calls: 0, loops: 0, prunes: 0, builds: 0 };
 
@@ -358,12 +359,12 @@ export class Spu {
     // start the search
     states.push(Spu.state);
 
-    const MAX_STATES = 10;
+    const MAX_STATES = 50;
     while (states.length > 0) {
       const numStates = Math.min(states.length, MAX_STATES);
       stats.calls += numStates;
       const inStates = states.splice(-numStates);
-      if (stats.calls % 100 < numStates) {
+      if (stats.calls % 100000 < numStates) {
         console.log(
           stats.calls.toString().padStart(10),
           (states.length + numStates).toString().padStart(6),
@@ -372,16 +373,22 @@ export class Spu {
       }
       // console.log("Input state");
       // console.log(state.toString());
-      const p = new Parallel(inStates);
-      // p.require("./shape.js");
-      // p.require("./spu.js");
-      p.require(Shape);
-      p.require(SpuState);
-      p.require(Spu);
-      const results = await p.map((v) => Spu.search(v));
+      const results = inStates.map((s) => Spu.search(s));
+      // const results = await p.map((v) => Spu.search(v));
       // const results = await Promise.all(
       //   inStates.map((s) => Spu.searchAsync(s))
       // );
+      // const results = await Promise.all([
+      //   Spu.searchAsync(inStates[0]),
+      //   Spu.searchAsync(inStates[1]),
+      //   Spu.searchAsync(inStates[2]),
+      //   Spu.searchAsync(inStates[3]),
+      //   Spu.searchAsync(inStates[4]),
+      // ]);
+      // const p = new Parallel(inStates);
+      // p.require(Shape);
+      // p.require(SpuState);
+      // p.require(Spu);
       // console.log("Output states");
       // result.states.map((v) => console.log(v.toString()));
       for (let result of results) {

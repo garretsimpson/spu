@@ -37,9 +37,7 @@
  */
 
 import { Shape } from "./shape.js";
-// import Parallel from "paralleljs";
-
-const DEFAULT_MAX_LENGTH = 8;
+import Parallel from "paralleljs";
 
 const allShapes = new Map();
 
@@ -60,15 +58,15 @@ class SpuState {
     return this.prog + " " + Shape.pp(this.stack);
   }
 
-  copy() {
-    const result = new SpuState();
-    result.in = this.in.slice();
-    result.out = this.out.slice();
-    result.prog = this.prog;
-    result.stack = this.stack.slice();
-    result.history = this.history.slice();
-    return result;
-  }
+  // copy() {
+  //   const result = new SpuState();
+  //   result.in = this.in.slice();
+  //   result.out = this.out.slice();
+  //   result.prog = this.prog;
+  //   result.stack = this.stack.slice();
+  //   result.history = this.history.slice();
+  //   return result;
+  // }
 }
 
 export class Spu {
@@ -301,13 +299,24 @@ export class Spu {
 
     // run each op
     for (let op of ops) {
-      const newState = state.copy();
-      Spu.runStep(newState, op);
-      newState.prog += op;
+      //const newState = state.copy();
+      const newState = new SpuState();
+      newState.in = state.in.slice();
+      newState.out = state.out.slice();
+      newState.prog = state.prog + op;
+      newState.stack = state.stack.slice();
       newState.history = history;
+      Spu.runStep(newState, op);
       result.states.push(newState);
+      //state.init();  // help free memory?
     }
     return result;
+  }
+
+  static searchAsync(state) {
+    return new Promise((resolve) => {
+      resolve(Spu.search(state));
+    });
   }
 
   static saveShape(state) {
@@ -324,9 +333,9 @@ export class Spu {
     }
   }
 
-  static runSearch() {
+  static async runSearch() {
     const DATA = [0xf, 0xf, 0xf, 0xf];
-    const MAX_LENGTH = 13;
+    const MAX_LENGTH = 8;
     const states = [];
     const stats = { calls: 0, loops: 0, prunes: 0, builds: 0 };
 
@@ -349,30 +358,53 @@ export class Spu {
     // start the search
     states.push(Spu.state);
 
+    const MAX_STATES = 10;
     while (states.length > 0) {
-      stats.calls++;
-      let state = states.pop();
-      if (stats.calls % 1000000 == 0) {
-        console.log(stats.calls.toString().padStart(10), state.toString());
+      const numStates = Math.min(states.length, MAX_STATES);
+      stats.calls += numStates;
+      const inStates = states.splice(-numStates);
+      if (stats.calls % 100 < numStates) {
+        console.log(
+          stats.calls.toString().padStart(10),
+          (states.length + numStates).toString().padStart(6),
+          inStates[0].toString()
+        );
       }
       // console.log("Input state");
       // console.log(state.toString());
-      const result = Spu.search(state);
+      const p = new Parallel(inStates);
+      // p.require("./shape.js");
+      // p.require("./spu.js");
+      p.require(Shape);
+      p.require(SpuState);
+      p.require(Spu);
+      const results = await p.map((v) => Spu.search(v));
+      // const results = await Promise.all(
+      //   inStates.map((s) => Spu.searchAsync(s))
+      // );
       // console.log("Output states");
       // result.states.map((v) => console.log(v.toString()));
-      if (result.loop) {
-        stats.loops++;
-        continue;
-      }
-      for (state of result.states) {
-        Spu.saveShape(state);
-        stats.builds++;
-        // if program exceeds max length, return
-        if (state.prog.length + 1 >= MAX_LENGTH) {
-          stats.prunes++;
+      for (let result of results) {
+        if (result.loop) {
+          stats.loops++;
           continue;
         }
-        states.push(state.copy());
+        for (let state of result.states) {
+          Spu.saveShape(state);
+          stats.builds++;
+          // if program exceeds max length, return
+          if (state.prog.length + 1 >= MAX_LENGTH) {
+            stats.prunes++;
+            continue;
+          }
+          const newState = new SpuState();
+          newState.in = state.in.slice();
+          newState.out = state.out.slice();
+          newState.prog = state.prog;
+          newState.stack = state.stack.slice();
+          newState.history = state.history.slice();
+          states.push(newState);
+        }
       }
     }
 
@@ -421,14 +453,25 @@ export class Spu {
     console.log("Shapes found:    ", allShapes.size);
     console.log("Unique shapes:   ", unique.size);
 
+    let prog;
     // look for Logo
     console.log("");
-    const logoCode = 0x4b;
-    const prog = allShapes.get(logoCode);
+    const logoCode = 0x004b;
+    prog = allShapes.get(logoCode);
     if (prog == undefined) {
       console.log("Logo not found");
     } else {
       console.log("Logo", Shape.pp(logoCode), prog);
+    }
+
+    // look for Rocket
+    console.log("");
+    const rocketCode = 0xfe1f;
+    prog = allShapes.get(rocketCode);
+    if (prog == undefined) {
+      console.log("Rocket not found");
+    } else {
+      console.log("Rocket", Shape.pp(rocketCode), prog);
     }
   }
 
@@ -453,7 +496,8 @@ export class Spu {
     console.log("");
 
     DATA = [0xf, 0xf];
-    PROG = "ICRICLSSC2SUOF";
+    // PROG = "ICRICLSSC2SUOF";
+    PROG = "ICLICRSSC2SROF";
     EXP = "RrRr--Rr:----Rg--:--------:--------";
     Spu.init();
     Spu.setInput(DATA);

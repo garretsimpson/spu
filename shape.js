@@ -140,6 +140,14 @@ export class Shape {
     return [left, right];
   }
 
+  static cutLeftCode(code) {
+    return Shape.collapse(code & 0xcccc);
+  }
+
+  static cutRightCode(code) {
+    return Shape.collapse(code & 0x3333);
+  }
+
   cut() {
     const [left, right] = Shape.cutCode(this.code);
     return [new Shape(left), new Shape(right)];

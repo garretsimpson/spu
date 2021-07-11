@@ -8,8 +8,9 @@
 
 import { Shape } from "./shape.js";
 import { Spu } from "./spu.js";
+import { Ops } from "./ops.js";
 
-const APP_NAME = "Shape Processing Unit 0.2.0";
+const APP_NAME = "Shape Processing Unit 0.3.0";
 
 function main() {
   console.log(APP_NAME);
@@ -20,7 +21,8 @@ function main() {
   // Shape.testPerf();
   // Shape.testLogo();
   // Spu.runTests();
-  Spu.runSearch();
+  // Spu.runSearch();
+  Ops.runOps();
 }
 
 main();

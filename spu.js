@@ -37,7 +37,6 @@
  */
 
 import { Shape } from "./shape.js";
-// import Parallel from "paralleljs";
 
 const DEFAULT_MAX_LENGTH = 8;
 
@@ -313,8 +312,7 @@ export class Spu {
   static saveShape(state) {
     // Ouput shape on top of stack
     const stack = state.stack;
-    const stackLen = stack.length;
-    const code = stack[stackLen - 1];
+    const code = stack[stack.length - 1];
     const prog = state.prog + "O";
     // console.log("Shape:", Shape.pp(code), prog);
 
@@ -353,7 +351,11 @@ export class Spu {
       stats.calls++;
       let state = states.pop();
       if (stats.calls % 1000000 == 0) {
-        console.log(stats.calls.toString().padStart(10), state.toString());
+        console.log(
+          stats.calls.toString().padStart(10),
+          (states.length + 1).toString().padStart(8),
+          state.toString()
+        );
       }
       // console.log("Input state");
       // console.log(state.toString());
@@ -453,7 +455,8 @@ export class Spu {
     console.log("");
 
     DATA = [0xf, 0xf];
-    PROG = "ICRICLSSC2SUOF";
+    //    PROG = "ICRICLSSC2SUOF";
+    PROG = "ICLICRSSC2SROF";
     EXP = "RrRr--Rr:----Rg--:--------:--------";
     Spu.init();
     Spu.setInput(DATA);

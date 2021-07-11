@@ -92,7 +92,7 @@ export class Ops {
    * @param {Array} newShapes
    * @param {Array} results
    */
-  static saveShapes(shape, newShapes, results) {
+  static saveShapes(shape, newShapes, results, stats) {
     const shapes = new Set();
 
     for (const result of results) {
@@ -105,7 +105,8 @@ export class Ops {
         allShapes.set(code, ops);
         shapes.add(code);
       }
-      ops.add(result.op);
+      // ops.add(result.op);
+      stats.ops++;
     }
     for (shape of shapes) {
       newShapes.push(shape);
@@ -115,8 +116,8 @@ export class Ops {
   static runOps() {
     const SHAPE1 = 0xf;
     const newShapes = [];
-    const stats = { iters: 0 };
-    const MAX_ITERS = 5000;
+    const stats = { iters: 0, ops: 0 };
+    const MAX_ITERS = 100000;
 
     newShapes.push(SHAPE1);
     allShapes.set(SHAPE1, new Set());
@@ -124,7 +125,8 @@ export class Ops {
     console.log(
       "Iters".padStart(width),
       "ToDo".padStart(width),
-      "Total".padStart(width)
+      "Total".padStart(width),
+      "Ops".padStart(width)
     );
     while (newShapes.length > 0) {
       if (stats.iters >= MAX_ITERS) break;
@@ -133,7 +135,8 @@ export class Ops {
         console.log(
           stats.iters.toString().padStart(width),
           newShapes.length.toString().padStart(width),
-          allShapes.size.toString().padStart(width)
+          allShapes.size.toString().padStart(width),
+          stats.ops.toString().padStart(width)
         );
       }
 
@@ -141,16 +144,16 @@ export class Ops {
       let results;
       // do one input operations
       results = Ops.doOneOps(shape);
-      Ops.saveShapes(shape, newShapes, results);
+      Ops.saveShapes(shape, newShapes, results, stats);
 
       // do two input operations
       const codes = Array.from(allShapes.keys());
       for (const code of codes) {
         results = Ops.doTwoOps(shape, code);
-        Ops.saveShapes(shape, newShapes, results);
+        Ops.saveShapes(shape, newShapes, results, stats);
         if (code == shape) continue;
         results = Ops.doTwoOps(code, shape);
-        Ops.saveShapes(shape, newShapes, results);
+        Ops.saveShapes(shape, newShapes, results, stats);
       }
     }
     console.log("");
@@ -163,17 +166,18 @@ export class Ops {
 
     console.log("Stats");
     console.log("Iters:", stats.iters);
+    console.log("Ops:  ", stats.ops);
     console.log("ToDo: ", newShapes.length);
     console.log("Total:", allShapes.size);
     console.log("");
 
-    console.log("Shapes");
-    const MAX_LENGTH = 5;
-    const keys = Array.from(allShapes.keys()).sort((a, b) => a - b);
-    for (let key of keys) {
-      const ops = Array.from(allShapes.get(key));
-      const len = Math.min(ops.length, MAX_LENGTH);
-      console.log(Shape.pp(key), ops.slice(-len).join(","));
-    }
+    // console.log("Shapes");
+    // const MAX_LENGTH = 5;
+    // const keys = Array.from(allShapes.keys()).sort((a, b) => a - b);
+    // for (let key of keys) {
+    //   const ops = Array.from(allShapes.get(key));
+    //   const len = Math.min(ops.length, MAX_LENGTH);
+    //   console.log(Shape.pp(key), ops.slice(-len).join(","));
+    // }
   }
 }

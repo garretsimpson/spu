@@ -177,12 +177,43 @@ export class Ops {
     console.log("");
 
     // Ops.displayShapes();
-    Ops.CountOps();
+    Ops.normalize();
 
     // Ops.findShape(SHAPE1);
     // Ops.findShape(0x4b); // Logo
     // Ops.findShape(0xfe1f); // Rocket
     // Ops.findShape(0xffff);
+  }
+
+  static normalize() {
+    const normals = new Map();
+    for (const code of allShapes.keys()) {
+      const key = Shape.keyCode(code);
+      let codes = normals.get(key);
+      if (codes == undefined) {
+        codes = [];
+        normals.set(key, codes);
+      }
+      codes.push(code);
+    }
+
+    console.log("Shapes");
+    //const keys = Array.from(normals.keys()).sort((a, b) => a - b);
+    for (let code = 0; code <= 0xffff; code++) {
+      const key = Shape.keyCode(code);
+      if (key != code) continue;
+      let result;
+      if (normals.has(key)) {
+        result = normals
+          .get(key)
+          .sort((a, b) => a - b)
+          .map((v) => Shape.pp(v))
+          .join();
+      } else {
+        result = "xxxx";
+      }
+      console.log(Shape.pp(key), result);
+    }
   }
 
   static findShape(code) {
@@ -229,13 +260,5 @@ export class Ops {
       const len = Math.min(ops.length, MAX_LENGTH);
       console.log(Shape.pp(key), ops.slice(-len).join(","));
     }
-  }
-
-  static CountOps() {
-    let num = 0;
-    for (const [code, ops] of allShapes) {
-      num += ops.length;
-    }
-    console.log("Total ops:", num);
   }
 }

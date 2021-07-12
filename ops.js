@@ -101,10 +101,12 @@ export class Ops {
       if (code == 0) continue;
       let ops = allShapes.get(code);
       if (ops == undefined) {
-        ops = new Set();
+        // ops = new Set();
+        ops = [];
         allShapes.set(code, ops);
         shapes.add(code);
       }
+      // ops.push(result.op);
       // ops.add(result.op);
       stats.ops++;
     }
@@ -116,11 +118,13 @@ export class Ops {
   static runOps() {
     const SHAPE1 = 0xf;
     const newShapes = [];
+    const usedShapes = [];
     const stats = { iters: 0, ops: 0 };
-    const MAX_ITERS = 100000;
+    const MAX_ITERS = 50000;
 
     newShapes.push(SHAPE1);
-    allShapes.set(SHAPE1, new Set());
+    allShapes.set(SHAPE1, []);
+
     const width = 10;
     console.log(
       "Iters".padStart(width),
@@ -128,6 +132,8 @@ export class Ops {
       "Total".padStart(width),
       "Ops".padStart(width)
     );
+
+    let shape;
     while (newShapes.length > 0) {
       if (stats.iters >= MAX_ITERS) break;
       stats.iters++;
@@ -140,15 +146,17 @@ export class Ops {
         );
       }
 
-      const shape = newShapes.pop();
+      shape = newShapes.pop();
+      usedShapes.push(shape);
+
       let results;
       // do one input operations
       results = Ops.doOneOps(shape);
       Ops.saveShapes(shape, newShapes, results, stats);
 
       // do two input operations
-      const codes = Array.from(allShapes.keys());
-      for (const code of codes) {
+      // const codes = Array.from(allShapes.keys());
+      for (const code of usedShapes) {
         results = Ops.doTwoOps(shape, code);
         Ops.saveShapes(shape, newShapes, results, stats);
         if (code == shape) continue;
@@ -171,13 +179,66 @@ export class Ops {
     console.log("Total:", allShapes.size);
     console.log("");
 
-    // console.log("Shapes");
-    // const MAX_LENGTH = 5;
-    // const keys = Array.from(allShapes.keys()).sort((a, b) => a - b);
-    // for (let key of keys) {
-    //   const ops = Array.from(allShapes.get(key));
-    //   const len = Math.min(ops.length, MAX_LENGTH);
-    //   console.log(Shape.pp(key), ops.slice(-len).join(","));
-    // }
+    // Ops.displayShapes();
+    Ops.CountOps();
+
+    // Ops.findShape(SHAPE1);
+    // Ops.findShape(0x4b); // Logo
+    // Ops.findShape(0xfe1f); // Rocket
+    // Ops.findShape(0xffff);
+  }
+
+  static findShape(code) {
+    const ops = allShapes.get(code);
+    if (ops == undefined || ops.length == 0) {
+      console.log(Shape.pp(code), "not found");
+      return;
+    }
+    console.log(Shape.pp(code), "found (" + ops.length + ")...");
+    Ops.listOps(code);
+  }
+
+  /**
+   * List all ops for a given shape code.
+   * @param {Number} code
+   */
+  static listOps(code) {
+    const MAX_LENGTH = 8;
+    const ops = allShapes.get(code).sort();
+
+    let result;
+    let i = 0;
+    for (i = 0; i < ops.length; i++) {
+      if (i % MAX_LENGTH == 0) {
+        result = Shape.pp(code);
+      }
+      result += " ";
+      result += ops[i];
+      if (i % MAX_LENGTH == MAX_LENGTH - 1) {
+        console.log(result);
+      }
+    }
+    if (i % MAX_LENGTH != MAX_LENGTH - 1) {
+      console.log(result);
+    }
+  }
+
+  static displayShapes() {
+    console.log("Shapes");
+    const MAX_LENGTH = 8;
+    const keys = Array.from(allShapes.keys()).sort((a, b) => a - b);
+    for (let key of keys) {
+      const ops = Array.from(allShapes.get(key));
+      const len = Math.min(ops.length, MAX_LENGTH);
+      console.log(Shape.pp(key), ops.slice(-len).join(","));
+    }
+  }
+
+  static CountOps() {
+    let num = 0;
+    for (const [code, ops] of allShapes) {
+      num += ops.length;
+    }
+    console.log("Total ops:", num);
   }
 }

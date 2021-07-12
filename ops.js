@@ -92,9 +92,8 @@ export class Ops {
    * @param {Array} newShapes
    * @param {Array} results
    */
-  static saveShapes(shape, newShapes, results, stats) {
-    const shapes = new Set();
-
+  static saveShapes(newShapes, results) {
+    let num = 0;
     for (const result of results) {
       const code = result.code;
       // Do not store empty shapes
@@ -104,15 +103,13 @@ export class Ops {
         // ops = new Set();
         ops = [];
         allShapes.set(code, ops);
-        shapes.add(code);
+        newShapes.push(code);
       }
-      // ops.push(result.op);
       // ops.add(result.op);
-      stats.ops++;
+      // ops.push(result.op);
+      num++;
     }
-    for (shape of shapes) {
-      newShapes.push(shape);
-    }
+    return num;
   }
 
   static runOps() {
@@ -146,22 +143,22 @@ export class Ops {
         );
       }
 
-      shape = newShapes.pop();
+      shape = newShapes.shift();
       usedShapes.push(shape);
 
       let results;
       // do one input operations
       results = Ops.doOneOps(shape);
-      Ops.saveShapes(shape, newShapes, results, stats);
+      stats.ops += Ops.saveShapes(newShapes, results, stats);
 
       // do two input operations
       // const codes = Array.from(allShapes.keys());
       for (const code of usedShapes) {
         results = Ops.doTwoOps(shape, code);
-        Ops.saveShapes(shape, newShapes, results, stats);
+        stats.ops += Ops.saveShapes(newShapes, results, stats);
         if (code == shape) continue;
         results = Ops.doTwoOps(code, shape);
-        Ops.saveShapes(shape, newShapes, results, stats);
+        stats.ops += Ops.saveShapes(newShapes, results, stats);
       }
     }
     console.log("");

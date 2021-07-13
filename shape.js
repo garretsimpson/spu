@@ -135,8 +135,8 @@ export class Shape {
   }
 
   static cutCode(code) {
-    const left = Shape.collapse(code & 0xcccc);
-    const right = Shape.collapse(code & 0x3333);
+    const left = Shape.cutLeftCode(code);
+    const right = Shape.cutRightCode(code);
     return [left, right];
   }
 
@@ -185,13 +185,13 @@ export class Shape {
 
   static runTests() {
     const TESTS = [
-      ["leftCode", [0x0001], 0x0008],
-      ["rightCode", [0x0001], 0x0002],
-      ["uturnCode", [0x0001], 0x0004],
-      ["leftCode", [0x1248], 0x8124],
+      ["toShape", [0x004b], "RrRr--Rr:----Rg--:--------:--------"],
       ["flipCode", [0x1234], 0x84c2],
       ["keyCode", [0x4321], 0x1624],
-      ["toShape", [0x004b], "RrRr--Rr:----Rg--:--------:--------"],
+      ["leftCode", [0x0001], 0x0008],
+      ["leftCode", [0x1248], 0x8124],
+      ["rightCode", [0x0001], 0x0002],
+      ["uturnCode", [0x0001], 0x0004],
       ["cutCode", [0x5aff], [0x48cc, 0x1233]],
       ["cutCode", [0x936c], [0x084c, 0x0132]],
       ["stackCode", [0x000f, 0x000f], 0x00ff],

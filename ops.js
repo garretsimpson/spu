@@ -45,16 +45,24 @@ export class Ops {
    */
   static doOneOps(code) {
     const results = [];
-    const ops = ["left", "uturn", "right", "cutLeft", "cutRight"];
+    const ops = [
+      "left",
+      "uturn",
+      "right",
+      "cutLeft",
+      "cutRight",
+      "unstackBottom",
+      "unstackTop",
+    ];
 
     if (code == 0) {
       return results;
     }
     for (let op of ops) {
       const newCode = Shape[op + "Code"](code);
-      const result = { code: newCode, op: op + "(" + Shape.pp(code) + ")" };
       // Skip NOPs
       if (code == newCode) continue;
+      const result = { code: newCode, op: op + "(" + Shape.pp(code) + ")" };
       results.push(result);
     }
     return results;
@@ -74,12 +82,12 @@ export class Ops {
     let newCode, result;
     for (let op of ops) {
       newCode = Shape[op + "Code"](code1, code2);
+      // Skip NOPs
+      if (code1 == newCode || code2 == newCode) continue;
       result = {
         code: newCode,
         op: op + "(" + Shape.pp(code1) + "," + Shape.pp(code2) + ")",
       };
-      // Skip NOPs
-      if (code1 == newCode || code2 == newCode) continue;
       results.push(result);
     }
     return results;
@@ -117,7 +125,7 @@ export class Ops {
     const newShapes = [];
     const usedShapes = [];
     const stats = { iters: 0, ops: 0 };
-    const MAX_ITERS = 50000;
+    const MAX_ITERS = 10000;
 
     newShapes.push(SHAPE1);
     allShapes.set(SHAPE1, []);
@@ -132,7 +140,7 @@ export class Ops {
 
     let shape;
     while (newShapes.length > 0) {
-      if (stats.iters >= MAX_ITERS) break;
+      // if (stats.iters >= MAX_ITERS) break;
       stats.iters++;
       if (stats.iters % 100 == 0) {
         console.log(
@@ -181,7 +189,7 @@ export class Ops {
 
     // Ops.findShape(SHAPE1);
     // Ops.findShape(0x4b); // Logo
-    // Ops.findShape(0xfe1f); // Rocket
+    Ops.findShape(0xfe1f); // Rocket
     // Ops.findShape(0xffff);
   }
 
@@ -198,7 +206,6 @@ export class Ops {
     }
 
     console.log("Shapes");
-    //const keys = Array.from(normals.keys()).sort((a, b) => a - b);
     for (let code = 0; code <= 0xffff; code++) {
       const key = Shape.keyCode(code);
       if (key != code) continue;
@@ -217,7 +224,7 @@ export class Ops {
   }
 
   static findShape(code) {
-    const ops = allShapes.get(code);
+    const ops = allShapes.get(Shape.keyCode(code));
     if (ops == undefined || ops.length == 0) {
       console.log(Shape.pp(code), "not found");
       return;

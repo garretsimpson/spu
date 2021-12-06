@@ -169,6 +169,31 @@ export class Shape {
     return new Shape(result);
   }
 
+  static unstackCode(code) {
+    let layer = 3;
+    let key = 0xf000;
+    for (; layer >= 0; layer--) {
+      if ((code & key) != 0) break;
+      key >>>= 4;
+    }
+    const bottom = code & ~key;
+    const top = code >>> (layer * 4);
+    return [bottom, top];
+  }
+
+  static unstackBottomCode(code) {
+    return Shape.unstackCode(code)[0];
+  }
+
+  static unstackTopCode(code) {
+    return Shape.unstackCode(code)[1];
+  }
+
+  unstack(shape) {
+    const [bottom, top] = unstackCode(shape.code);
+    return [new Shape(bottom), new Shape(top)];
+  }
+
   // pretty print
   static pp(value) {
     if (typeof value === "number") {
@@ -197,6 +222,9 @@ export class Shape {
       ["stackCode", [0x000f, 0x000f], 0x00ff],
       ["stackCode", [0x1111, 0x2222], 0x3333],
       ["stackCode", [0xfffa, 0x5111], 0xf111],
+      ["unstackCode", [0x000f], [0x0000, 0x000f]],
+      ["unstackCode", [0x0234], [0x0034, 0x0002]],
+      ["unstackCode", [0x1234], [0x0234, 0x0001]],
     ];
 
     let testNum = 0;

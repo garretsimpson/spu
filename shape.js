@@ -10,7 +10,7 @@
  * - The flip and keyCode functions are used to compute a canonical shape code.
  */
 
-import { Spu } from "./spu.js";
+import { readFileSync } from "fs";
 
 const FULL_CIRC = "CuCuCuCu"; // 0x000F
 const HALF_RECT = "RuRu----"; // 0x0003
@@ -23,6 +23,8 @@ export class Shape {
   static STAR = "S";
   static WIND = "W";
 
+  static allShapes;
+
   /**
    * @param {Number} code
    */
@@ -34,10 +36,38 @@ export class Shape {
     return Shape.toShape(this.code);
   }
 
+  static init() {
+    Shape.allShapes = new Set();
+    Shape.readShapeFile();
+  }
+
+  static readShapeFile() {
+    const FILENAME = "data/allShapes.txt";
+    let data;
+    try {
+      console.log("Reading file:", FILENAME);
+      data = readFileSync(FILENAME, "utf8");
+    } catch (e) {
+      console.error(e);
+      return;
+    }
+
+    const EOL = /\r?\n/;
+    const lines = data.toString().trim().split(EOL);
+    console.log("lines:", lines.length);
+    for (const line of lines) {
+      const [key, values] = line.split(/ /);
+      const codes = values.split(/,/);
+      for (const code of codes) {
+        const num = Number.parseInt("0x" + code);
+        if (Number.isNaN(num)) continue;
+        Shape.allShapes.add(num);
+      }
+    }
+  }
+
   static codeToHex(code) {
-    const hex = code.toString(16).padStart(4, "0");
-    return hex;
-    //return "0x" + hex;
+    return code.toString(16).padStart(4, "0");
   }
 
   /**
@@ -135,8 +165,8 @@ export class Shape {
   }
 
   static cutCode(code) {
-    const left = Shape.collapse(code & 0xcccc);
-    const right = Shape.collapse(code & 0x3333);
+    const left = Shape.cutLeftCode(code);
+    const right = Shape.cutRightCode(code);
     return [left, right];
   }
 
@@ -210,13 +240,13 @@ export class Shape {
 
   static runTests() {
     const TESTS = [
-      ["leftCode", [0x0001], 0x0008],
-      ["rightCode", [0x0001], 0x0002],
-      ["uturnCode", [0x0001], 0x0004],
-      ["leftCode", [0x1248], 0x8124],
+      ["toShape", [0x004b], "RrRr--Rr:----Rg--:--------:--------"],
       ["flipCode", [0x1234], 0x84c2],
       ["keyCode", [0x4321], 0x1624],
-      ["toShape", [0x004b], "RrRr--Rr:----Rg--:--------:--------"],
+      ["leftCode", [0x0001], 0x0008],
+      ["leftCode", [0x1248], 0x8124],
+      ["rightCode", [0x0001], 0x0002],
+      ["uturnCode", [0x0001], 0x0004],
       ["cutCode", [0x5aff], [0x48cc, 0x1233]],
       ["cutCode", [0x936c], [0x084c, 0x0132]],
       ["stackCode", [0x000f, 0x000f], 0x00ff],
@@ -293,6 +323,28 @@ export class Shape {
     console.log("Logo:", pass ? "PASS" : "FAIL", "returned", result);
     if (!pass) {
       console.log("  expected", EXP);
+    }
+  }
+
+  static testAllShapes() {
+    Shape.init();
+    console.log("Shapes:", Shape.allShapes.size);
+    Shape.makeMap();
+  }
+
+  static makeMap() {
+    const ICONS = ["  ", "XX"];
+    let map = "";
+    for (let y = 0; y <= 0xff; y++) {
+      let row = "";
+      for (let x = 0; x <= 0xff; x++) {
+        const num = (y << 8) + x;
+        const found = Shape.allShapes.has(num);
+        const code = x.toString(16).padStart(2, "0");
+        row += found ? ICONS[0] : code;
+      }
+      const code = y.toString(16).padStart(2, "0");
+      console.log(code, row);
     }
   }
 }

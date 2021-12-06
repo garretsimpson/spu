@@ -17,12 +17,13 @@ function main() {
   console.log(Date());
   console.log("");
 
+  Shape.testAllShapes();
   // Shape.runTests();
   // Shape.testPerf();
   // Shape.testLogo();
   // Spu.runTests();
   // Spu.runSearch();
-  Ops.runOps();
+  // Ops.runOps();
 }
 
 main();

@@ -329,12 +329,19 @@ export class Shape {
   static testAllShapes() {
     Shape.init();
     console.log("Shapes:", Shape.allShapes.size);
+    console.log("");
     Shape.makeMap();
   }
 
   static makeMap() {
     const ICONS = ["  ", "XX"];
-    let map = "";
+    console.log("4-layer impossible shapes");
+    let head = "";
+    for (let x = 0; x <= 0xff; x++) {
+      const code = x.toString(16).padStart(2, "0");
+      head += code;
+    }
+    console.log("  ", head);
     for (let y = 0; y <= 0xff; y++) {
       let row = "";
       for (let x = 0; x <= 0xff; x++) {
@@ -342,6 +349,7 @@ export class Shape {
         const found = Shape.allShapes.has(num);
         const code = x.toString(16).padStart(2, "0");
         row += found ? ICONS[0] : code;
+        // row += found ? code : ICONS[0];
       }
       const code = y.toString(16).padStart(2, "0");
       console.log(code, row);

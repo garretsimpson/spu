@@ -1,13 +1,12 @@
 /***
  * Shape - Shape handling primitives
  *
- * - A shape has 4 possible layers.  Each layer has 4 positions (quads).
+ * - A shape 4 quadrants and 1 to 4 layers.
  * - A shape is represented internally by 16 bit integer (shape code), one bit for each possible position.
- * - The order of the bits is simply the reverse order of the game's shape string.
+ * - The order of the bits is simply the reverse order of the game's shape string (constant value).
  * - Shape piece types (C, R, S, W) and colors are currently not used.
  * - The constructor takes a 16 bit integer (shape code).
- * - Basic shape operations: rotate(left, uturn, right), cut, stack
- * - The flip and keyCode functions are used to compute a canonical shape code.
+ * - Basic shape operations: rotate (left, uturn, right), cut, stack, unstack.
  */
 
 import { readFileSync } from "fs";
@@ -55,15 +54,24 @@ export class Shape {
     const EOL = /\r?\n/;
     const lines = data.toString().trim().split(EOL);
     console.log("lines:", lines.length);
+    let badCodes = 0;
+    let goodCodes = 0;
     for (const line of lines) {
       const [key, values] = line.split(/ /);
       const codes = values.split(/,/);
       for (const code of codes) {
         const num = Number.parseInt("0x" + code);
-        if (Number.isNaN(num)) continue;
+        if (Number.isNaN(num)) {
+          badCodes++;
+          continue;
+        }
+        goodCodes++;
         Shape.allShapes.add(num);
       }
     }
+    console.log("good:", goodCodes);
+    console.log("bad:", badCodes);
+    console.log("");
   }
 
   static codeToHex(code) {
@@ -86,8 +94,9 @@ export class Shape {
     for (let i = 0; i < 16; i++) {
       let val = EMPTY;
       if (bin[15 - i] == 1) {
-        const layer = Math.trunc(i / 4);
-        const color = COLORS[layer];
+        // const layer = Math.trunc(i / 4);
+        // const color = COLORS[layer];
+        const color = "u";
         val = SHAPE + color;
       }
       if (i == 4 || i == 8 || i == 12) {
@@ -98,6 +107,11 @@ export class Shape {
     return result;
   }
 
+  /**
+   * Compute the canonical shape code
+   * @param {Number} code
+   * @returns {Number}
+   */
   static keyCode(code) {
     const fcode = Shape.flipCode(code);
     let result = Math.min(code, fcode);
@@ -224,6 +238,71 @@ export class Shape {
     return [new Shape(bottom), new Shape(top)];
   }
 
+  static layerCount(code) {
+    let max = 0x0fff;
+    for (let num = 4; num > 0; num--) {
+      if (code > max) {
+        return num;
+      }
+      max >>>= 4;
+    }
+    return 0;
+  }
+
+  // Returns true if the shape contains an empty layer
+  static isInvalid(code) {
+    if (code == 0) {
+      return true;
+    }
+    for (; code > 0; code >>>= 4) {
+      if ((code & 0xf) == 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  static toLayers(code) {
+    const result = [];
+    while (code > 0) {
+      const [bottom, top] = Shape.unstackCode(code);
+      result.push(top);
+      code = bottom;
+    }
+    return result;
+  }
+
+  static isStackable(code) {
+    if (code == 0) {
+      return false;
+    }
+    let layers = Shape.toLayers(code);
+    let result = layers[0];
+    for (let i = 1; i < layers.length; i++) {
+      const bottom = layers[i];
+      result = Shape.stackCode(result, bottom);
+    }
+    return result == code;
+  }
+
+  static isCuttable(code) {
+    if (code == 0) {
+      return false;
+    }
+    // try cutting vertically
+    let [left, right] = Shape.cutCode(code);
+    if (Shape.stackCode(left, right) == code) {
+      return true;
+    }
+    // try cutting horizontally
+    code = Shape.rightCode(code);
+    let [bottom, top] = Shape.cutCode(code);
+    if (Shape.stackCode(bottom, top) == code) {
+      return true;
+    }
+    return false;
+  }
+
   // pretty print
   static pp(value) {
     if (typeof value === "number") {
@@ -255,6 +334,20 @@ export class Shape {
       ["unstackCode", [0x000f], [0x0000, 0x000f]],
       ["unstackCode", [0x0234], [0x0034, 0x0002]],
       ["unstackCode", [0x1234], [0x0234, 0x0001]],
+      ["layerCount", [0x0001], 1],
+      ["layerCount", [0x000f], 1],
+      ["layerCount", [0xffff], 4],
+      ["toLayers", [0x0001], [0x0001]],
+      ["toLayers", [0xabcd], [0x000a, 0x000b, 0x000c, 0x000d]],
+      ["isInvalid", [0x0000], true],
+      ["isInvalid", [0x0001], false],
+      ["isInvalid", [0x0010], true],
+      ["isStackable", [0x0001], true],
+      ["isStackable", [0x0012], false],
+      ["isStackable", [0xffff], true],
+      ["isCuttable", [0x0012], true],
+      ["isCuttable", [0x00f1], false],
+      ["isCuttable", [0x00ff], true],
     ];
 
     let testNum = 0;
@@ -327,13 +420,60 @@ export class Shape {
   }
 
   static testAllShapes() {
+    // Initialize
     Shape.init();
-    console.log("Shapes:", Shape.allShapes.size);
+
+    const allShapes = Shape.allShapes;
+    const keyShapes = new Map();
+    // 2 layers max (for now)
+    for (let code = 0; code <= 0x00ff; code++) {
+      const key = Shape.keyCode(code);
+      // if (allShapes.has(code)) {
+      //   const key = Shape.keyCode(code);
+      //   keyShapes.set(key, {});
+      // }
+      keyShapes.set(key, {});
+    }
+    console.log("Number of shapes:", allShapes.size);
+    console.log("Number of key shapes", keyShapes.size);
+
+    // Count layers
+    // Check for stackable and cuttable shapes
+    // keyShapes.forEach((value, key) => (value.layers = Shape.layerCount(key)));
+    for (const [code, value] of keyShapes) {
+      value.layers = Shape.layerCount(code);
+      value.invalid = Shape.isInvalid(code);
+      value.cuttable = Shape.isCuttable(code);
+      value.stackable = Shape.isStackable(code);
+    }
+
+    // Display results
     console.log("");
-    Shape.makeMap();
+    console.log("Analysis...");
+    let numInvalid = 0;
+    let numPossible = 0;
+    for (const [code, value] of keyShapes) {
+      const possible = value.stackable || value.cuttable;
+      if (possible) numPossible++;
+      if (value.invalid) numInvalid++;
+      console.log(
+        Shape.pp(code),
+        value.layers,
+        value.invalid ? "I" : "-",
+        value.cuttable ? "C" : "-",
+        value.stackable ? "S" : "-",
+        possible || value.invalid ? "" : "XXXX"
+      );
+    }
+    console.log("");
+    console.log("Number invalid:", numInvalid);
+    console.log("Number impossible:", keyShapes.size - numPossible - numInvalid);
+    console.log("");
   }
 
   static makeMap() {
+    Shape.init();
+
     const ICONS = ["  ", "XX"];
     console.log("4-layer impossible shapes");
     let head = "";
@@ -349,10 +489,26 @@ export class Shape {
         const found = Shape.allShapes.has(num);
         const code = x.toString(16).padStart(2, "0");
         row += found ? ICONS[0] : code;
-        // row += found ? code : ICONS[0];
       }
       const code = y.toString(16).padStart(2, "0");
       console.log(code, row);
+    }
+  }
+
+  static makeShapeMap() {
+    Shape.init();
+
+    console.log("2-layer impossible shapes");
+    for (let y = 0; y <= 0x0f; y++) {
+      let row = "";
+      for (let x = 0; x <= 0x0f; x++) {
+        const num = (x << 4) + y;
+        const found = Shape.allShapes.has(num);
+        const code = Shape.toShape(x).substring(0, 8);
+        row += found ? "        " : code;
+        row += " ";
+      }
+      console.log(Shape.toShape(y).substring(0, 8) + " : " + row);
     }
   }
 }

@@ -51,8 +51,8 @@ export class Ops {
       "right",
       "cutLeft",
       "cutRight",
-      "unstackBottom",
-      "unstackTop",
+      // "unstackBottom",
+      // "unstackTop",
     ];
 
     if (code == 0) {
@@ -114,7 +114,7 @@ export class Ops {
         newShapes.push(code);
       }
       // ops.add(result.op);
-      // ops.push(result.op);
+      ops.push(result.op);
       num++;
     }
     return num;
@@ -140,7 +140,7 @@ export class Ops {
 
     let shape;
     while (newShapes.length > 0) {
-      // if (stats.iters >= MAX_ITERS) break;
+      if (stats.iters >= MAX_ITERS) break;
       stats.iters++;
       if (stats.iters % 100 == 0) {
         console.log(
@@ -187,9 +187,12 @@ export class Ops {
     // Ops.displayShapes();
     Ops.normalize();
 
+    Ops.listAllOps();
     // Ops.findShape(SHAPE1);
     // Ops.findShape(0x4b); // Logo
-    Ops.findShape(0xfe1f); // Rocket
+    // Ops.findShape(0x03); // Logo part
+    // Ops.findShape(0x48); // Logo part
+    // Ops.findShape(0xfe1f); // Rocket
     // Ops.findShape(0xffff);
   }
 
@@ -239,7 +242,13 @@ export class Ops {
    */
   static listOps(code) {
     const MAX_LENGTH = 8;
-    const ops = allShapes.get(code).sort();
+    /** @type {Array} */
+    const ops = allShapes.get(code);
+
+    if (ops == undefined || ops.length == 0) {
+      return;
+    }
+    ops.sort();
 
     let result;
     let i = 0;
@@ -255,6 +264,12 @@ export class Ops {
     }
     if (i % MAX_LENGTH != MAX_LENGTH - 1) {
       console.log(result);
+    }
+  }
+
+  static listAllOps() {
+    for (let code = 0; code < 0xffff; code++) {
+      this.listOps(code);
     }
   }
 

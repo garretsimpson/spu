@@ -1,0 +1,25 @@
+C:\Program Files\nodejs\node.exe --max-old-space-size=25000 .\main.js
+Shape Processing Unit 0.3.0
+Mon Jan 03 2022 16:01:40 GMT-0800 (Pacific Standard Time)
+
+Reading file: data/allShapes.txt
+lines: 9316
+Shapes: 48432
+
+2-layer impossible shapes
+-------- : -------- Ru------ --Ru---- RuRu---- ----Ru-- Ru--Ru-- --RuRu-- RuRuRu-- ------Ru Ru----Ru --Ru--Ru RuRu--Ru ----RuRu Ru--RuRu --RuRuRu RuRuRuRu
+Ru------ :                                     ----Ru--          --RuRu--                            --Ru--Ru          ----RuRu          --RuRuRu
+--Ru---- :                                              Ru--Ru--                   ------Ru Ru----Ru                   ----RuRu Ru--RuRu
+RuRu---- :
+----Ru-- :          Ru------          RuRu----                                              Ru----Ru --Ru--Ru RuRu--Ru
+Ru--Ru-- :
+--RuRu-- :
+RuRuRu-- :
+------Ru :                   --Ru---- RuRu----          Ru--Ru-- --RuRu-- RuRuRu--
+Ru----Ru :
+--Ru--Ru :
+RuRu--Ru :
+----RuRu :
+Ru--RuRu :
+--RuRuRu :
+RuRuRuRu :

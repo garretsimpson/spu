@@ -1,0 +1,67 @@
+C:\Program Files\nodejs\node.exe --max-old-space-size=25000 .\main.js
+Shape Processing Unit 0.4
+Wed Jan 05 2022 11:42:48 GMT-0800 (Pacific Standard Time)
+
+Reading file: data/allShapes.txt
+lines: 9316
+good: 48432
+bad: 2625
+
+Number of shapes: 48432
+Number of key shapes 55
+0000 0     XXXX
+0001 1 S C
+0003 1 S C
+0005 1 S C
+0007 1 S C
+000f 1 S C
+0010 2     XXXX
+0011 2 S C
+0012 2   C
+0013 2 S C
+0014 2     XXXX
+0015 2 S C
+0016 2   C
+0017 2 S C
+001a 2   C
+001b 2 S C
+001e 2   C
+001f 2 S C
+0030 2     XXXX
+0031 2 S C
+0033 2 S C
+0034 2     XXXX
+0035 2 S C
+0036 2 S C
+0037 2 S C
+003c 2   C
+003d 2 S C
+003f 2 S C
+0050 2     XXXX
+0051 2 S
+0052 2     XXXX
+0053 2 S C
+0055 2 S C
+0057 2 S C
+005a 2   C
+005b 2 S C
+005f 2 S C
+0070 2     XXXX
+0071 2 S
+0072 2 S
+0073 2 S C
+0075 2 S C
+0077 2 S C
+0078 2     XXXX
+0079 2 S C
+007a 2 S C
+007b 2 S C
+007d 2 S C
+007f 2 S C
+00f0 2     XXXX
+00f1 2 S
+00f3 2 S C
+00f5 2 S C
+00f7 2 S C
+00ff 2 S C
+Number impossible: 10

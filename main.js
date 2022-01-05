@@ -10,15 +10,15 @@ import { Shape } from "./shape.js";
 import { Spu } from "./spu.js";
 import { Ops } from "./ops.js";
 
-const APP_NAME = "Shape Processing Unit 0.3.0";
+const APP_NAME = "Shape Processing Unit 0.4";
 
 function main() {
   console.log(APP_NAME);
   console.log(Date());
   console.log("");
 
-  Shape.testAllShapes();
   // Shape.runTests();
+  Shape.testAllShapes();
   // Shape.testPerf();
   // Shape.testLogo();
   // Spu.runTests();

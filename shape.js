@@ -22,6 +22,8 @@ export class Shape {
   static STAR = "S";
   static WIND = "W";
 
+  static IMPOSSIBLE = [0x0014, 0x0034, 0x0052, 0x0078, 0x0114];
+
   static allShapes;
 
   /**
@@ -93,7 +95,7 @@ export class Shape {
     let result = "";
     for (let i = 0; i < 16; i++) {
       let val = EMPTY;
-      if (bin[15 - i] == 1) {
+      if (bin[15 - i] == "1") {
         // const layer = Math.trunc(i / 4);
         // const color = COLORS[layer];
         const color = "u";
@@ -262,6 +264,13 @@ export class Shape {
     return false;
   }
 
+  static isImpossible(code) {
+    if (Shape.allShapes == undefined || Shape.allShapes.length == 0) {
+      return false;
+    }
+    return !Shape.allShapes.has(code);
+  }
+
   static toLayers(code) {
     const result = [];
     while (code > 0) {
@@ -425,8 +434,8 @@ export class Shape {
 
     const allShapes = Shape.allShapes;
     const keyShapes = new Map();
-    // 2 layers max (for now)
-    for (let code = 0; code <= 0x00ff; code++) {
+    // 3 layers max (for now)
+    for (let code = 0; code <= 0x0fff; code++) {
       const key = Shape.keyCode(code);
       // if (allShapes.has(code)) {
       //   const key = Shape.keyCode(code);
@@ -437,38 +446,93 @@ export class Shape {
     console.log("Number of shapes:", allShapes.size);
     console.log("Number of key shapes", keyShapes.size);
 
-    // Count layers
-    // Check for stackable and cuttable shapes
-    // keyShapes.forEach((value, key) => (value.layers = Shape.layerCount(key)));
+    // Analyze each shape
+    console.log("");
+    console.log("Analysis...");
     for (const [code, value] of keyShapes) {
       value.layers = Shape.layerCount(code);
       value.invalid = Shape.isInvalid(code);
       value.cuttable = Shape.isCuttable(code);
       value.stackable = Shape.isStackable(code);
+      value.impossible = Shape.isImpossible(code);
+    }
+    const unknownShapes = [];
+    for (const [code, value] of keyShapes) {
+      const known = value.invalid || value.impossible || value.stackable;
+      //      value.invalid || value.impossible || value.stackable || value.cuttable;
+      if (!known) unknownShapes.push(code);
     }
 
     // Display results
-    console.log("");
-    console.log("Analysis...");
-    let numInvalid = 0;
-    let numPossible = 0;
+    const NON = "-";
     for (const [code, value] of keyShapes) {
-      const possible = value.stackable || value.cuttable;
-      if (possible) numPossible++;
-      if (value.invalid) numInvalid++;
+      const unknown = unknownShapes.includes(code);
       console.log(
         Shape.pp(code),
-        value.layers,
-        value.invalid ? "I" : "-",
-        value.cuttable ? "C" : "-",
-        value.stackable ? "S" : "-",
-        possible || value.invalid ? "" : "XXXX"
+        value.layers.toString() + (value.impossible ? "X" : NON),
+        (value.invalid ? "I" : NON) +
+          (value.cuttable ? "C" : NON) +
+          (value.stackable ? "S" : NON),
+        unknown ? "XXXX" : ""
       );
     }
     console.log("");
-    console.log("Number invalid:", numInvalid);
-    console.log("Number impossible:", keyShapes.size - numPossible - numInvalid);
+    console.log("Number unknown:", unknownShapes.length);
+    let code = unknownShapes.shift();
+    console.log("First unknown:", Shape.pp(code));
+    console.log(Shape.toShape(code));
     console.log("");
+    console.log(Shape.graph(code));
+
+    const MAX_NUM = 8;
+    const numLines = Math.floor(unknownShapes.length / MAX_NUM) + 1;
+    for (let i = 0; i < numLines; i++) {
+      const pos = MAX_NUM * i;
+      const line = unknownShapes
+        .slice(pos, pos + MAX_NUM)
+        .map((v) => Shape.pp(v))
+        .join(" ");
+      console.log(line);
+    }
+    console.log("");
+    for (let i = 0; i < numLines; i++) {
+      const pos = MAX_NUM * i;
+      const head = unknownShapes
+        .slice(pos, pos + MAX_NUM)
+        .map(
+          (v) =>
+            Shape.pp(v) + " " + (keyShapes.get(v).cuttable ? "-C" : "--") + " "
+        )
+        .join("   ");
+      console.log(head);
+
+      const graphs = unknownShapes
+        .slice(pos, pos + MAX_NUM)
+        .map((v) => Shape.graph(v));
+      for (let i = 0; i < 4; i++) {
+        const line = graphs
+          .map((v) => v.split(/\n/))
+          .map((v) => v[i])
+          .join("   ");
+        console.log(line);
+      }
+      console.log("");
+    }
+  }
+
+  static graph(code) {
+    const bin = code.toString(2).padStart(16, "0");
+    const ICONS = ["- ", "X "];
+    let result = "";
+    for (let y = 0; y < 4; y++) {
+      for (let x = 0; x < 4; x++) {
+        const pos = 4 * y + (3 - x);
+        const bit = bin[pos];
+        result += bit == "0" ? ICONS[0] : ICONS[1];
+      }
+      result += "\n";
+    }
+    return result;
   }
 
   static makeMap() {

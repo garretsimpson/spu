@@ -216,6 +216,7 @@ export class Shape {
   }
 
   static unstackCode(code) {
+    if (code == 0) return [0, 0];
     let layer = 3;
     let key = 0xf000;
     for (; layer >= 0; layer--) {
@@ -281,7 +282,11 @@ export class Shape {
     return result;
   }
 
-  static isStackable(code) {
+  /**
+   * Tries to unstack and restack all layers.
+   * Layers: 1, 1/1, 1/1/1, 1/1/1/1
+   */
+  static canStackAll(code) {
     if (code == 0) {
       return false;
     }
@@ -294,7 +299,29 @@ export class Shape {
     return result == code;
   }
 
-  static isCuttable(code) {
+  /**
+   * Tries to unstack and restack just some of the layers.
+   * Layers: 1, 1/1, 1/2, 2/1, 1/3, 2/2, 3/1
+   */
+  static canStackSome(code) {
+    if (code == 0) {
+      return false;
+    }
+    const numLayers = Shape.layerCount(code);
+    if (numLayers == 1) return true;
+    let tmp = 0;
+    let top = 0;
+    let bottom = code;
+    for (let i = 1; i < numLayers; i++) {
+      [bottom, tmp] = Shape.unstackCode(bottom);
+      top = (top << 4) + tmp;
+      const result = Shape.stackCode(top, bottom);
+      if (result == code) return true;
+    }
+    return false;
+  }
+
+  static canCut(code) {
     if (code == 0) {
       return false;
     }
@@ -351,12 +378,18 @@ export class Shape {
       ["isInvalid", [0x0000], true],
       ["isInvalid", [0x0001], false],
       ["isInvalid", [0x0010], true],
-      ["isStackable", [0x0001], true],
-      ["isStackable", [0x0012], false],
-      ["isStackable", [0xffff], true],
-      ["isCuttable", [0x0012], true],
-      ["isCuttable", [0x00f1], false],
-      ["isCuttable", [0x00ff], true],
+      ["canStackAll", [0x0001], true],
+      ["canStackAll", [0x0012], false],
+      ["canStackAll", [0xffff], true],
+      ["canStackSome", [0x000f], true],
+      ["canStackSome", [0x00ff], true],
+      ["canStackSome", [0x0fff], true],
+      ["canStackSome", [0xffff], true],
+      ["canStackAll", [0xfa5f], false],
+      ["canStackSome", [0xfa5f], true],
+      ["canCut", [0x0012], true],
+      ["canCut", [0x00f1], false],
+      ["canCut", [0x00ff], true],
     ];
 
     let testNum = 0;
@@ -434,13 +467,8 @@ export class Shape {
 
     const allShapes = Shape.allShapes;
     const keyShapes = new Map();
-    // 3 layers max (for now)
-    for (let code = 0; code <= 0x0fff; code++) {
+    for (let code = 0; code <= 0xffff; code++) {
       const key = Shape.keyCode(code);
-      // if (allShapes.has(code)) {
-      //   const key = Shape.keyCode(code);
-      //   keyShapes.set(key, {});
-      // }
       keyShapes.set(key, {});
     }
     console.log("Number of shapes:", allShapes.size);
@@ -452,14 +480,16 @@ export class Shape {
     for (const [code, value] of keyShapes) {
       value.layers = Shape.layerCount(code);
       value.invalid = Shape.isInvalid(code);
-      value.cuttable = Shape.isCuttable(code);
-      value.stackable = Shape.isStackable(code);
+      value.cuttable = Shape.canCut(code);
+      value.stackAll = Shape.canStackAll(code);
+      value.stackSome = Shape.canStackSome(code);
       value.impossible = Shape.isImpossible(code);
     }
     const unknownShapes = [];
     for (const [code, value] of keyShapes) {
-      const known = value.invalid || value.impossible || value.stackable;
-      //      value.invalid || value.impossible || value.stackable || value.cuttable;
+      const known =
+        value.invalid || value.impossible || value.cuttable || value.stackAll;
+      // const known = value.invalid || !value.impossible;
       if (!known) unknownShapes.push(code);
     }
 
@@ -472,13 +502,13 @@ export class Shape {
         value.layers.toString() + (value.impossible ? "X" : NON),
         (value.invalid ? "I" : NON) +
           (value.cuttable ? "C" : NON) +
-          (value.stackable ? "S" : NON),
+          (value.stackAll ? "S" : NON),
         unknown ? "XXXX" : ""
       );
     }
     console.log("");
     console.log("Number unknown:", unknownShapes.length);
-    let code = unknownShapes.shift();
+    let code = unknownShapes[0];
     console.log("First unknown:", Shape.pp(code));
     console.log(Shape.toShape(code));
     console.log("");
@@ -488,27 +518,27 @@ export class Shape {
     const numLines = Math.floor(unknownShapes.length / MAX_NUM) + 1;
     for (let i = 0; i < numLines; i++) {
       const pos = MAX_NUM * i;
-      const line = unknownShapes
-        .slice(pos, pos + MAX_NUM)
-        .map((v) => Shape.pp(v))
-        .join(" ");
+      const shapes = unknownShapes.slice(pos, pos + MAX_NUM);
+      const line = shapes.map((v) => Shape.pp(v)).join(" ");
       console.log(line);
     }
     console.log("");
     for (let i = 0; i < numLines; i++) {
       const pos = MAX_NUM * i;
-      const head = unknownShapes
-        .slice(pos, pos + MAX_NUM)
+      const shapes = unknownShapes.slice(pos, pos + MAX_NUM);
+      const head = shapes
         .map(
           (v) =>
-            Shape.pp(v) + " " + (keyShapes.get(v).cuttable ? "-C" : "--") + " "
+            Shape.pp(v) +
+            " " +
+            (keyShapes.get(v).stackSome ? "S" : "-") +
+            (keyShapes.get(v).cuttable ? "C" : "-") +
+            " "
         )
         .join("   ");
       console.log(head);
 
-      const graphs = unknownShapes
-        .slice(pos, pos + MAX_NUM)
-        .map((v) => Shape.graph(v));
+      const graphs = shapes.map((v) => Shape.graph(v));
       for (let i = 0; i < 4; i++) {
         const line = graphs
           .map((v) => v.split(/\n/))

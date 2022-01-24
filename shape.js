@@ -22,8 +22,6 @@ export class Shape {
   static STAR = "S";
   static WIND = "W";
 
-  static IMPOSSIBLE = [0x0014, 0x0034, 0x0052, 0x0078, 0x0114];
-
   static allShapes;
 
   /**
@@ -254,9 +252,7 @@ export class Shape {
 
   // Returns true if the shape contains an empty layer
   static isInvalid(code) {
-    if (code == 0) {
-      return true;
-    }
+    if (code == 0) return true;
     for (; code > 0; code >>>= 4) {
       if ((code & 0xf) == 0) {
         return true;
@@ -304,9 +300,7 @@ export class Shape {
    * Layers: 1, 1/1, 1/2, 2/1, 1/3, 2/2, 3/1
    */
   static canStackSome(code) {
-    if (code == 0) {
-      return false;
-    }
+    if (code == 0) return false;
     const numLayers = Shape.layerCount(code);
     if (numLayers == 1) return true;
     let tmp = 0;
@@ -558,7 +552,7 @@ export class Shape {
       for (let x = 0; x < 4; x++) {
         const pos = 4 * y + (3 - x);
         const bit = bin[pos];
-        result += bit == "0" ? ICONS[0] : ICONS[1];
+        result += ICONS[bit];
       }
       result += "\n";
     }

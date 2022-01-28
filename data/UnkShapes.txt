@@ -1,0 +1,2106 @@
+0012 -C    0016 -C    001a -C    001e -C    003c -C    005a -C    0112 SC    0116 SC
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    X - - -    X - - -
+X - - -    X - - -    X - - -    X - - -    X X - -    X - X -    X - - -    X - - -
+- X - -    - X X -    - X - X    - X X X    - - X X    - X - X    - X - -    - X X -
+
+011a SC    011e SC    0121 -C    0122 SC    0123 SC    0125 -C    0126 SC    0127 SC
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - - -    X - - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- X - X    - X X X    X - - -    - X - -    X X - -    X - X -    - X X -    X X X -
+
+0129 -C    012a SC    012b SC    012d -C    012e SC    012f SC    0138 S-    013c SC
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    X X - -    X X - -
+X - - X    - X - X    X X - X    X - X X    - X X X    X X X X    - - - X    - - X X
+
+015a SC    0162 S-    0163 S-    0164 S-    0165 SC    0166 SC    0167 SC    0169 -C
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- X - X    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -    X - - X
+
+016a SC    016b SC    016c S-    016d SC    016e SC    016f SC    0178 S-    01a2 S-
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    X X X -    - X - X
+- X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - - - X    - X - -
+
+01a3 SC    01a5 -C    01a6 SC    01a7 SC    01aa SC    01ab SC    01ae SC    01af SC
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X X - -    X - X -    - X X -    X X X -    - X - X    X X - X    - X X X    X X X X
+
+01e2 S-    01e3 SC    01e4 S-    01e5 SC    01e6 SC    01e7 SC    01ea SC    01eb SC
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+- X - -    X X - -    - - X -    X - X -    - X X -    X X X -    - X - X    X X - X
+
+01ee SC    01ef SC    0312 SC    0316 SC    0318 S-    031a SC    031c S-    031e SC
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -
+X - - -    X - - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- X X X    - X X X    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    X X X X    - X - -    - X X -    - - - X    - X - X    - - X X    - X X X
+
+0334 S-    033c SC    035a SC    0361 S-    0369 SC    0378 S-    03c3 -C    03c4 S-
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X - -    X X - -    X - X -    - X X -    - X X -    X X X -    - - X X    - - X X
+- - X -    - - X X    - X - X    X - - -    X - - X    - - - X    X X - -    - - X -
+
+03c5 SC    03c6 S-    03c7 SC    03cc SC    03cd SC    03cf SC    03d2 S-    0512 S-
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X - X -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    X - X X    X - - -
+X - X -    - X X -    X X X -    - - X X    X - X X    X X X X    - X - -    - X - -
+
+0516 S-    051a S-    051e S-    053c SC    0552 S-    055a SC    0578 S-    05a2 S-
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - - -    X - - -    X - - -    X X - -    X - X -    X - X -    X X X -    - X - X
+- X X -    - X - X    - X X X    - - X X    - X - -    - X - X    - - - X    - X - -
+
+05a3 SC    05a5 -C    05a7 SC    05aa SC    05ab SC    05af SC    0712 S-    0716 S-
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X X X -    X X X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    X - - -    X - - -
+X X - -    X - X -    X X X -    - X - X    X X - X    X X X X    - X - -    - X X -
+
+0718 S-    071a S-    071c S-    071e S-    0721 S-    0725 S-    0729 S-    072d S-
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    X - - -    X - - -    X - - -    - X - -    - X - -    - X - -    - X - -
+- - - X    - X - X    - - X X    - X X X    X - - -    X - X -    X - - X    X - X X
+
+0734 S-    0738 S-    073c SC    0752 S-    0758 S-    075a SC    0778 S-    0796 SC
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - -    X X - -    X X - -    X - X -    X - X -    X - X -    X X X -    X - - X
+- - X -    - - - X    - - X X    - X - -    - - - X    - X - X    - - - X    - X X -
+
+07a5 SC    07b4 S-    07d2 S-    0f12 S-    0f16 S-    0f1a S-    0f1e S-    0f34 S-
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -
+X X X -    X X X -    X X X -    X X X X    X X X X    X X X X    X X X X    X X X X
+- X - X    X X - X    X - X X    X - - -    X - - -    X - - -    X - - -    X X - -
+X - X -    - - X -    - X - -    - X - -    - X X -    - X - X    - X X X    - - X -
+
+0f3c SC    0f52 S-    0f5a SC    0f78 S-    1112 SC    1116 SC    111a SC    111e SC
+- - - -    - - - -    - - - -    - - - -    X - - -    X - - -    X - - -    X - - -
+X X X X    X X X X    X X X X    X X X X    X - - -    X - - -    X - - -    X - - -
+X X - -    X - X -    X - X -    X X X -    X - - -    X - - -    X - - -    X - - -
+- - X X    - X - -    - X - X    - - - X    - X - -    - X X -    - X - X    - X X X
+
+1121 SC    1122 SC    1123 SC    1125 SC    1126 SC    1127 SC    1129 SC    112a SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - - 
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - - -    - X - -    X X - -    X - X -    - X X -    X X X -    X - - X    - X - X
+
+112b SC    112d SC    112e SC    112f SC    1138 S-    113c SC    115a SC    1162 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - - 
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    X X - -    X X - -    X - X -    - X X -
+X X - X    X - X X    - X X X    X X X X    - - - X    - - X X    - X - X    - X - -
+
+1163 S-    1164 S-    1165 SC    1166 SC    1167 SC    1169 SC    116a SC    116b SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - - 
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+X X - -    - - X -    X - X -    - X X -    X X X -    X - - X    - X - X    X X - X
+
+116c S-    116d SC    116e SC    116f SC    1178 S-    11a2 S-    11a3 SC    11a5 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - - 
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    X X X -    - X - X    - X - X    - X - X
+- - X X    X - X X    - X X X    X X X X    - - - X    - X - -    X X - -    X - X -
+
+11a6 SC    11a7 SC    11aa SC    11ab SC    11ae SC    11af SC    11e2 S-    11e3 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - - 
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X X X    - X X X
+- X X -    X X X -    - X - X    X X - X    - X X X    X X X X    - X - -    X X - -
+
+11e4 S-    11e5 SC    11e6 SC    11e7 SC    11ea SC    11eb SC    11ee SC    11ef SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - - 
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+- - X -    X - X -    - X X -    X X X -    - X - X    X X - X    - X X X    X X X X
+
+1211 SC    1212 -C    1213 SC    1215 SC    1216 -C    1217 SC    1219 SC    121a -C
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - - -    - X - -    X X - -    X - X -    - X X -    X X X -    X - - X    - X - X
+
+121b SC    121d SC    121e -C    121f SC    1221 SC    1222 SC    1223 SC    1224 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - - -    X - - -    X - - -    X - - -    - X - -    - X - -    - X - -    - X - -
+X X - X    X - X X    - X X X    X X X X    X - - -    - X - -    X X - -    - - X -
+
+1225 SC    1226 SC    1227 SC    1229 SC    122a SC    122b SC    122c S-    122d SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - X -    - X X -    X X X -    X - - X    - X - X    X X - X    - - X X    X - X X
+
+122e SC    122f SC    1231 SC    1232 SC    1233 SC    1234 S-    1235 SC    1236 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- X - -    - X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- X X X    X X X X    X - - -    - X - -    X X - -    - - X -    X - X -    - X X -
+
+1237 SC    1239 SC    123a SC    123b SC    123c S-    123d SC    123e SC    123f SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X X -    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X
+
+1251 S-    1253 S-    1254 S-    1255 SC    1256 SC    1257 SC    1259 SC    125a -C
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - - -    X X - -    - - X -    X - X -    - X X -    X X X -    X - - X    - X - X
+
+125b SC    125c S-    125d SC    125e SC    125f SC    1262 S-    1263 S-    1264 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - X -    X - X -    X - X -    X - X -    X - X -    - X X -    - X X -    - X X -
+X X - X    - - X X    X - X X    - X X X    X X X X    - X - -    X X - -    - - X -
+
+1265 SC    1266 SC    1267 SC    1269 SC    126a SC    126b SC    126c S-    126d SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+X - X -    - X X -    X X X -    X - - X    - X - X    X X - X    - - X X    X - X X
+
+126e SC    126f SC    1271 S-    1272 S-    1273 S-    1274 S-    1275 SC    1276 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- X X -    - X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X X X    X X X X    X - - -    - X - -    X X - -    - - X -    X - X -    - X X -
+
+1277 SC    1279 SC    127a SC    127b SC    127c S-    127d SC    127e SC    127f SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X X -    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X
+
+1291 S-    1293 S-    1295 SC    1296 -C    1297 SC    1298 S-    1299 SC    129a SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X
+X - - -    X X - -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X
+
+129b SC    129c S-    129d SC    129e SC    129f SC    12a2 S-    12a3 S-    12a5 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - - X    X - - X    X - - X    X - - X    X - - X    - X - X    - X - X    - X - X
+X X - X    - - X X    X - X X    - X X X    X X X X    - X - -    X X - -    X - X -
+
+12a6 SC    12a7 SC    12a8 S-    12a9 SC    12aa SC    12ab SC    12ac S-    12ad SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+- X X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X
+
+12ae SC    12af SC    12b1 S-    12b2 S-    12b3 S-    12b4 S-    12b5 SC    12b6 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- X - X    - X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+- X X X    X X X X    X - - -    - X - -    X X - -    - - X -    X - X -    - X X -
+
+12b7 SC    12b8 S-    12b9 SC    12ba SC    12bb SC    12bc S-    12bd SC    12be SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X
+
+12bf SC    12d1 S-    12d3 S-    12d4 S-    12d5 SC    12d6 SC    12d7 SC    12d8 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X X - X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X
+X X X X    X - - -    X X - -    - - X -    X - X -    - X X -    X X X -    - - - X
+
+12d9 SC    12da SC    12db SC    12dc S-    12dd SC    12de SC    12df SC    12e2 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    - X X X
+X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - -
+
+12e3 S-    12e4 S-    12e5 SC    12e6 SC    12e7 SC    12e8 S-    12e9 SC    12ea SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+X X - -    - - X -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X
+
+12eb SC    12ec S-    12ed SC    12ee SC    12ef SC    12f1 S-    12f2 S-    12f3 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- X X X    - X X X    - X X X    - X X X    - X X X    X X X X    X X X X    X X X X
+X X - X    - - X X    X - X X    - X X X    X X X X    X - - -    - X - -    X X - -
+
+12f4 S-    12f5 SC    12f6 SC    12f7 SC    12f8 S-    12f9 SC    12fa SC    12fb SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+- - X -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X    X X - X
+
+12fc S-    12fd SC    12fe SC    12ff SC    1312 SC    1316 SC    1318 S-    131a SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    X X - -    X X - -    X X - -    X X - -
+X X X X    X X X X    X X X X    X X X X    X - - -    X - - -    X - - -    X - - -
+- - X X    X - X X    - X X X    X X X X    - X - -    - X X -    - - - X    - X - X
+
+131c S-    131e SC    1321 SC    1324 S-    1325 SC    1329 SC    132c S-    132d SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - - -    X - - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- - X X    - X X X    X - - -    - - X -    X - X -    X - - X    - - X X    X - X X
+
+1334 S-    1338 S-    133c SC    135a SC    1361 S-    1369 SC    1378 S-    1381 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X - -    X X - -    X X - -    X - X -    - X X -    - X X -    X X X -    - - - X
+- - X -    - - - X    - - X X    - X - X    X - - -    X - - X    - - - X    X - - -
+
+1383 S-    1385 S-    1387 S-    1388 S-    1389 S-    138a S-    138b S-    138c S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X X - -    X - X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X
+
+138d S-    138e S-    138f S-    1392 S-    1396 SC    13a1 S-    13a4 S-    13a5 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - - X    - - - X    - - - X    X - - X    X - - X    - X - X    - X - X    - X - X
+X - X X    - X X X    X X X X    - X - -    - X X -    X - - -    - - X -    X - X -
+
+13b4 S-    13c3 SC    13c4 S-    13c5 SC    13c6 S-    13c7 SC    13c8 S-    13c9 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X - X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+- - X -    X X - -    - - X -    X - X -    - X X -    X X X -    - - - X    X - - X
+
+13ca SC    13cb SC    13cc SC    13cd SC    13ce SC    13cf SC    13d2 S-    13e1 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    X - X X    - X X X
+- X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - -    X - - -
+
+1512 S-    1516 S-    151a S-    151e S-    153c SC    1542 S-    1543 S-    154a S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - - -    X - - -    X - - -    X - - -    X X - -    - - X -    - - X -    - - X -
+- X - -    - X X -    - X - X    - X X X    - - X X    - X - -    X X - -    - X - X
+
+154b S-    1552 S-    155a SC    1569 SC    1578 S-    15a2 S-    15a3 SC    15a5 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- - X -    X - X -    X - X -    - X X -    X X X -    - X - X    - X - X    - X - X
+X X - X    - X - -    - X - X    X - - X    - - - X    - X - -    X X - -    X - X -
+
+15a6 SC    15a7 SC    15aa SC    15ab SC    15ae SC    15af SC    1621 S-    1622 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    - X X -    - X X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - -    - X - -
+- X X -    X X X -    - X - X    X X - X    - X X X    X X X X    X - - -    - X - -
+
+1623 S-    1624 S-    1625 S-    1626 S-    1627 S-    1629 S-    162a S-    162b S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X X - -    - - X -    X - X -    - X X -    X X X -    X - - X    - X - X    X X - X
+
+162c S-    162d S-    162e S-    162f S-    1631 S-    1632 S-    1633 S-    1634 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- X - -    - X - -    - X - -    - X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    X - X X    - X X X    X X X X    X - - -    - X - -    X X - -    - - X -
+
+1635 S-    1636 S-    1637 S-    1639 S-    163a S-    163b S-    163c S-    163d S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X -    - X X -    X X X -    X - - X    - X - X    X X - X    - - X X    X - X X
+
+163e S-    163f S-    1642 S-    1643 S-    1644 S-    1645 S-    1646 S-    1647 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+X X - -    X X - -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+- X X X    X X X X    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -
+
+1648 S-    1649 S-    164a S-    164b S-    164c S-    164d S-    164e S-    164f S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+- - - X    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X
+
+1651 S-    1653 S-    1654 S-    1655 SC    1656 SC    1657 SC    1659 SC    165a SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - - -    X X - -    - - X -    X - X -    - X X -    X X X -    X - - X    - X - X
+
+165b SC    165c S-    165d SC    165e SC    165f SC    1661 S-    1662 S-    1663 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+X - X -    X - X -    X - X -    X - X -    X - X -    - X X -    - X X -    - X X -
+X X - X    - - X X    X - X X    - X X X    X X X X    X - - -    - X - -    X X - -
+
+1664 S-    1665 SC    1666 SC    1667 SC    1668 S-    1669 SC    166a SC    166b SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X - 
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- - X -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X    X X - X
+
+166c S-    166d SC    166e SC    166f SC    1671 S-    1672 S-    1673 S-    1674 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- X X -    - X X -    - X X -    - X X -    X X X -    X X X -    X X X -    X X X -
+- - X X    X - X X    - X X X    X X X X    X - - -    - X - -    X X - -    - - X -
+
+1675 SC    1676 SC    1677 SC    1678 S-    1679 SC    167a SC    167b SC    167c S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - X -    - X X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X
+
+167d SC    167e SC    167f SC    1691 S-    1693 S-    1695 SC    1696 -C    1697 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+X X X -    X X X -    X X X -    X - - X    X - - X    X - - X    X - - X    X - - X
+X - X X    - X X X    X X X X    X - - -    X X - -    X - X -    - X X -    X X X -
+
+1698 S-    1699 SC    169a SC    169b SC    169c S-    169d SC    169e SC    169f SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X
+- - - X    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X
+
+16a2 S-    16a3 S-    16a5 SC    16a6 SC    16a7 SC    16a8 S-    16a9 SC    16aa SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+- X - -    X X - -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X
+
+16ab SC    16ac S-    16ad SC    16ae SC    16af SC    16b1 S-    16b2 S-    16b3 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- X - X    - X - X    - X - X    - X - X    - X - X    X X - X    X X - X    X X - X
+X X - X    - - X X    X - X X    - X X X    X X X X    X - - -    - X - -    X X - -
+
+16b4 S-    16b5 SC    16b6 SC    16b7 SC    16b8 S-    16b9 SC    16ba SC    16bb SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+- - X -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X    X X - X
+
+16bc S-    16bd SC    16be SC    16bf SC    16c3 S-    16c4 S-    16c5 S-    16c6 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+X X - X    X X - X    X X - X    X X - X    - - X X    - - X X    - - X X    - - X X
+- - X X    X - X X    - X X X    X X X X    X X - -    - - X -    X - X -    - X X -
+
+16c7 S-    16c8 S-    16c9 S-    16ca S-    16cb S-    16cc S-    16cd S-    16ce S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X
+
+16cf S-    16d1 S-    16d2 S-    16d3 S-    16d4 S-    16d5 SC    16d6 SC    16d7 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X
+X X X X    X - - -    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -
+
+16d8 S-    16d9 SC    16da SC    16db SC    16dc S-    16dd SC    16de SC    16df SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X
+- - - X    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X
+
+16e1 S-    16e2 S-    16e3 S-    16e4 S-    16e5 SC    16e6 SC    16e7 SC    16e8 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+X - - -    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -    - - - X
+
+16e9 SC    16ea SC    16eb SC    16ec S-    16ed SC    16ee SC    16ef SC    16f1 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    X X X X
+X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X    X - - -
+
+16f2 S-    16f3 S-    16f4 S-    16f5 SC    16f6 SC    16f7 SC    16f8 S-    16f9 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+- X - -    X X - -    - - X -    X - X -    - X X -    X X X -    - - - X    X - - X
+
+16fa SC    16fb SC    16fc S-    16fd SC    16fe SC    16ff SC    1712 S-    1716 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    X X X -    X X X -
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X - - -    X - - -
+- X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - -    - X X -
+
+1718 S-    171a S-    171c S-    171e S-    1721 S-    1724 S-    1725 S-    1729 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    X - - -    X - - -    X - - -    - X - -    - X - -    - X - -    - X - -
+- - - X    - X - X    - - X X    - X X X    X - - -    - - X -    X - X -    X - - X
+
+172c S-    172d S-    1734 S-    1738 S-    173c SC    1742 S-    1743 S-    1748 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - -    - X - -    X X - -    X X - -    X X - -    - - X -    - - X -    - - X -
+- - X X    X - X X    - - X -    - - - X    - - X X    - X - -    X X - -    - - - X
+
+1749 S-    174a S-    174b S-    1752 S-    1758 S-    175a SC    1761 S-    1768 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - X -    - - X -    - - X -    X - X -    X - X -    X - X -    - X X -    - X X -
+X - - X    - X - X    X X - X    - X - -    - - - X    - X - X    X - - -    - - - X
+
+1769 SC    1778 S-    1781 S-    1783 S-    1785 S-    1787 S-    1788 S-    1789 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X X -    X X X -    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X - - X    - - - X    X - - -    X X - -    X - X -    X X X -    - - - X    X - - X
+
+178a S-    178b S-    178c S-    178d S-    178e S-    178f S-    1792 S-    1796 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    X - - X    X - - X
+- X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - -    - X X -
+
+17a1 S-    17a4 S-    17a5 SC    17b4 S-    17c1 S-    17c2 S-    17c3 SC    17d2 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - X    - X - X    - X - X    X X - X    - - X X    - - X X    - - X X    X - X X
+X - - -    - - X -    X - X -    - - X -    X - - -    - X - -    X X - -    - X - -
+
+17e1 S-    1a21 S-    1a22 S-    1a23 S-    1a24 S-    1a25 S-    1a26 S-    1a27 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X X -    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+- X X X    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - - -    X - - -    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -
+
+1a29 S-    1a2a S-    1a2b S-    1a2c S-    1a2d S-    1a2e S-    1a2f S-    1a31 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    X X - -
+X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X    X - - -
+
+1a32 S-    1a33 SC    1a35 SC    1a36 S-    1a37 SC    1a39 S-    1a3a SC    1a3b SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- X - -    X X - -    X - X -    - X X -    X X X -    X - - X    - X - X    X X - X
+
+1a3c SC    1a3d SC    1a3e SC    1a3f SC    1a51 S-    1a53 SC    1a54 S-    1a55 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X X - -    X X - -    X X - -    X X - -    X - X -    X - X -    X - X -    X - X -
+- - X X    X - X X    - X X X    X X X X    X - - -    X X - -    - - X -    X - X -
+
+1a56 SC    1a57 SC    1a5a -C    1a5b SC    1a5e SC    1a5f SC    1a62 S-    1a63 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    - X X -    - X X -
+- X X -    X X X -    - X - X    X X - X    - X X X    X X X X    - X - -    X X - -
+
+1a64 S-    1a65 SC    1a66 SC    1a67 SC    1a69 SC    1a6a SC    1a6b SC    1a6c S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- - X -    X - X -    - X X -    X X X -    X - - X    - X - X    X X - X    - - X X
+
+1a6d SC    1a6e SC    1a6f SC    1a71 S-    1a72 S-    1a73 SC    1a74 S-    1a75 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+- X X -    - X X -    - X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - X X    - X X X    X X X X    X - - -    - X - -    X X - -    - - X -    X - X -
+
+1a76 SC    1a77 SC    1a79 SC    1a7a SC    1a7b SC    1a7c SC    1a7d SC    1a7e SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X X -    X X X -    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X
+
+1a7f SC    1aa1 S-    1aa2 S-    1aa3 SC    1aa4 S-    1aa5 SC    1aa6 SC    1aa7 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X X X -    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X X X X    X - - -    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -
+
+1aaa SC    1aab SC    1aae SC    1aaf SC    1ab1 S-    1ab2 S-    1ab3 SC    1ab4 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+- X - X    - X - X    - X - X    - X - X    X X - X    X X - X    X X - X    X X - X
+- X - X    X X - X    - X X X    X X X X    X - - -    - X - -    X X - -    - - X -
+
+1ab5 SC    1ab6 SC    1ab7 SC    1aba SC    1abb SC    1abe SC    1abf SC    1ae1 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    - X X X
+X - X -    - X X -    X X X -    - X - X    X X - X    - X X X    X X X X    X - - -
+
+1ae2 S-    1ae3 SC    1ae4 S-    1ae5 SC    1ae6 SC    1ae7 SC    1aea SC    1aeb SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+- X - -    X X - -    - - X -    X - X -    - X X -    X X X -    - X - X    X X - X
+
+1aee SC    1aef SC    1af1 S-    1af2 S-    1af3 SC    1af4 S-    1af5 SC    1af6 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+- X X X    - X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+- X X X    X X X X    X - - -    - X - -    X X - -    - - X -    X - X -    - X X -
+
+1af7 SC    1afa SC    1afb SC    1afe SC    1aff SC    1b12 S-    1b16 S-    1b1a S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    X X - X    X X - X    X X - X
+X X X X    X X X X    X X X X    X X X X    X X X X    X - - -    X - - -    X - - -
+X X X -    - X - X    X X - X    - X X X    X X X X    - X - -    - X X -    - X - X
+
+1b1e S-    1b21 S-    1b24 S-    1b25 S-    1b29 S-    1b2c S-    1b2d S-    1b34 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+X - - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    X X - -
+- X X X    X - - -    - - X -    X - X -    X - - X    - - X X    X - X X    - - X -
+
+1b38 S-    1b3c SC    1b5a SC    1b61 S-    1b69 SC    1b78 S-    1ba1 S-    1ba4 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+X X - -    X X - -    X - X -    - X X -    - X X -    X X X -    - X - X    - X - X
+- - - X    - - X X    - X - X    X - - -    X - - X    - - - X    X - - -    - - X -
+
+1ba5 SC    1bb4 S-    1be1 S-    1e21 S-    1e22 S-    1e23 S-    1e24 S-    1e25 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X - X    X X - X    X X - X    - X X X    - X X X    - X X X    - X X X    - X X X
+- X - X    X X - X    - X X X    - X - -    - X - -    - X - -    - X - -    - X - -
+X - X -    - - X -    X - - -    X - - -    - X - -    X X - -    - - X -    X - X -
+
+1e26 S-    1e27 S-    1e29 S-    1e2a S-    1e2b S-    1e2c S-    1e2d S-    1e2e S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- X X -    X X X -    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X
+
+1e2f S-    1e31 S-    1e32 S-    1e33 SC    1e35 SC    1e36 S-    1e37 SC    1e39 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+- X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X X X    X - - -    - X - -    X X - -    X - X -    - X X -    X X X -    X - - X
+
+1e3a SC    1e3b SC    1e3c SC    1e3d SC    1e3e SC    1e3f SC    1e42 S-    1e43 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    - - X -    - - X -
+- X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - -    X X - -
+
+1e44 S-    1e45 S-    1e46 S-    1e47 S-    1e4a S-    1e4b S-    1e4e S-    1e4f S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+- - X -    X - X -    - X X -    X X X -    - X - X    X X - X    - X X X    X X X X
+
+1e51 S-    1e53 SC    1e54 S-    1e55 SC    1e56 SC    1e57 SC    1e5a SC    1e5b SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - - -    X X - -    - - X -    X - X -    - X X -    X X X -    - X - X    X X - X
+
+1e5e SC    1e5f SC    1e61 S-    1e62 S-    1e63 S-    1e64 S-    1e65 SC    1e66 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+X - X -    X - X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- X X X    X X X X    X - - -    - X - -    X X - -    - - X -    X - X -    - X X -
+
+1e67 SC    1e68 S-    1e69 SC    1e6a SC    1e6b SC    1e6c S-    1e6d SC    1e6e SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X
+
+1e6f SC    1e71 S-    1e72 S-    1e73 SC    1e74 S-    1e75 SC    1e76 SC    1e77 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+- X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X X X    X - - -    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -
+
+1e78 S-    1e79 SC    1e7a SC    1e7b SC    1e7c SC    1e7d SC    1e7e SC    1e7f SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X
+
+1ea1 S-    1ea2 S-    1ea3 SC    1ea4 S-    1ea5 SC    1ea6 SC    1ea7 SC    1eaa SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X - - -    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -    - X - X
+
+1eab SC    1eae SC    1eaf SC    1eb1 S-    1eb2 S-    1eb3 SC    1eb4 S-    1eb5 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+- X - X    - X - X    - X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+X X - X    - X X X    X X X X    X - - -    - X - -    X X - -    - - X -    X - X -
+
+1eb6 SC    1eb7 SC    1eba SC    1ebb SC    1ebe SC    1ebf SC    1ee1 S-    1ee2 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    - X X X    - X X X
+- X X -    X X X -    - X - X    X X - X    - X X X    X X X X    X - - -    - X - -
+
+1ee3 SC    1ee4 S-    1ee5 SC    1ee6 SC    1ee7 SC    1eea SC    1eeb SC    1eee SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X 
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+X X - -    - - X -    X - X -    - X X -    X X X -    - X - X    X X - X    - X X X
+
+1eef SC    1ef1 S-    1ef2 S-    1ef3 SC    1ef4 S-    1ef5 SC    1ef6 SC    1ef7 SC
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+- X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X X X X    X - - -    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -
+
+1efa SC    1efb SC    1efe SC    1eff SC    1f12 S-    1f16 S-    1f1a S-    1f1e S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    X X X X    X X X X    X X X X    X X X X
+X X X X    X X X X    X X X X    X X X X    X - - -    X - - -    X - - -    X - - -
+- X - X    X X - X    - X X X    X X X X    - X - -    - X X -    - X - X    - X X X
+
+1f21 S-    1f24 S-    1f25 S-    1f29 S-    1f2c S-    1f2d S-    1f34 S-    1f38 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    X X - -    X X - -
+X - - -    - - X -    X - X -    X - - X    - - X X    X - X X    - - X -    - - - X
+
+1f3c SC    1f42 S-    1f43 S-    1f4a S-    1f4b S-    1f52 S-    1f5a SC    1f61 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X X - -    - - X -    - - X -    - - X -    - - X -    X - X -    X - X -    - X X -
+- - X X    - X - -    X X - -    - X - X    X X - X    - X - -    - X - X    X - - -
+
+1f68 S-    1f69 SC    1f78 S-    1fa1 S-    1fa4 S-    1fa5 SC    1fb4 S-    1fe1 S-
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+- X X -    - X X -    X X X -    - X - X    - X - X    - X - X    X X - X    - X X X
+- - - X    X - - X    - - - X    X - - -    - - X -    X - X -    - - X -    X - - -
+
+3112 SC    3116 SC    3118 S-    311a SC    311c S-    311e SC    3121 SC    3122 SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    - X - -    - X - -
+- X - -    - X X -    - - - X    - X - X    - - X X    - X X X    X - - -    - X - -
+
+3123 SC    3125 SC    3126 SC    3127 SC    3129 SC    312a SC    312b SC    312d SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X X - -    X - X -    - X X -    X X X -    X - - X    - X - X    X X - X    X - X X
+
+312e SC    312f SC    3138 S-    313c S-    315a SC    3162 S-    3163 S-    3164 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    X X - -    X X - -    X - X -    - X X -    - X X -    - X X -
+- X X X    X X X X    - - - X    - - X X    - X - X    - X - -    X X - -    - - X -
+
+3165 SC    3166 SC    3167 SC    3169 SC    316a SC    316b SC    316c S-    316d SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+X - X -    - X X -    X X X -    X - - X    - X - X    X X - X    - - X X    X - X X
+
+316e SC    316f SC    3178 S-    3181 S-    3183 S-    3185 S-    3187 S-    3188 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    X X X -    - - - X    - - - X    - - - X    - - - X    - - - X
+- X X X    X X X X    - - - X    X - - -    X X - -    X - X -    X X X -    - - - X
+
+3189 S-    318a S-    318b S-    318c S-    318d S-    318e S-    318f S-    3192 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    X - - X
+X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - -
+
+3196 SC    31a2 S-    31a3 S-    31a5 SC    31a6 SC    31a7 SC    31a8 S-    31a9 SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+- X X -    - X - -    X X - -    X - X -    - X X -    X X X -    - - - X    X - - X
+
+31aa SC    31ab SC    31ac S-    31ad SC    31ae SC    31af SC    31c3 S-    31c4 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - - X X    - - X X
+- X - X    X X - X    - - X X    X - X X    - X X X    X X X X    X X - -    - - X -
+
+31c5 S-    31c6 S-    31c7 S-    31c8 S-    31c9 S-    31ca S-    31cb S-    31cc S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+X - X -    - X X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X
+
+31cd S-    31ce S-    31cf S-    31d2 S-    31e2 S-    31e3 S-    31e4 S-    31e5 SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- - X X    - - X X    - - X X    X - X X    - X X X    - X X X    - X X X    - X X X
+X - X X    - X X X    X X X X    - X - -    - X - -    X X - -    - - X -    X - X -
+
+31e6 SC    31e7 SC    31e8 S-    31e9 SC    31ea SC    31eb SC    31ec S-    31ed SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+- X X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X
+
+31ee SC    31ef SC    3312 SC    3316 SC    3318 S-    331a SC    331c S-    331e SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - - -    X - - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- X X X    - X X X    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    X X X X    - X - -    - X X -    - - - X    - X - X    - - X X    - X X X
+
+3334 S-    333c SC    3342 S-    3343 S-    3344 S-    3345 S-    3346 S-    3347 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X - -    X X - -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+- - X -    - - X X    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -
+
+334a S-    334b S-    334c S-    334d S-    334e S-    334f S-    3352 S-    3358 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    X - X -    X - X -
+- X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - -    - - - X
+
+335a SC    3361 S-    3369 SC    3378 S-    33c1 S-    33c3 SC    33c4 S-    33c5 SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X -    - X X -    - X X -    X X X -    - - X X    - - X X    - - X X    - - X X
+- X - X    X - - -    X - - X    - - - X    X - - -    X X - -    - - X -    X - X -
+
+33c6 S-    33c7 SC    33cc SC    33cd SC    33cf SC    33d2 S-    3422 S-    3423 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    - - X -    - - X -
+- - X X    - - X X    - - X X    - - X X    - - X X    X - X X    - X - -    - X - -
+- X X -    X X X -    - - X X    X - X X    X X X X    - X - -    - X - -    X X - -
+
+3424 --    3425 --    3426 S-    3427 S-    342a S-    342b S-    342c --    342d --
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- - X -    X - X -    - X X -    X X X -    - X - X    X X - X    - - X X    X - X X
+
+342e S-    342f S-    3431 S-    3432 S-    3433 S-    3435 S-    3436 S-    3437 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+- X - -    - X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- X X X    X X X X    X - - -    - X - -    X X - -    X - X -    - X X -    X X X -
+
+3439 S-    343a S-    343b S-    343c --    343d S-    343e S-    343f S-    3442 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    - - X -
+X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - -
+
+3443 S-    3444 S-    3445 S-    3446 S-    3447 S-    3448 S-    3449 S-    344a S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X - 
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+X X - -    - - X -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X
+
+344b S-    344c S-    344d S-    344e S-    344f S-    3451 S-    3453 S-    3454 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+- - X -    - - X -    - - X -    - - X -    - - X -    X - X -    X - X -    X - X -
+X X - X    - - X X    X - X X    - X X X    X X X X    X - - -    X X - -    - - X -
+
+3455 S-    3456 S-    3457 S-    3459 S-    345a S-    345b S-    345c S-    345d S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - X -    - X X -    X X X -    X - - X    - X - X    X X - X    - - X X    X - X X
+
+345e S-    345f S-    3462 S-    3463 S-    3464 S-    3465 S-    3466 S-    3467 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+X - X -    X - X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- X X X    X X X X    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -
+
+3468 S-    3469 S-    346a S-    346b S-    346c S-    346d S-    346e S-    346f S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- - - X    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X
+
+3471 S-    3472 S-    3473 S-    3474 S-    3475 S-    3476 S-    3477 S-    3478 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -    - - - X
+
+3479 S-    347a S-    347b S-    347c S-    347d S-    347e S-    347f S-    34a2 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    - X - X
+X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - -
+
+34a3 S-    34a5 --    34a6 S-    34a7 S-    34a8 S-    34a9 S-    34aa S-    34ab S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X X - -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X    X X - X
+
+34ac S-    34ad S-    34ae S-    34af S-    34b1 S-    34b2 S-    34b3 S-    34b5 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+- X - X    - X - X    - X - X    - X - X    X X - X    X X - X    X X - X    X X - X
+- - X X    X - X X    - X X X    X X X X    X - - -    - X - -    X X - -    X - X -
+
+34b6 S-    34b7 S-    34b8 S-    34b9 S-    34ba S-    34bb S-    34bc S-    34bd S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+- X X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X
+
+34be S-    34bf S-    34c3 S-    34c4 S-    34c5 S-    34c6 S-    34c7 S-    34c8 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+X X - X    X X - X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+- X X X    X X X X    X X - -    - - X -    X - X -    - X X -    X X X -    - - - X
+
+34c9 S-    34ca S-    34cb S-    34cc S-    34cd S-    34ce S-    34cf S-    34d1 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    X - X X
+X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X    X - - -
+
+34d3 S-    34d4 S-    34d5 S-    34d6 S-    34d7 S-    34d8 S-    34d9 S-    34da S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X
+X X - -    - - X -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X
+
+34db S-    34dc S-    34dd S-    34de S-    34df S-    34e2 S-    34e3 S-    34e4 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+X - X X    X - X X    X - X X    X - X X    X - X X    - X X X    - X X X    - X X X
+X X - X    - - X X    X - X X    - X X X    X X X X    - X - -    X X - -    - - X -
+
+34e5 S-    34e6 S-    34e7 S-    34e8 S-    34e9 S-    34ea S-    34eb S-    34ec S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+X - X -    - X X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X
+
+34ed S-    34ee S-    34ef S-    34f1 S-    34f2 S-    34f3 S-    34f4 S-    34f5 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+- X X X    - X X X    - X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X - X X    - X X X    X X X X    X - - -    - X - -    X X - -    - - X -    X - X -
+
+34f6 S-    34f7 S-    34f8 S-    34f9 S-    34fa S-    34fb S-    34fc S-    34fd S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+- X X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X
+
+34fe S-    34ff S-    3512 S-    3516 S-    3518 S-    351a S-    351c S-    351e S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X X X    X X X X    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    X X X X    - X - -    - X X -    - - - X    - X - X    - - X X    - X X X
+
+3521 S-    3522 S-    3523 S-    3524 S-    3525 S-    3526 S-    3527 S-    3529 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - - -    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -    X - - X
+
+352a S-    352b S-    352c S-    352d S-    352e S-    352f S-    3534 S-    3538 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    X X - -    X X - -
+- X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - - X -    - - - X
+
+353c SC    3542 S-    3543 S-    3548 S-    3549 S-    354a S-    354b S-    3552 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X - -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    X - X -
+- - X X    - X - -    X X - -    - - - X    X - - X    - X - X    X X - X    - X - -
+
+3558 S-    355a SC    3561 S-    3568 S-    3569 SC    3578 S-    3581 S-    3583 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - X -    X - X -    - X X -    - X X -    - X X -    X X X -    - - - X    - - - X
+- - - X    - X - X    X - - -    - - - X    X - - X    - - - X    X - - -    X X - -
+
+3585 S-    3587 S-    3588 S-    3589 S-    358a S-    358b S-    358c S-    358d S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X - X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X
+
+358e S-    358f S-    3592 S-    3596 SC    35a1 S-    35a2 S-    35a3 SC    35a4 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- - - X    - - - X    X - - X    X - - X    - X - X    - X - X    - X - X    - X - X
+- X X X    X X X X    - X - -    - X X -    X - - -    - X - -    X X - -    - - X -
+
+35a5 SC    35a6 SC    35a7 SC    35a8 S-    35a9 SC    35aa SC    35ab SC    35ac SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X - X -    - X X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X
+
+35ad SC    35ae SC    35af SC    35b4 S-    35c1 S-    35c2 S-    35c3 SC    35d2 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - X    - X - X    - X - X    X X - X    - - X X    - - X X    - - X X    X - X X
+X - X X    - X X X    X X X X    - - X -    X - - -    - X - -    X X - -    - X - -
+
+35e1 S-    3611 S-    3612 S-    3613 S-    3615 S-    3616 S-    3617 S-    3619 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- X X X    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - - -    X - - -    - X - -    X X - -    X - X -    - X X -    X X X -    X - - X
+
+361a S-    361b S-    361d S-    361e S-    361f S-    3621 S-    3624 S-    3625 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+X - - -    X - - -    X - - -    X - - -    X - - -    - X - -    - X - -    - X - -
+- X - X    X X - X    X - X X    - X X X    X X X X    X - - -    - - X -    X - X -
+
+3629 S-    362c S-    362d S-    3634 S-    363c S-    3642 S-    3643 S-    3648 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- X - -    - X - -    - X - -    X X - -    X X - -    - - X -    - - X -    - - X -
+X - - X    - - X X    X - X X    - - X -    - - X X    - X - -    X X - -    - - - X
+
+3649 S-    364a S-    364b S-    3652 S-    3658 S-    365a SC    3661 S-    3668 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- - X -    - - X -    - - X -    X - X -    X - X -    X - X -    - X X -    - X X -
+X - - X    - X - X    X X - X    - X - -    - - - X    - X - X    X - - -    - - - X
+
+3669 SC    3678 S-    3691 S-    3693 S-    3695 SC    3696 SC    3697 SC    3698 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- X X -    X X X -    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X
+X - - X    - - - X    X - - -    X X - -    X - X -    - X X -    X X X -    - - - X
+
+3699 SC    369a SC    369b SC    369c S-    369d SC    369e SC    369f SC    36a5 SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    - X - X
+X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X    X - X -
+
+36b4 S-    36c2 S-    36c3 S-    36d2 S-    36e1 S-    3712 S-    3716 S-    3718 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- X X -    - X X -    - X X -    - X X -    - X X -    X X X -    X X X -    X X X -
+X X - X    - - X X    - - X X    X - X X    - X X X    X - - -    X - - -    X - - -
+- - X -    - X - -    X X - -    - X - -    X - - -    - X - -    - X X -    - - - X
+
+371a S-    371c S-    371e S-    3721 S-    3724 S-    3725 S-    3729 S-    372c S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    X - - -    X - - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- X - X    - - X X    - X X X    X - - -    - - X -    X - X -    X - - X    - - X X
+
+372d S-    3734 S-    3738 S-    373c SC    3742 S-    3743 S-    3748 S-    3749 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - -    X X - -    X X - -    X X - -    - - X -    - - X -    - - X -    - - X -
+X - X X    - - X -    - - - X    - - X X    - X - -    X X - -    - - - X    X - - X
+
+374a S-    374b S-    3752 S-    3758 S-    375a SC    3761 S-    3768 S-    3769 SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - X -    - - X -    X - X -    X - X -    X - X -    - X X -    - X X -    - X X -
+- X - X    X X - X    - X - -    - - - X    - X - X    X - - -    - - - X    X - - X
+
+3778 S-    3781 S-    3783 S-    3785 S-    3787 S-    3788 S-    3789 S-    378a S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X X -    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+- - - X    X - - -    X X - -    X - X -    X X X -    - - - X    X - - X    - X - X
+
+378b S-    378c S-    378d S-    378e S-    378f S-    3792 S-    3796 SC    37a1 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    X - - X    X - - X    - X - X
+X X - X    - - X X    X - X X    - X X X    X X X X    - X - -    - X X -    X - - -
+
+37a4 S-    37a5 SC    37b4 S-    37c1 S-    37c2 S-    37c3 SC    37d2 S-    37e1 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - X    - X - X    X X - X    - - X X    - - X X    - - X X    X - X X    - X X X
+- - X -    X - X -    - - X -    X - - -    - X - -    X X - -    - X - -    X - - -
+
+3c11 S-    3c13 S-    3c15 S-    3c17 S-    3c18 --    3c19 S-    3c1a --    3c1b S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - - -    X X - -    X - X -    X X X -    - - - X    X - - X    - X - X    X X - X
+
+3c1c --    3c1d S-    3c1e --    3c1f S-    3c31 S-    3c33 SC    3c34 --    3c35 SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+X - - -    X - - -    X - - -    X - - -    X X - -    X X - -    X X - -    X X - -
+- - X X    X - X X    - X X X    X X X X    X - - -    X X - -    - - X -    X - X -
+
+3c36 S-    3c37 SC    3c3c -C    3c3d SC    3c3f SC    3c42 S-    3c43 S-    3c44 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+X X - -    X X - -    X X - -    X X - -    X X - -    - - X -    - - X -    - - X -
+- X X -    X X X -    - - X X    X - X X    X X X X    - X - -    X X - -    - - X -
+
+3c45 S-    3c46 S-    3c47 S-    3c48 S-    3c49 S-    3c4a S-    3c4b S-    3c4c S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+X - X -    - X X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X
+
+3c4d S-    3c4e S-    3c4f S-    3c51 S-    3c52 S-    3c53 SC    3c54 S-    3c55 SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+- - X -    - - X -    - - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - X X    - X X X    X X X X    X - - -    - X - -    X X - -    - - X -    X - X -
+
+3c56 S-    3c57 SC    3c58 S-    3c59 S-    3c5a SC    3c5b SC    3c5c SC    3c5d SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X
+
+3c5e SC    3c5f SC    3c62 S-    3c63 S-    3c64 S-    3c65 S-    3c66 S-    3c67 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+X - X -    X - X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- X X X    X X X X    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -
+
+3c68 S-    3c69 S-    3c6a S-    3c6b S-    3c6c S-    3c6d S-    3c6e S-    3c6f S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- - - X    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X
+
+3c71 S-    3c72 S-    3c73 SC    3c74 S-    3c75 SC    3c76 S-    3c77 SC    3c78 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -    - - - X
+
+3c79 S-    3c7a SC    3c7b SC    3c7c SC    3c7d SC    3c7e SC    3c7f SC    3cc1 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    - - X X
+X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X    X - - -
+
+3cc3 SC    3cc4 S-    3cc5 SC    3cc6 S-    3cc7 SC    3ccc SC    3ccd SC    3ccf SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X 
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+X X - -    - - X -    X - X -    - X X -    X X X -    - - X X    X - X X    X X X X
+
+3cd1 S-    3cd2 S-    3cd3 SC    3cd4 S-    3cd5 SC    3cd6 S-    3cd7 SC    3cd8 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X
+X - - -    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -    - - - X
+
+3cd9 S-    3cda SC    3cdb SC    3cdc SC    3cdd SC    3cde SC    3cdf SC    3cf1 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X X X X
+X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X    X - - -
+
+3cf3 SC    3cf4 S-    3cf5 SC    3cf6 S-    3cf7 SC    3cfc SC    3cfd SC    3cff SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X X - -    - - X -    X - X -    - X X -    X X X -    - - X X    X - X X    X X X X
+
+3d12 S-    3d16 S-    3d18 S-    3d1a S-    3d1c S-    3d1e S-    3d21 S-    3d22 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    - X - -    - X - -
+- X - -    - X X -    - - - X    - X - X    - - X X    - X X X    X - - -    - X - -
+
+3d23 S-    3d24 S-    3d25 S-    3d26 S-    3d27 S-    3d29 S-    3d2a S-    3d2b S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X X - -    - - X -    X - X -    - X X -    X X X -    X - - X    - X - X    X X - X
+
+3d2c S-    3d2d S-    3d2e S-    3d2f S-    3d34 S-    3d38 S-    3d3c SC    3d42 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X
+- X - -    - X - -    - X - -    - X - -    X X - -    X X - -    X X - -    - - X -
+- - X X    X - X X    - X X X    X X X X    - - X -    - - - X    - - X X    - X - -
+
+3d43 S-    3d48 S-    3d49 S-    3d4a S-    3d4b S-    3d52 S-    3d58 S-    3d5a SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X
+- - X -    - - X -    - - X -    - - X -    - - X -    X - X -    X - X -    X - X -
+X X - -    - - - X    X - - X    - X - X    X X - X    - X - -    - - - X    - X - X
+
+3d61 S-    3d68 S-    3d69 SC    3d78 S-    3d81 S-    3d83 S-    3d84 S-    3d85 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X
+- X X -    - X X -    - X X -    X X X -    - - - X    - - - X    - - - X    - - - X
+X - - -    - - - X    X - - X    - - - X    X - - -    X X - -    - - X -    X - X -
+
+3d86 S-    3d87 S-    3d92 S-    3d94 S-    3d96 SC    3da1 S-    3da4 S-    3da5 SC
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X
+- - - X    - - - X    X - - X    X - - X    X - - X    - X - X    - X - X    - X - X
+- X X -    X X X -    - X - -    - - X -    - X X -    X - - -    - - X -    X - X -
+
+3db4 S-    3dc1 S-    3dc2 S-    3dc3 SC    3dd2 S-    3de1 S-    3f12 S-    3f16 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X X X X    X X X X
+X X - X    - - X X    - - X X    - - X X    X - X X    - X X X    X - - -    X - - -
+- - X -    X - - -    - X - -    X X - -    - X - -    X - - -    - X - -    - X X -
+
+3f18 S-    3f1a S-    3f1c S-    3f1e S-    3f34 S-    3f3c SC    3f42 S-    3f43 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X - - -    X - - -    X - - -    X - - -    X X - -    X X - -    - - X -    - - X -
+- - - X    - X - X    - - X X    - X X X    - - X -    - - X X    - X - -    X X - -
+
+3f48 S-    3f49 S-    3f4a S-    3f4b S-    3f52 S-    3f58 S-    3f5a SC    3f61 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+- - X -    - - X -    - - X -    - - X -    X - X -    X - X -    X - X -    - X X -
+- - - X    X - - X    - X - X    X X - X    - X - -    - - - X    - X - X    X - - -
+
+3f68 S-    3f69 SC    3f78 S-    3fc1 S-    3fc3 SC    3fd2 S-    5112 S-    5116 S-
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X - X -    X - X -
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X - - -    X - - -
+- X X -    - X X -    X X X -    - - X X    - - X X    X - X X    X - - -    X - - -
+- - - X    X - - X    - - - X    X - - -    X X - -    - X - -    - X - -    - X X -
+
+511a S-    511e S-    5121 S-    5122 S-    5123 S-    5125 S-    5126 S-    5127 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - - -    X - - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- X - X    - X X X    X - - -    - X - -    X X - -    X - X -    - X X -    X X X -
+
+5129 S-    512a S-    512b S-    512d S-    512e S-    512f S-    5138 S-    513c S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    X X - -    X X - -
+X - - X    - X - X    X X - X    X - X X    - X X X    X X X X    - - - X    - - X X
+
+515a S-    5162 S-    5163 S-    5164 S-    5165 S-    5166 S-    5167 S-    5169 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- X - X    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -    X - - X
+
+516a S-    516b S-    516c S-    516d S-    516e S-    516f S-    5178 S-    51a2 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    X X X -    - X - X
+- X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - - - X    - X - -
+
+51a3 S-    51a5 S-    51a6 S-    51a7 S-    51aa S-    51ab S-    51ae S-    51af S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X X - -    X - X -    - X X -    X X X -    - X - X    X X - X    - X X X    X X X X
+
+51e2 S-    51e3 S-    51e4 S-    51e5 S-    51e6 S-    51e7 S-    51ea S-    51eb S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+- X - -    X X - -    - - X -    X - X -    - X X -    X X X -    - X - X    X X - X
+
+51ee S-    51ef S-    5211 S-    5212 --    5213 S-    5215 S-    5216 --    5217 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - - -    X - - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- X X X    - X X X    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    X X X X    X - - -    - X - -    X X - -    X - X -    - X X -    X X X -
+
+5219 S-    521a --    521b S-    521d S-    521e --    521f S-    5221 S-    5222 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    - X - -    - X - -
+X - - X    - X - X    X X - X    X - X X    - X X X    X X X X    X - - -    - X - -
+
+5223 S-    5225 S-    5227 S-    5229 S-    522a S-    522b S-    522d S-    522f S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X X - -    X - X -    X X X -    X - - X    - X - X    X X - X    X - X X    X X X X
+
+5231 S-    5232 S-    5233 S-    5234 S-    5235 S-    5236 S-    5237 S-    5239 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - - -    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -    X - - X
+
+523a S-    523b S-    523c S-    523d S-    523e S-    523f S-    5251 S-    5253 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X - X -    X - X -
+- X - X    X X - X    - - X X    X - X X    - X X X    X X X X    X - - -    X X - -
+
+5255 S-    5257 S-    5259 S-    525a --    525b S-    525d S-    525f S-    5271 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X X X -
+X - X -    X X X -    X - - X    - X - X    X X - X    X - X X    X X X X    X - - -
+
+5272 S-    5273 S-    5275 S-    5277 S-    5279 S-    527a S-    527b S-    527d S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - -    X X - -    X - X -    X X X -    X - - X    - X - X    X X - X    X - X X
+
+527f S-    5291 S-    5293 S-    5295 S-    5296 --    5297 S-    5298 S-    5299 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X X X -    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X
+X X X X    X - - -    X X - -    X - X -    - X X -    X X X -    - - - X    X - - X
+
+529a S-    529b S-    529c S-    529d S-    529e S-    529f S-    52a2 S-    52a3 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    - X - X    - X - X
+- X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - -    X X - -
+
+52a5 S-    52a7 S-    52a8 S-    52a9 S-    52aa S-    52ab S-    52ad S-    52af S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X - X -    X X X -    - - - X    X - - X    - X - X    X X - X    X - X X    X X X X
+
+52b1 S-    52b2 S-    52b3 S-    52b4 S-    52b5 S-    52b6 S-    52b7 S-    52b8 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+X - - -    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -    - - - X
+
+52b9 S-    52ba S-    52bb S-    52bc S-    52bd S-    52be S-    52bf S-    52d1 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X - X X
+X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X    X - - -
+
+52d3 S-    52d5 S-    52d7 S-    52d8 S-    52d9 S-    52da S-    52db S-    52dd S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X
+X X - -    X - X -    X X X -    - - - X    X - - X    - X - X    X X - X    X - X X
+
+52df S-    52f1 S-    52f2 S-    52f3 S-    52f5 S-    52f7 S-    52f8 S-    52f9 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X X X X    X - - -    - X - -    X X - -    X - X -    X X X -    - - - X    X - - X
+
+52fa S-    52fb S-    52fd S-    52ff S-    5312 S-    5316 S-    5318 S-    531a S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    X X - -    X X - -    X X - -    X X - -
+X X X X    X X X X    X X X X    X X X X    X - - -    X - - -    X - - -    X - - -
+- X - X    X X - X    X - X X    X X X X    - X - -    - X X -    - - - X    - X - X
+
+531c S-    531e S-    5321 S-    5324 S-    5325 S-    5329 S-    532c S-    532d S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - - -    X - - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- - X X    - X X X    X - - -    - - X -    X - X -    X - - X    - - X X    X - X X
+
+5334 S-    5338 S-    533c SC    5342 S-    5343 S-    5344 S-    5345 S-    5346 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X - -    X X - -    X X - -    - - X -    - - X -    - - X -    - - X -    - - X -
+- - X -    - - - X    - - X X    - X - -    X X - -    - - X -    X - X -    - X X -
+
+5347 S-    534a S-    534b S-    534c S-    534d S-    534e S-    534f S-    5352 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    X - X -
+X X X -    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - -
+
+5358 S-    535a SC    5361 S-    5369 S-    5378 S-    5381 S-    5383 S-    5385 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X -    X - X -    - X X -    - X X -    X X X -    - - - X    - - - X    - - - X
+- - - X    - X - X    X - - -    X - - X    - - - X    X - - -    X X - -    X - X -
+
+5387 S-    5388 S-    5389 S-    538a S-    538b S-    538c S-    538d S-    538e S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X
+
+538f S-    5392 S-    5396 S-    53a1 S-    53a4 S-    53a5 SC    53b4 S-    53c1 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - - X    X - - X    X - - X    - X - X    - X - X    - X - X    X X - X    - - X X
+X X X X    - X - -    - X X -    X - - -    - - X -    X - X -    - - X -    X - - -
+
+53c2 S-    53c3 SC    53c4 S-    53c5 SC    53c6 S-    53c7 SC    53c8 S-    53c9 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+- X - -    X X - -    - - X -    X - X -    - X X -    X X X -    - - - X    X - - X
+
+53ca SC    53cb SC    53cc SC    53cd SC    53ce SC    53cf SC    53d2 S-    53e1 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    X - X X    - X X X
+- X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - -    X - - -
+
+5512 S-    5516 S-    551a S-    551e S-    5521 S-    5522 S-    5523 S-    5525 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - - -    X - - -    X - - -    X - - -    - X - -    - X - -    - X - -    - X - -
+- X - -    - X X -    - X - X    - X X X    X - - -    - X - -    X X - -    X - X -
+
+5527 S-    5529 S-    552a S-    552b S-    552d S-    552f S-    5534 S-    5538 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    X X - -    X X - -
+X X X -    X - - X    - X - X    X X - X    X - X X    X X X X    - - X -    - - - X
+
+553c SC    5552 S-    555a SC    5578 S-    55a1 S-    55a2 S-    55a3 SC    55a5 SC
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X - -    X - X -    X - X -    X X X -    - X - X    - X - X    - X - X    - X - X
+- - X X    - X - -    - X - X    - - - X    X - - -    - X - -    X X - -    X - X -
+
+55a7 SC    55aa SC    55ab SC    55af SC    55b4 S-    5712 S-    5716 S-    5718 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - X -    X - X -    X - X -    X - X -    X - X -    X X X -    X X X -    X X X -
+- X - X    - X - X    - X - X    - X - X    X X - X    X - - -    X - - -    X - - -
+X X X -    - X - X    X X - X    X X X X    - - X -    - X - -    - X X -    - - - X
+
+571a S-    571c S-    571e S-    5721 S-    5725 S-    5729 S-    572d S-    5734 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    X - - -    X - - -    - X - -    - X - -    - X - -    - X - -    X X - -
+- X - X    - - X X    - X X X    X - - -    X - X -    X - - X    X - X X    - - X -
+
+5738 S-    573c SC    5752 S-    5758 S-    575a SC    5778 S-    5781 S-    5783 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - -    X X - -    X - X -    X - X -    X - X -    X X X -    - - - X    - - - X
+- - - X    - - X X    - X - -    - - - X    - X - X    - - - X    X - - -    X X - -
+
+5785 S-    5787 S-    5788 S-    5789 S-    578a S-    578b S-    578d S-    578f S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X - X -    X X X -    - - - X    X - - X    - X - X    X X - X    X - X X    X X X X
+
+5792 S-    5794 S-    5796 SC    57a1 S-    57a5 SC    57b4 S-    57d2 S-    5a11 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    - X - X
+X - - X    X - - X    X - - X    - X - X    - X - X    X X - X    X - X X    X - - -
+- X - -    - - X -    - X X -    X - - -    X - X -    - - X -    - X - -    X - - -
+
+5a12 --    5a13 S-    5a15 S-    5a16 --    5a17 S-    5a1a --    5a1b S-    5a1e --
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    X X - -    X - X -    - X X -    X X X -    - X - X    X X - X    - X X X
+
+5a1f S-    5a21 S-    5a22 S-    5a23 S-    5a25 S-    5a27 S-    5a29 S-    5a2a S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X - - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X X X X    X - - -    - X - -    X X - -    X - X -    X X X -    X - - X    - X - X
+
+5a2b S-    5a2d S-    5a2f S-    5a31 S-    5a32 S-    5a33 SC    5a34 S-    5a35 SC
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+- X - -    - X - -    - X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X - X    X - X X    X X X X    X - - -    - X - -    X X - -    - - X -    X - X -
+
+5a36 S-    5a37 SC    5a38 S-    5a39 S-    5a3a SC    5a3b SC    5a3c SC    5a3d SC
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- X X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X
+
+5a3e SC    5a3f SC    5a51 S-    5a52 --    5a53 SC    5a55 SC    5a57 SC    5a5a -C
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X X - -    X X - -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X X X    X X X X    X - - -    - X - -    X X - -    X - X -    X X X -    - X - X
+
+5a5b SC    5a5f SC    5a71 S-    5a72 S-    5a73 SC    5a75 SC    5a77 SC    5a78 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X - X -    X - X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - X    X X X X    X - - -    - X - -    X X - -    X - X -    X X X -    - - - X
+
+5a79 SC    5a7a SC    5a7b SC    5a7d SC    5a7f SC    5aa1 S-    5aa2 S-    5aa3 SC
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X X X -    X X X -    X X X -    X X X -    X X X -    - X - X    - X - X    - X - X
+X - - X    - X - X    X X - X    X - X X    X X X X    X - - -    - X - -    X X - -
+
+5aa5 SC    5aa7 SC    5aaa SC    5aab SC    5aaf SC    5ab1 S-    5ab2 S-    5ab3 SC
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+- X - X    - X - X    - X - X    - X - X    - X - X    X X - X    X X - X    X X - X
+X - X -    X X X -    - X - X    X X - X    X X X X    X - - -    - X - -    X X - -
+
+5ab4 S-    5ab5 SC    5ab6 SC    5ab7 SC    5aba SC    5abb SC    5abe SC    5abf SC
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+- - X -    X - X -    - X X -    X X X -    - X - X    X X - X    - X X X    X X X X
+
+5af1 S-    5af2 S-    5af3 SC    5af5 SC    5af7 SC    5afa SC    5afb SC    5aff SC
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X - - -    - X - -    X X - -    X - X -    X X X -    - X - X    X X - X    X X X X
+
+5b12 S-    5b16 S-    5b1a S-    5b1e S-    5b21 S-    5b24 S-    5b25 S-    5b29 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+X - - -    X - - -    X - - -    X - - -    - X - -    - X - -    - X - -    - X - -
+- X - -    - X X -    - X - X    - X X X    X - - -    - - X -    X - X -    X - - X
+
+5b2c S-    5b2d S-    5b34 S-    5b38 S-    5b3c SC    5b42 S-    5b43 S-    5b44 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+- X - -    - X - -    X X - -    X X - -    X X - -    - - X -    - - X -    - - X -
+- - X X    X - X X    - - X -    - - - X    - - X X    - X - -    X X - -    - - X -
+
+5b45 S-    5b46 S-    5b47 S-    5b4a S-    5b4b S-    5b4e S-    5b4f S-    5b52 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    X - X -
+X - X -    - X X -    X X X -    - X - X    X X - X    - X X X    X X X X    - X - -
+
+5b5a SC    5b61 S-    5b68 S-    5b69 SC    5b78 S-    5ba1 S-    5ba4 S-    5ba5 SC
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+X - X -    - X X -    - X X -    - X X -    X X X -    - X - X    - X - X    - X - X
+- X - X    X - - -    - - - X    X - - X    - - - X    X - - -    - - X -    X - X -
+
+5bb4 S-    5be1 S-    5f12 S-    5f16 S-    5f1a S-    5f1e S-    5f21 S-    5f25 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X - X    X X - X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X X - X    - X X X    X - - -    X - - -    X - - -    X - - -    - X - -    - X - -
+- - X -    X - - -    - X - -    - X X -    - X - X    - X X X    X - - -    X - X -
+
+5f29 S-    5f2d S-    5f34 S-    5f38 S-    5f3c SC    5f52 S-    5f5a SC    5f78 S-
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+- X - -    - X - -    X X - -    X X - -    X X - -    X - X -    X - X -    X X X -
+X - - X    X - X X    - - X -    - - - X    - - X X    - X - -    - X - X    - - - X
+
+5fa1 S-    5fa5 SC    5fb4 S-    7112 S-    7116 S-    7118 S-    711a S-    711c S-
+X - X -    X - X -    X - X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X X X    X X X X    X X X X    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    X X - X    X - - -    X - - -    X - - -    X - - -    X - - -
+X - - -    X - X -    - - X -    - X - -    - X X -    - - - X    - X - X    - - X X
+
+711e S-    7121 S-    7122 S-    7123 S-    7125 S-    7126 S-    7127 S-    7129 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- X X X    X - - -    - X - -    X X - -    X - X -    - X X -    X X X -    X - - X
+
+712a S-    712b S-    712d S-    712e S-    712f S-    7138 S-    713c S-    715a S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    X X - -    X X - -    X - X -
+- X - X    X X - X    X - X X    - X X X    X X X X    - - - X    - - X X    - X - X
+
+7162 S-    7163 S-    7164 S-    7165 S-    7166 S-    7167 S-    7169 S-    716a S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- X - -    X X - -    - - X -    X - X -    - X X -    X X X -    X - - X    - X - X
+
+716b S-    716c S-    716d S-    716e S-    716f S-    7178 S-    7181 S-    7183 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    X X X -    - - - X    - - - X
+X X - X    - - X X    X - X X    - X X X    X X X X    - - - X    X - - -    X X - -
+
+7185 S-    7187 S-    7188 S-    7189 S-    718a S-    718b S-    718c S-    718d S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X - X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X
+
+718e S-    718f S-    7192 S-    7196 S-    71a2 S-    71a3 S-    71a5 S-    71a6 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- - - X    - - - X    X - - X    X - - X    - X - X    - X - X    - X - X    - X - X
+- X X X    X X X X    - X - -    - X X -    - X - -    X X - -    X - X -    - X X -
+
+71a7 S-    71a8 S-    71a9 S-    71aa S-    71ab S-    71ac S-    71ad S-    71ae S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X
+
+71af S-    71c3 S-    71c4 S-    71c5 S-    71c6 S-    71c7 S-    71c8 S-    71c9 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+X X X X    X X - -    - - X -    X - X -    - X X -    X X X -    - - - X    X - - X
+
+71ca S-    71cb S-    71cc S-    71cd S-    71ce S-    71cf S-    71d2 S-    71e2 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    X - X X    - X X X
+- X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - -    - X - -
+
+71e3 S-    71e4 S-    71e5 S-    71e6 S-    71e7 S-    71e8 S-    71e9 S-    71ea S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+X X - -    - - X -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X
+
+71eb S-    71ec S-    71ed S-    71ee S-    71ef S-    7211 S-    7212 S-    7213 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    X - - -    X - - -    X - - -    X - - -    - X - -    - X - -    - X - -
+- X X X    - X X X    - X X X    - X X X    - X X X    X - - -    X - - -    X - - -
+X X - X    - - X X    X - X X    - X X X    X X X X    X - - -    - X - -    X X - -
+
+7215 S-    7216 S-    7217 S-    7219 S-    721a S-    721b S-    721d S-    721e S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - X -    - X X -    X X X -    X - - X    - X - X    X X - X    X - X X    - X X X
+
+721f S-    7221 S-    7225 S-    7229 S-    722d S-    7234 S-    723c S-    7251 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - - -    - X - -    - X - -    - X - -    - X - -    X X - -    X X - -    X - X -
+X X X X    X - - -    X - X -    X - - X    X - X X    - - X -    - - X X    X - - -
+
+7253 S-    7255 S-    7257 S-    7259 S-    725a S-    725b S-    725d S-    725f S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X - -    X - X -    X X X -    X - - X    - X - X    X X - X    X - X X    X X X X
+
+7291 S-    7293 S-    7295 S-    7296 S-    7297 S-    7298 S-    7299 S-    729a S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X
+X - - -    X X - -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X
+
+729b S-    729c S-    729d S-    729e S-    729f S-    72a5 S-    72b4 S-    72d1 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - - X    X - - X    X - - X    X - - X    X - - X    - X - X    X X - X    X - X X
+X X - X    - - X X    X - X X    - X X X    X X X X    X - X -    - - X -    X - - -
+
+72d3 S-    72d5 S-    72d7 S-    72d8 S-    72d9 S-    72da S-    72db S-    72dd S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X
+X X - -    X - X -    X X X -    - - - X    X - - X    - X - X    X X - X    X - X X
+
+72df S-    7312 S-    7316 S-    7318 S-    731a S-    731c S-    731e S-    7321 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X X    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    - X - -
+X X X X    - X - -    - X X -    - - - X    - X - X    - - X X    - X X X    X - - -
+
+7324 S-    7325 S-    7329 S-    732c S-    732d S-    7334 S-    7338 S-    733c SC
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- X - -    - X - -    - X - -    - X - -    - X - -    X X - -    X X - -    X X - -
+- - X -    X - X -    X - - X    - - X X    X - X X    - - X -    - - - X    - - X X
+
+7342 S-    7343 S-    7344 S-    7345 S-    7346 S-    7347 S-    734a S-    734b S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+- X - -    X X - -    - - X -    X - X -    - X X -    X X X -    - X - X    X X - X
+
+734c S-    734d S-    734e S-    734f S-    7352 S-    7358 S-    735a SC    7361 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    X - X -    X - X -    X - X -    - X X -
+- - X X    X - X X    - X X X    X X X X    - X - -    - - - X    - X - X    X - - -
+
+7369 S-    7378 S-    7381 S-    7383 S-    7385 S-    7387 S-    7388 S-    7389 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- X X -    X X X -    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X - - X    - - - X    X - - -    X X - -    X - X -    X X X -    - - - X    X - - X
+
+738a S-    738b S-    738c S-    738d S-    738e S-    738f S-    7392 S-    7396 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    X - - X    X - - X
+- X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - -    - X X -
+
+73a1 S-    73a4 S-    73a5 SC    73b4 S-    73c1 S-    73c2 S-    73c3 SC    73c4 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- X - X    - X - X    - X - X    X X - X    - - X X    - - X X    - - X X    - - X X
+X - - -    - - X -    X - X -    - - X -    X - - -    - X - -    X X - -    - - X -
+
+73c5 SC    73c6 S-    73c7 SC    73c8 S-    73c9 S-    73ca SC    73cb SC    73cc SC
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X
+X - X -    - X X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X
+
+73cd SC    73ce SC    73cf SC    73d2 S-    73e1 S-    7512 S-    7516 S-    7518 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - -    X X - -    X X - -    X X - -    X X - -    X - X -    X - X -    X - X -
+- - X X    - - X X    - - X X    X - X X    - X X X    X - - -    X - - -    X - - -
+X - X X    - X X X    X X X X    - X - -    X - - -    - X - -    - X X -    - - - X
+
+751a S-    751c S-    751e S-    7521 S-    7522 S-    7523 S-    7525 S-    7527 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - - -    X - - -    X - - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- X - X    - - X X    - X X X    X - - -    - X - -    X X - -    X - X -    X X X -
+
+7529 S-    752a S-    752b S-    752d S-    752f S-    7534 S-    7538 S-    753c SC
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    - X - -    X X - -    X X - -    X X - -
+X - - X    - X - X    X X - X    X - X X    X X X X    - - X -    - - - X    - - X X
+
+7552 S-    7558 S-    755a SC    7578 S-    7581 S-    7583 S-    7585 S-    7587 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - X -    X - X -    X - X -    X X X -    - - - X    - - - X    - - - X    - - - X
+- X - -    - - - X    - X - X    - - - X    X - - -    X X - -    X - X -    X X X -
+
+7588 S-    7589 S-    758a S-    758b S-    758d S-    758f S-    7592 S-    7594 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    X - - X    X - - X
+- - - X    X - - X    - X - X    X X - X    X - X X    X X X X    - X - -    - - X -
+
+7596 SC    75a1 S-    75a2 S-    75a3 SC    75a5 SC    75a7 SC    75a8 S-    75a9 SC
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+- X X -    X - - -    - X - -    X X - -    X - X -    X X X -    - - - X    X - - X
+
+75aa SC    75ab SC    75ad SC    75af SC    75b4 S-    75d2 S-    7712 S-    7716 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X X X -    X X X -
+- X - X    - X - X    - X - X    - X - X    X X - X    X - X X    X - - -    X - - -
+- X - X    X X - X    X - X X    X X X X    - - X -    - X - -    - X - -    - X X -
+
+7718 S-    771a S-    771c S-    771e S-    7721 S-    7725 S-    7729 S-    772d S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    X - - -    X - - -    X - - -    - X - -    - X - -    - X - -    - X - -
+- - - X    - X - X    - - X X    - X X X    X - - -    X - X -    X - - X    X - X X
+
+7734 S-    7738 S-    773c SC    7752 S-    7758 S-    775a SC    7778 S-    7781 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - -    X X - -    X X - -    X - X -    X - X -    X - X -    X X X -    - - - X
+- - X -    - - - X    - - X X    - X - -    - - - X    - X - X    - - - X    X - - -
+
+7783 S-    7785 S-    7787 S-    7788 S-    7789 S-    778a S-    778b S-    778d S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X X - -    X - X -    X X X -    - - - X    X - - X    - X - X    X X - X    X - X X
+
+778f S-    7792 S-    7794 S-    7796 SC    77a1 S-    77a5 SC    77b4 S-    77d2 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    X - - X    X - - X    X - - X    - X - X    - X - X    X X - X    X - X X
+X X X X    - X - -    - - X -    - X X -    X - - -    X - X -    - - X -    - X - -
+
+7811 S-    7813 S-    7815 S-    7817 S-    7818 --    7819 S-    781a --    781b S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - - -    X X - -    X - X -    X X X -    - - - X    X - - X    - X - X    X X - X
+
+781c --    781d S-    781e --    781f S-    7831 S-    7832 S-    7833 S-    7835 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X - - -    X - - -    X - - -    X - - -    X X - -    X X - -    X X - -    X X - -
+- - X X    X - X X    - X X X    X X X X    X - - -    - X - -    X X - -    X - X -
+
+7836 S-    7837 S-    7839 S-    783a S-    783b S-    783c --    783d S-    783e S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- X X -    X X X -    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X
+
+783f S-    7851 S-    7853 S-    7855 S-    7857 S-    7859 S-    785a --    785b S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X X - -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X X X X    X - - -    X X - -    X - X -    X X X -    X - - X    - X - X    X X - X
+
+785d S-    785f S-    7871 S-    7872 S-    7873 S-    7875 S-    7877 S-    7879 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X - X -    X - X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - X X    X X X X    X - - -    - X - -    X X - -    X - X -    X X X -    X - - X
+
+787a S-    787b S-    787d S-    787f S-    7881 S-    7883 S-    7885 S-    7887 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X X X -    X X X -    X X X -    X X X -    - - - X    - - - X    - - - X    - - - X
+- X - X    X X - X    X - X X    X X X X    X - - -    X X - -    X - X -    X X X -
+
+7888 S-    7889 S-    788a S-    788b S-    788d S-    788f S-    7891 S-    7893 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    X - - X    X - - X
+- - - X    X - - X    - X - X    X X - X    X - X X    X X X X    X - - -    X X - -
+
+7894 S-    7895 S-    7896 S-    7897 S-    7898 S-    7899 S-    789a S-    789b S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X
+- - X -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X    X X - X
+
+789c S-    789d S-    789e S-    789f S-    78a2 S-    78a3 S-    78a5 S-    78a7 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X - - X    X - - X    X - - X    X - - X    - X - X    - X - X    - X - X    - X - X
+- - X X    X - X X    - X X X    X X X X    - X - -    X X - -    X - X -    X X X -
+
+78a8 S-    78a9 S-    78aa S-    78ab S-    78ad S-    78af S-    78b1 S-    78b2 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    X X - X    X X - X
+- - - X    X - - X    - X - X    X X - X    X - X X    X X X X    X - - -    - X - -
+
+78b3 S-    78b4 S-    78b5 S-    78b6 S-    78b7 S-    78b8 S-    78b9 S-    78ba S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+X X - -    - - X -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X
+
+78bb S-    78bc S-    78bd S-    78be S-    78bf S-    78d1 S-    78d3 S-    78d5 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X X - X    X X - X    X X - X    X X - X    X X - X    X - X X    X - X X    X - X X
+X X - X    - - X X    X - X X    - X X X    X X X X    X - - -    X X - -    X - X -
+
+78d7 S-    78d8 S-    78d9 S-    78da S-    78db S-    78dd S-    78df S-    78f1 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X X X X
+X X X -    - - - X    X - - X    - X - X    X X - X    X - X X    X X X X    X - - -
+
+78f2 S-    78f3 S-    78f5 S-    78f7 S-    78f8 S-    78f9 S-    78fa S-    78fb S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+- X - -    X X - -    X - X -    X X X -    - - - X    X - - X    - X - X    X X - X
+
+78fd S-    78ff S-    7912 S-    7916 S-    7918 S-    791a S-    791c S-    791e S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X
+X X X X    X X X X    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - X X    X X X X    - X - -    - X X -    - - - X    - X - X    - - X X    - X X X
+
+7921 S-    7922 S-    7923 S-    7925 S-    7926 S-    7927 S-    7929 S-    792a S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X - - -    - X - -    X X - -    X - X -    - X X -    X X X -    X - - X    - X - X
+
+792b S-    792d S-    792e S-    792f S-    7938 S-    793c S-    7944 S-    7945 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X
+- X - -    - X - -    - X - -    - X - -    X X - -    X X - -    - - X -    - - X -
+X X - X    X - X X    - X X X    X X X X    - - - X    - - X X    - - X -    X - X -
+
+7946 S-    7947 S-    7948 S-    7949 S-    794a S-    794b S-    794c S-    794d S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+- X X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X
+
+794e S-    794f S-    7952 S-    7958 S-    795a SC    7961 S-    7962 S-    7963 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X
+- - X -    - - X -    X - X -    X - X -    X - X -    - X X -    - X X -    - X X -
+- X X X    X X X X    - X - -    - - - X    - X - X    X - - -    - X - -    X X - -
+
+7964 S-    7965 SC    7966 SC    7967 SC    7968 S-    7969 SC    796a SC    796b SC
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- - X -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X    X X - X
+
+796c S-    796d SC    796e SC    796f SC    7978 S-    7981 S-    7983 S-    7984 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X
+- X X -    - X X -    - X X -    - X X -    X X X -    - - - X    - - - X    - - - X
+- - X X    X - X X    - X X X    X X X X    - - - X    X - - -    X X - -    - - X -
+
+7985 S-    7986 S-    7987 S-    7992 S-    7994 S-    7996 SC    79a1 S-    79a4 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X
+- - - X    - - - X    - - - X    X - - X    X - - X    X - - X    - X - X    - X - X
+X - X -    - X X -    X X X -    - X - -    - - X -    - X X -    X - - -    - - X -
+
+79a5 SC    79b4 S-    79c1 S-    79c3 S-    79d2 S-    79e1 S-    7a11 S-    7a12 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    - X - X    - X - X
+- X - X    X X - X    - - X X    - - X X    X - X X    - X X X    X - - -    X - - -
+X - X -    - - X -    X - - -    X X - -    - X - -    X - - -    X - - -    - X - -
+
+7a13 S-    7a15 S-    7a16 S-    7a17 S-    7a18 S-    7a19 S-    7a1a S-    7a1b S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X X - -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X    X X - X
+
+7a1c S-    7a1d S-    7a1e S-    7a1f S-    7a21 S-    7a25 S-    7a29 S-    7a2d S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X - - -    X - - -    X - - -    X - - -    - X - -    - X - -    - X - -    - X - -
+- - X X    X - X X    - X X X    X X X X    X - - -    X - X -    X - - X    X - X X
+
+7a34 S-    7a38 S-    7a3c SC    7a51 S-    7a52 S-    7a53 SC    7a55 SC    7a57 SC
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X X - -    X X - -    X X - -    X - X -    X - X -    X - X -    X - X -    X - X -
+- - X -    - - - X    - - X X    X - - -    - X - -    X X - -    X - X -    X X X -
+
+7a58 S-    7a59 SC    7a5a SC    7a5b SC    7a5d SC    7a5f SC    7a78 S-    7a81 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X X X -    - - - X
+- - - X    X - - X    - X - X    X X - X    X - X X    X X X X    - - - X    X - - -
+
+7a83 S-    7a85 S-    7a87 S-    7a92 S-    7a94 S-    7a96 SC    7aa1 S-    7aa5 SC
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+- - - X    - - - X    - - - X    X - - X    X - - X    X - - X    - X - X    - X - X
+X X - -    X - X -    X X X -    - X - -    - - X -    - X X -    X - - -    X - X -
+
+7ab4 S-    7ad2 S-    7b12 S-    7b16 S-    7b18 S-    7b1a S-    7b1c S-    7b1e S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - X    - X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+X X - X    X - X X    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- - X -    - X - -    - X - -    - X X -    - - - X    - X - X    - - X X    - X X X
+
+7b21 S-    7b24 S-    7b25 S-    7b29 S-    7b2c S-    7b2d S-    7b34 S-    7b38 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    X X - -    X X - -
+X - - -    - - X -    X - X -    X - - X    - - X X    X - X X    - - X -    - - - X
+
+7b3c SC    7b42 S-    7b43 S-    7b44 S-    7b45 S-    7b46 S-    7b47 S-    7b48 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+X X - -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+- - X X    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -    - - - X
+
+7b49 S-    7b4a S-    7b4b S-    7b4c S-    7b4d S-    7b4e S-    7b4f S-    7b52 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    X - X -
+X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - -
+
+7b58 S-    7b5a SC    7b61 S-    7b68 S-    7b69 SC    7b78 S-    7b81 S-    7b83 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+X - X -    X - X -    - X X -    - X X -    - X X -    X X X -    - - - X    - - - X
+- - - X    - X - X    X - - -    - - - X    X - - X    - - - X    X - - -    X X - -
+
+7b84 S-    7b85 S-    7b86 S-    7b87 S-    7b92 S-    7b94 S-    7b96 SC    7ba1 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+- - - X    - - - X    - - - X    - - - X    X - - X    X - - X    X - - X    - X - X
+- - X -    X - X -    - X X -    X X X -    - X - -    - - X -    - X X -    X - - -
+
+7ba4 S-    7ba5 SC    7bb4 S-    7bc1 S-    7bc2 S-    7bc3 SC    7bd2 S-    7be1 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X
+- X - X    - X - X    X X - X    - - X X    - - X X    - - X X    X - X X    - X X X
+- - X -    X - X -    - - X -    X - - -    - X - -    X X - -    - X - -    X - - -
+
+7d12 S-    7d16 S-    7d18 S-    7d1a S-    7d1c S-    7d1e S-    7d21 S-    7d22 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    - X - -    - X - -
+- X - -    - X X -    - - - X    - X - X    - - X X    - X X X    X - - -    - X - -
+
+7d23 S-    7d25 S-    7d27 S-    7d29 S-    7d2a S-    7d2b S-    7d2d S-    7d2f S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+X X - -    X - X -    X X X -    X - - X    - X - X    X X - X    X - X X    X X X X
+
+7d34 S-    7d38 S-    7d3c SC    7d52 S-    7d58 S-    7d5a SC    7d78 S-    7d81 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X
+X X - -    X X - -    X X - -    X - X -    X - X -    X - X -    X X X -    - - - X
+- - X -    - - - X    - - X X    - X - -    - - - X    - X - X    - - - X    X - - -
+
+7d83 S-    7d85 S-    7d87 S-    7d92 S-    7d94 S-    7d96 SC    7da1 S-    7da5 SC
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X
+- - - X    - - - X    - - - X    X - - X    X - - X    X - - X    - X - X    - X - X
+X X - -    X - X -    X X X -    - X - -    - - X -    - X X -    X - - -    X - X -
+
+7db4 S-    7dd2 S-    7f12 S-    7f16 S-    7f18 S-    7f1a S-    7f1c S-    7f1e S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - X X    X - X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X X - X    X - X X    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- - X -    - X - -    - X - -    - X X -    - - - X    - X - X    - - X X    - X X X
+
+7f21 S-    7f25 S-    7f29 S-    7f2d S-    7f34 S-    7f38 S-    7f3c SC    7f52 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+- X - -    - X - -    - X - -    - X - -    X X - -    X X - -    X X - -    X - X -
+X - - -    X - X -    X - - X    X - X X    - - X -    - - - X    - - X X    - X - -
+
+7f58 S-    7f5a SC    7f78 S-    7f81 S-    7f83 S-    7f85 S-    7f87 S-    7f92 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X - X -    X - X -    X X X -    - - - X    - - - X    - - - X    - - - X    X - - X
+- - - X    - X - X    - - - X    X - - -    X X - -    X - X -    X X X -    - X - -
+
+7f94 S-    7f96 SC    7fa1 S-    7fa5 SC    7fb4 S-    7fd2 S-    f112 S-    f116 S-
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X X    X X X X
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X - - -    X - - -
+X - - X    X - - X    - X - X    - X - X    X X - X    X - X X    X - - -    X - - -
+- - X -    - X X -    X - - -    X - X -    - - X -    - X - -    - X - -    - X X -
+
+f11a S-    f11e S-    f121 S-    f122 S-    f123 S-    f125 S-    f126 S-    f127 S-
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - - -    X - - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- X - X    - X X X    X - - -    - X - -    X X - -    X - X -    - X X -    X X X -
+
+f129 S-    f12a S-    f12b S-    f12d S-    f12e S-    f12f S-    f138 S-    f13c S-
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    X X - -    X X - -
+X - - X    - X - X    X X - X    X - X X    - X X X    X X X X    - - - X    - - X X
+
+f15a S-    f162 S-    f163 S-    f164 S-    f165 S-    f166 S-    f167 S-    f169 S-
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+X - X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -    - X X -
+- X - X    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -    X - - X
+
+f16a S-    f16b S-    f16c S-    f16d S-    f16e S-    f16f S-    f178 S-    f1a2 S-
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X -    - X X -    - X X -    - X X -    - X X -    - X X -    X X X -    - X - X
+- X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - - - X    - X - -
+
+f1a3 S-    f1a5 S-    f1a6 S-    f1a7 S-    f1aa S-    f1ab S-    f1ae S-    f1af S-
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+X X - -    X - X -    - X X -    X X X -    - X - X    X X - X    - X X X    X X X X
+
+f1e2 S-    f1e3 S-    f1e4 S-    f1e5 S-    f1e6 S-    f1e7 S-    f1ea S-    f1eb S-
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X    - X X X
+- X - -    X X - -    - - X -    X - X -    - X X -    X X X -    - X - X    X X - X
+
+f1ee S-    f1ef S-    f312 S-    f316 S-    f318 S-    f31a S-    f31c S-    f31e S-
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X - - -    X - - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- X X X    - X X X    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -
+- X X X    X X X X    - X - -    - X X -    - - - X    - X - X    - - X X    - X X X
+
+f334 S-    f33c SC    f342 S-    f343 S-    f344 S-    f345 S-    f346 S-    f347 S-
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X X - -    X X - -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -
+- - X -    - - X X    - X - -    X X - -    - - X -    X - X -    - X X -    X X X -
+
+f34a S-    f34b S-    f34c S-    f34d S-    f34e S-    f34f S-    f352 S-    f358 S-
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    X - X -    X - X -
+- X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - -    - - - X
+
+f35a SC    f361 S-    f369 S-    f378 S-    f3c1 S-    f3c3 SC    f3c4 S-    f3c5 SC
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -
+X - X -    - X X -    - X X -    X X X -    - - X X    - - X X    - - X X    - - X X
+- X - X    X - - -    X - - X    - - - X    X - - -    X X - -    - - X -    X - X -
+
+f3c6 S-    f3c7 SC    f3cc SC    f3cd SC    f3cf SC    f3d2 S-    f512 S-    f516 S-
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X - X -    X - X -
+- - X X    - - X X    - - X X    - - X X    - - X X    X - X X    X - - -    X - - -
+- X X -    X X X -    - - X X    X - X X    X X X X    - X - -    - X - -    - X X -
+
+f51a S-    f51e S-    f521 S-    f522 S-    f523 S-    f525 S-    f527 S-    f529 S-
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - - -    X - - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -
+- X - X    - X X X    X - - -    - X - -    X X - -    X - X -    X X X -    X - - X
+
+f52a S-    f52b S-    f52d S-    f52f S-    f534 S-    f538 S-    f53c SC    f552 S-
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+- X - -    - X - -    - X - -    - X - -    X X - -    X X - -    X X - -    X - X -
+- X - X    X X - X    X - X X    X X X X    - - X -    - - - X    - - X X    - X - -
+
+f55a SC    f578 S-    f5a1 S-    f5a2 S-    f5a3 SC    f5a5 SC    f5a7 SC    f5aa SC
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -
+X - X -    X X X -    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X
+- X - X    - - - X    X - - -    - X - -    X X - -    X - X -    X X X -    - X - X
+
+f5ab SC    f5af SC    f5b4 S-    f712 S-    f716 S-    f718 S-    f71a S-    f71c S-
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X - X -    X - X -    X - X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- X - X    - X - X    X X - X    X - - -    X - - -    X - - -    X - - -    X - - -
+X X - X    X X X X    - - X -    - X - -    - X X -    - - - X    - X - X    - - X X
+
+f71e S-    f721 S-    f725 S-    f729 S-    f72d S-    f734 S-    f738 S-    f73c SC
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - - -    - X - -    - X - -    - X - -    - X - -    X X - -    X X - -    X X - -
+- X X X    X - - -    X - X -    X - - X    X - X X    - - X -    - - - X    - - X X
+
+f752 S-    f758 S-    f75a SC    f778 S-    f781 S-    f783 S-    f785 S-    f787 S-
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+X - X -    X - X -    X - X -    X X X -    - - - X    - - - X    - - - X    - - - X
+- X - -    - - - X    - X - X    - - - X    X - - -    X X - -    X - X -    X X X -
+
+f788 S-    f789 S-    f78a S-    f78b S-    f78d S-    f78f S-    f792 S-    f794 S-
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    X - - X    X - - X
+- - - X    X - - X    - X - X    X X - X    X - X X    X X X X    - X - -    - - X -
+
+f796 SC    f7a1 S-    f7a5 SC    f7b4 S-    f7d2 S-    ff12 S-    ff16 S-    ff1a S-
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X X    X X X X    X X X X
+X - - X    - X - X    - X - X    X X - X    X - X X    X - - -    X - - -    X - - -
+- X X -    X - - -    X - X -    - - X -    - X - -    - X - -    - X X -    - X - X
+
+ff1e S-    ff34 S-    ff3c SC    ff52 S-    ff5a SC    ff78 S-
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X 
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X
+X - - -    X X - -    X X - -    X - X -    X - X -    X X X -
+- X X X    - - X -    - - X X    - X - -    - X - X    - - - X
+

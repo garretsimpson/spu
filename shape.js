@@ -113,7 +113,7 @@ export class Shape {
    * @returns {Number}
    */
   static keyCode(code) {
-    const fcode = Shape.flipCode(code);
+    const fcode = Shape.mirrorCode(code);
     let result = Math.min(code, fcode);
 
     for (let i = 1; i < 4; i++) {
@@ -156,13 +156,17 @@ export class Shape {
     return new Shape(Shape.leftCode(this.code));
   }
 
-  static flipCode(code) {
+  static mirrorCode(code) {
     let result = 0;
     for (let i = 0; i < 4; i++) {
       result = (result << 1) | (code & 0x1111);
       code >>>= 1;
     }
     return result;
+  }
+
+  mirror() {
+    return new Shape(Shape.mirrorCode(this.code));
   }
 
   // Remove empty layers
@@ -239,6 +243,21 @@ export class Shape {
     return [new Shape(bottom), new Shape(top)];
   }
 
+  static flipCode(code) {
+    code = Shape.mirrorCode(code);
+    let result = 0;
+    for (let i = 0; i < 4; i++) {
+      if (code == 0) break;
+      result = (result << 4) | (code & 0xf);
+      code >>>= 4;
+    }
+    return result;
+  }
+
+  flip() {
+    return new Shape(Shape.flipCode(this.code));
+  }
+
   static layerCount(code) {
     let max = 0x0fff;
     for (let num = 4; num > 0; num--) {
@@ -268,6 +287,7 @@ export class Shape {
     return !Shape.allShapes.has(code);
   }
 
+  // TODO: This might be simpler with bit logic.
   static toLayers(code) {
     const result = [];
     while (code > 0) {
@@ -350,7 +370,7 @@ export class Shape {
   static runTests() {
     const TESTS = [
       ["toShape", [0x004b], "RrRr--Rr:----Rg--:--------:--------"],
-      ["flipCode", [0x1234], 0x84c2],
+      ["mirrorCode", [0x1234], 0x84c2],
       ["keyCode", [0x4321], 0x1624],
       ["leftCode", [0x0001], 0x0008],
       ["leftCode", [0x1248], 0x8124],
@@ -364,6 +384,8 @@ export class Shape {
       ["unstackCode", [0x000f], [0x0000, 0x000f]],
       ["unstackCode", [0x0234], [0x0034, 0x0002]],
       ["unstackCode", [0x1234], [0x0234, 0x0001]],
+      ["flipCode", [0x0001], 0x0008],
+      ["flipCode", [0x1234], 0x2c48],
       ["layerCount", [0x0001], 1],
       ["layerCount", [0x000f], 1],
       ["layerCount", [0xffff], 4],

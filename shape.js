@@ -219,14 +219,10 @@ export class Shape {
 
   static unstackCode(code) {
     if (code == 0) return [0, 0];
-    let layer = 3;
-    let key = 0xf000;
-    for (; layer >= 0; layer--) {
-      if ((code & key) != 0) break;
-      key >>>= 4;
-    }
-    const bottom = code & ~key;
-    const top = code >>> (layer * 4);
+    const num = Shape.layerCount(code) - 1;
+    const mask = 0x000f << (4 * num); // top layer
+    const bottom = code & ~mask;
+    const top = code >>> (4 * num);
     return [bottom, top];
   }
 
@@ -258,13 +254,45 @@ export class Shape {
     return new Shape(Shape.flipCode(this.code));
   }
 
+  // Rotate each layer 90 degrees more than layer above.
+  // Example: (top to bottom)
+  // 1 layer shape: 90
+  // 4 layer shape: 90, 180, 270, 0 (360)
+  static screwLeftCode(code) {
+    let result = 0;
+    while (code > 0) {
+      code = Shape.leftCode(code);
+      const [bottom, top] = Shape.unstackCode(code);
+      result = (result << 4) | top;
+      code = bottom;
+    }
+    return result;
+  }
+
+  static screwRightCode(code) {
+    let result = 0;
+    while (code > 0) {
+      code = Shape.rightCode(code);
+      const [bottom, top] = Shape.unstackCode(code);
+      result = (result << 4) | top;
+      code = bottom;
+    }
+    return result;
+  }
+
+  screwLeft() {
+    return new Shape(Shape.screwLeftCode(this.code));
+  }
+
+  screwRight() {
+    return new Shape(Shape.screwRightCode(this.code));
+  }
+
   static layerCount(code) {
-    let max = 0x0fff;
+    let mask = 0xf000;
     for (let num = 4; num > 0; num--) {
-      if (code > max) {
-        return num;
-      }
-      max >>>= 4;
+      if (code & mask) return num;
+      mask >>>= 4;
     }
     return 0;
   }
@@ -386,6 +414,10 @@ export class Shape {
       ["unstackCode", [0x1234], [0x0234, 0x0001]],
       ["flipCode", [0x0001], 0x0008],
       ["flipCode", [0x1234], 0x2c48],
+      ["screwLeftCode", [0x0001], 0x0008],
+      ["screwLeftCode", [0x1111], 0x8421],
+      ["screwRightCode", [0x0001], 0x0002],
+      ["screwRightCode", [0x1111], 0x2481],
       ["layerCount", [0x0001], 1],
       ["layerCount", [0x000f], 1],
       ["layerCount", [0xffff], 4],
@@ -503,9 +535,9 @@ export class Shape {
     }
     const unknownShapes = [];
     for (const [code, value] of keyShapes) {
-      const known =
-        value.invalid || value.impossible || value.cuttable || value.stackAll;
-      // const known = value.invalid || !value.impossible;
+      // const known =
+      // value.invalid || value.impossible || value.cuttable || value.stackAll;
+      const known = value.invalid || !value.impossible;
       if (!known) unknownShapes.push(code);
     }
 
@@ -522,6 +554,12 @@ export class Shape {
         unknown ? "XXXX" : ""
       );
     }
+
+    if (unknownShapes.length == 0) {
+      console.log("No unknown shapes");
+      return;
+    }
+
     console.log("");
     console.log("Number unknown:", unknownShapes.length);
     let code = unknownShapes[0];

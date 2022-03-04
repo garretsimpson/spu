@@ -35,10 +35,21 @@
  */
 
 import { Shape } from "./shape.js";
+import { appendFileSync, rm } from "fs";
 
 const allShapes = new Map();
 
 export class Ops {
+  static OPS_FILE_NAME = "ops.txt";
+
+  static appendFile(filename, data) {
+    try {
+      appendFileSync(filename, data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   /**
    * Do one input transforms
    * @param {Number} code
@@ -53,6 +64,9 @@ export class Ops {
       "cutRight",
       // "unstackBottom",
       // "unstackTop",
+      // "screwLeft",
+      // "screwRight",
+      "flip",
     ];
 
     if (code == 0) {
@@ -108,13 +122,11 @@ export class Ops {
       if (code == 0) continue;
       let ops = allShapes.get(code);
       if (ops == undefined) {
-        // ops = new Set();
         ops = [];
         allShapes.set(code, ops);
         newShapes.push(code);
       }
-      // ops.add(result.op);
-      ops.push(result.op);
+      // ops.push(result.op);  // Store the op
       num++;
     }
     return num;
@@ -125,7 +137,7 @@ export class Ops {
     const newShapes = [];
     const usedShapes = [];
     const stats = { iters: 0, ops: 0 };
-    const MAX_ITERS = 10000;
+    const MAX_ITERS = 1000;
 
     newShapes.push(SHAPE1);
     allShapes.set(SHAPE1, []);
@@ -140,7 +152,7 @@ export class Ops {
 
     let shape;
     while (newShapes.length > 0) {
-      if (stats.iters >= MAX_ITERS) break;
+      // if (stats.iters >= MAX_ITERS) break;
       stats.iters++;
       if (stats.iters % 100 == 0) {
         console.log(
@@ -186,8 +198,9 @@ export class Ops {
 
     // Ops.displayShapes();
     Ops.normalize();
+    // Ops.appendFile(Ops.OPS_FILE_NAME, "Testing 123");
 
-    Ops.listAllOps();
+    // Ops.saveAllOps();
     // Ops.findShape(SHAPE1);
     // Ops.findShape(0x4b); // Logo
     // Ops.findShape(0x03); // Logo part
@@ -246,30 +259,42 @@ export class Ops {
     const ops = allShapes.get(code);
 
     if (ops == undefined || ops.length == 0) {
-      return;
+      return "";
     }
     ops.sort();
 
-    let result;
+    let result = "";
+    let line;
+    const head = Shape.pp(code);
     let i = 0;
     for (i = 0; i < ops.length; i++) {
       if (i % MAX_LENGTH == 0) {
-        result = Shape.pp(code);
+        line = head;
       }
-      result += " ";
-      result += ops[i];
+      line += " ";
+      line += ops[i];
       if (i % MAX_LENGTH == MAX_LENGTH - 1) {
-        console.log(result);
+        result += line;
+        result += "\n";
       }
     }
     if (i % MAX_LENGTH != MAX_LENGTH - 1) {
-      console.log(result);
+      result += line;
+      result += "\n";
     }
+    return result;
   }
 
-  static listAllOps() {
+  static saveAllOps() {
     for (let code = 0; code < 0xffff; code++) {
-      this.listOps(code);
+      const data = Ops.listOps(code);
+      try {
+        rm(Ops.OPS_FILE_NAME);
+      } catch (err) {
+        console.error(err);
+      }
+      Ops.appendFile(Ops.OPS_FILE_NAME, data);
+      // console.log(data);
     }
   }
 

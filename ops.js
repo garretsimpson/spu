@@ -145,6 +145,10 @@ export class Ops {
   }
 
   static runOps() {
+    const FULL_SHAPES = [0xf];
+    const FLAT_SHAPES = [
+      0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf,
+    ];
     const LOGO1_SHAPES = [0x1, 0x2, 0x4, 0x8];
     const LOGO2_SHAPES = [0x12, 0x24, 0x48, 0x81, 0x18, 0x21, 0x42, 0x84];
     const LOGO3_SHAPES = [
@@ -163,11 +167,22 @@ export class Ops {
     const seenShapes = [];
 
     let cost = 0;
+    // Ops.saveShapes(
+    //   START_SHAPES.map((code) => {
+    //     return { code, cost, op: "prim" };
+    //   })
+    // );
     Ops.saveShapes(
-      START_SHAPES.map((code) => {
-        return { code, cost, op: "prim" };
+      FULL_SHAPES.map((code) => {
+        return { code, cost: 0, op: "prim" };
       })
     );
+    // const LOGO_SHAPES = [...LOGO2_SHAPES, ...LOGO3_SHAPES, ...LOGO4_SHAPES];
+    // Ops.saveShapes(
+    //   LOGO_SHAPES.map((code) => {
+    //     return { code, cost: 10, op: "prim" };
+    //   })
+    // );
 
     let iters = 0;
     Ops.logTable("Iters", "Cost", "Total", "ToDo");
@@ -179,6 +194,7 @@ export class Ops {
       while (shapes.length > 0) {
         iters++;
         // if (iters >= MAX_ITERS) break;
+        if (cost > 8) break;
         if (iters % 100 == 0) {
           Ops.logTable(iters, cost, allShapes.size, shapes.length);
         }
@@ -212,17 +228,20 @@ export class Ops {
     console.log("Total:", allShapes.size);
     console.log("");
 
-    Ops.displayShapes();
+    // Ops.displayShapes();
     // Ops.normalize();
     // Ops.appendFile(Ops.OPS_FILE_NAME, "Testing 123");
 
     // Ops.saveAllOps();
-    // Ops.findShape(SHAPE1);
-    // Ops.findShape(0x4b); // Logo
-    // Ops.findShape(0x03); // Logo part
-    // Ops.findShape(0x48); // Logo part
-    // Ops.findShape(0xfe1f); // Rocket
-    // Ops.findShape(0xffff);
+    for (let code = 0x1; code <= 0xf; code++) {
+      Ops.findShape(code);
+    }
+    Ops.findShape(0xffff);
+    Ops.findShape(0x12);
+    Ops.findShape(0x121);
+    Ops.findShape(0x1212);
+    Ops.findShape(0x4b); // Logo
+    Ops.findShape(0xfe1f); // Rocket
   }
 
   static normalize() {
@@ -255,14 +274,15 @@ export class Ops {
     }
   }
 
-  static findShape(code) {
-    const ops = allShapes.get(Shape.keyCode(code));
-    if (ops == undefined || ops.length == 0) {
-      console.log(Shape.pp(code), "not found");
+  static findShape(code, i = 0) {
+    const shape = allShapes.get(code);
+    if (shape === undefined) {
+      console.log("Shape not found:", Shape.pp(code));
       return;
     }
-    console.log(Shape.pp(code), "found (" + ops.length + ")...");
-    Ops.listOps(code);
+    Ops.displayShape(shape, i++);
+    shape.code1 !== undefined && Ops.findShape(shape.code1, i);
+    shape.code2 !== undefined && Ops.findShape(shape.code2, i);
   }
 
   /**
@@ -321,10 +341,11 @@ export class Ops {
     }
   }
 
-  static displayShape(shape) {
+  static displayShape(shape, i = 0) {
     console.log(
+      "  ".repeat(i),
       Shape.pp(shape.code),
-      shape.cost.toString().padStart(2),
+      // shape.cost.toString().padStart(2),
       shape.op,
       shape.code1 === undefined ? "" : Shape.pp(shape.code1),
       shape.code2 === undefined ? "" : Shape.pp(shape.code2)

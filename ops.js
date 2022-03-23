@@ -51,7 +51,7 @@ export class Ops {
    * Do one input transforms
    * @param {Number} code
    */
-  static doOneOps(code1, cost) {
+  static doOneOps(shape1) {
     const results = [];
     const ops = [
       "left",
@@ -66,7 +66,8 @@ export class Ops {
       // "flip",
     ];
 
-    cost++;
+    const code1 = shape1.code;
+    const cost = shape1.cost + 1;
     for (let op of ops) {
       const newCode = Shape[op + "Code"](code1);
       // Skip NOPs
@@ -86,11 +87,13 @@ export class Ops {
    * Do two input transforms
    * @param {Number} code
    */
-  static doTwoOps(code1, code2, cost) {
+  static doTwoOps(shape1, shape2) {
     const results = [];
     const ops = ["stack"];
 
-    cost++;
+    const code1 = shape1.code;
+    const code2 = shape2.code;
+    const cost = shape1.cost + shape2.cost + 1;
     let newCode, result;
     for (let op of ops) {
       newCode = Shape[op + "Code"](code1, code2);
@@ -122,17 +125,25 @@ export class Ops {
       if (entry === undefined) {
         allShapes.set(code, shape);
         results.push(shape);
+        shape.alt = 0;
       } else {
         if (shape.cost === entry.cost) {
           // console.debug("#### Same cost found ####");
           // Ops.displayShape(shape);
+          entry.alt++;
         } else if (shape.cost < entry.cost) {
           console.error("#### Lower cost found ####");
           // Ops.displayShape(shape);
-          allShapes.set(code, shape);
+          // Copy contents
+          entry.cost = shape.cost;
+          entry.op = shape.op;
+          entry.code1 = shape.code1;
+          entry.code2 = shape.code2;
+          shape.alt = 0;
         }
       }
     }
+    // TODO: shape cost may have changed
     for (let shape of results) {
       const cost = shape.cost;
       const entry = newShapes[cost];
@@ -158,31 +169,20 @@ export class Ops {
       0x1212, 0x2424, 0x4848, 0x8181, 0x1818, 0x2121, 0x4242, 0x8484,
     ];
     const START_SHAPES = [
-      ...LOGO1_SHAPES,
+      ...FLAT_SHAPES,
       ...LOGO2_SHAPES,
       ...LOGO3_SHAPES,
       ...LOGO4_SHAPES,
     ];
-    const MAX_ITERS = 32;
+    const MAX_ITERS = 13;
     const seenShapes = [];
 
     let cost = 0;
-    // Ops.saveShapes(
-    //   START_SHAPES.map((code) => {
-    //     return { code, cost, op: "prim" };
-    //   })
-    // );
     Ops.saveShapes(
-      FULL_SHAPES.map((code) => {
-        return { code, cost: 0, op: "prim" };
+      START_SHAPES.map((code) => {
+        return { code, cost, op: "prim" };
       })
     );
-    // const LOGO_SHAPES = [...LOGO2_SHAPES, ...LOGO3_SHAPES, ...LOGO4_SHAPES];
-    // Ops.saveShapes(
-    //   LOGO_SHAPES.map((code) => {
-    //     return { code, cost: 10, op: "prim" };
-    //   })
-    // );
 
     let iters = 0;
     Ops.logTable("Iters", "Cost", "Total", "ToDo");
@@ -193,25 +193,23 @@ export class Ops {
       if (shapes === undefined) continue;
       while (shapes.length > 0) {
         iters++;
-        // if (iters >= MAX_ITERS) break;
-        if (cost > 8) break;
+        // if (cost > 12) break;
         if (iters % 100 == 0) {
           Ops.logTable(iters, cost, allShapes.size, shapes.length);
         }
+        // if (iters >= MAX_ITERS) break;
 
         const shape = shapes.shift();
         seenShapes.push(shape);
-        // const seenShapes = Array.from(allShapes.values());
 
         // do one input operations
-        Ops.saveShapes(Ops.doOneOps(shape.code, cost));
+        Ops.saveShapes(Ops.doOneOps(shape));
 
         // do two input operations
         for (const other of seenShapes) {
-          const newCost = cost + other.cost; // TODO: Lookup other cost as it might be lower?
-          Ops.saveShapes(Ops.doTwoOps(shape.code, other.code, newCost));
-          if (other.code == shape.code) continue;
-          Ops.saveShapes(Ops.doTwoOps(other.code, shape.code, newCost));
+          Ops.saveShapes(Ops.doTwoOps(shape, other));
+          if (other.code === shape.code) continue;
+          Ops.saveShapes(Ops.doTwoOps(other, shape));
         }
       }
     }
@@ -348,7 +346,8 @@ export class Ops {
       // shape.cost.toString().padStart(2),
       shape.op,
       shape.code1 === undefined ? "" : Shape.pp(shape.code1),
-      shape.code2 === undefined ? "" : Shape.pp(shape.code2)
+      shape.code2 === undefined ? "" : Shape.pp(shape.code2),
+      `(${shape.alt})`
     );
   }
 

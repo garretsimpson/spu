@@ -193,8 +193,8 @@ export class Ops {
   }
 
   static runOps() {
-    const START_SHAPES = LOGO_SHAPES;
-    const MAX_ITERS = 24000;
+    const START_SHAPES = [...FLAT_SHAPES, ...LOGO_SHAPES];
+    const MAX_ITERS = 10000;
     const MAX_LEVEL = 4;
     let iters = 0;
 
@@ -218,7 +218,7 @@ export class Ops {
           const total = Object.keys(allShapes).length;
           Ops.logTable(iters, level, total, shapes.length);
         }
-        // if (iters > MAX_ITERS) break;
+        if (iters > MAX_ITERS) break;
         // if (level > MAX_LEVEL) break;
 
         const shape = shapes.shift();
@@ -237,11 +237,15 @@ export class Ops {
     }
     console.log("");
 
-    // console.log("Remaining shapes:", newShapes.length);
+    console.log("Remaining shapes:");
+    const levels = Object.keys(newShapes);
+    for (let level of levels) {
+      console.log(level, newShapes[level].length);
+    }
     // for (const code of newShapes) {
     //   console.log(Shape.pp(code));
     // }
-    // console.log("");
+    console.log("");
 
     console.log("Stats");
     console.log("ToDo: ", newShapes.flat().length);

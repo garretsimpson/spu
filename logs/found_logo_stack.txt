@@ -1,12 +1,9 @@
-# START: LOGO_SHAPES
-# MAX_LEVEL: 4
-
 C:\Program Files\nodejs\node.exe --max-old-space-size=25000 .\main.js
 Shape Processing Unit 0.5
-Wed Mar 23 2022 23:59:08 GMT-0700 (Pacific Daylight Time)
+Thu Mar 24 2022 00:13:18 GMT-0700 (Pacific Daylight Time)
 
 Stats
-ToDo:  18344
+ToDo:  0
 Total: 48432
 
 0001 prim               (0)
@@ -58,7 +55,7 @@ Total: 48432
   0006 stack    0004 0002 (1)
     0004 prim               (0)
     0002 prim               (0)
-ffff stack    00fb 04ff (39)
+ffff stack    00fb 04ff (167)
   00fb stack    0032 00c9 (5)
     0032 stack    0002 0012 (0)
       0002 prim               (0)
@@ -83,7 +80,7 @@ ffff stack    00fb 04ff (39)
     0002 prim               (0)
     0001 prim               (0)
   0048 prim               (0)
-fe1f stack    00ec 121f (26)
+fe1f stack    00ec 121f (44)
   00ec stack    00c8 0024 (1)
     00c8 stack    0008 0048 (0)
       0008 prim               (0)

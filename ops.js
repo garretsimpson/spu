@@ -57,9 +57,28 @@ const LOGO_SHAPES = [
 ];
 
 const OPS_FILE_NAME = "data/ops.txt";
+const BUILDS_FILE_NAME = "data/builds.txt";
 const WIDTH = 8;
 const newShapes = []; // a[cost][]
 const allShapes = []; // a[code]
+
+const OPS = {
+  prim: "prim",
+  left: "left",
+  uturn: "uturn",
+  right: "right",
+  cutLeft: "cutLeft",
+  cutRight: "cutRight",
+  stack: "stack",
+  unstackBottom: "unstackBottom",
+  unstackTop: "unstackTop",
+  screwLeft: "screwLeft",
+  screwRight: "screwRight",
+  flip: "flip",
+};
+
+const ONE_OPS = [OPS.left, OPS.uturn, OPS.right, OPS.cutLeft, OPS.cutRight];
+const TWO_OPS = [OPS.stack];
 
 export class Ops {
   static logTable(...values) {
@@ -72,22 +91,9 @@ export class Ops {
    */
   static doOneOps(shape1) {
     const results = [];
-    const ops = [
-      "left",
-      "uturn",
-      "right",
-      "cutLeft",
-      "cutRight",
-      // "unstackBottom",
-      // "unstackTop",
-      // "screwLeft",
-      // "screwRight",
-      // "flip",
-    ];
-
     const code1 = shape1.code;
     const cost = shape1.cost + 1;
-    for (let op of ops) {
+    for (let op of ONE_OPS) {
       const newCode = Shape[op + "Code"](code1);
       // Skip NOPs
       if (code1 == newCode) continue;
@@ -108,13 +114,11 @@ export class Ops {
    */
   static doTwoOps(shape1, shape2) {
     const results = [];
-    const ops = ["stack"];
-
     const code1 = shape1.code;
     const code2 = shape2.code;
     const cost = shape1.cost + shape2.cost + 1;
     let newCode, result;
-    for (let op of ops) {
+    for (let op of TWO_OPS) {
       newCode = Shape[op + "Code"](code1, code2);
       // Skip NOPs
       if (code1 == newCode || code2 == newCode) continue;
@@ -193,6 +197,7 @@ export class Ops {
   }
 
   static runOps() {
+    // const START_SHAPES = FULL_SHAPES;
     const START_SHAPES = [...FLAT_SHAPES, ...LOGO_SHAPES];
     const MAX_ITERS = 10000;
     const MAX_LEVEL = 4;
@@ -202,7 +207,7 @@ export class Ops {
 
     Ops.saveShapes(
       START_SHAPES.map((code) => {
-        return { code, cost: 0, op: "prim" };
+        return { code, cost: 0, op: OPS.prim };
       })
     );
 
@@ -242,9 +247,6 @@ export class Ops {
     for (let level of levels) {
       console.log(level, newShapes[level].length);
     }
-    // for (const code of newShapes) {
-    //   console.log(Shape.pp(code));
-    // }
     console.log("");
 
     console.log("Stats");
@@ -254,9 +256,10 @@ export class Ops {
 
     // Ops.displayShapes();
     // Ops.normalize();
-    // Ops.appendFile(Ops.OPS_FILE_NAME, "Testing 123");
 
-    // Ops.saveAllOps();
+    Ops.saveAllShapes();
+    Ops.saveAllBuilds();
+
     for (let code = 0x1; code <= 0xf; code++) {
       Ops.findShape(code);
     }
@@ -267,7 +270,56 @@ export class Ops {
     Ops.findShape(0x4b); // Logo
     Ops.findShape(0xfe1f); // Rocket
 
-    Ops.saveAllShapes();
+    console.log("Rocket:", Ops.getBuildStr(0xfe1f));
+  }
+
+  static shapeToString(shape) {
+    if (!shape) return "";
+    const result = [
+      Shape.pp(shape.code),
+      // shape.cost.toString().padStart(2),
+      shape.op.padEnd(WIDTH, " "),
+      shape.code1 === undefined ? "    " : Shape.pp(shape.code1),
+      shape.code2 === undefined ? "    " : Shape.pp(shape.code2),
+      `(${shape.alt})`,
+    ];
+    return result.join(" ");
+  }
+
+  static findShape(code, i = 0) {
+    const shape = allShapes[code];
+    if (shape === undefined) {
+      console.log("Shape not found:", Shape.pp(code));
+      return;
+    }
+    console.log("  ".repeat(i++) + Ops.shapeToString(shape));
+    shape.code1 !== undefined && Ops.findShape(shape.code1, i);
+    shape.code2 !== undefined && Ops.findShape(shape.code2, i);
+  }
+
+  static OP_CODE = {
+    left: "RL",
+    uturn: "R2",
+    right: "RR",
+    cutLeft: "CL",
+    cutRight: "CR",
+    stack: "ST",
+  };
+
+  static getBuildStr(code) {
+    const shape = allShapes[code];
+    if (shape === undefined) return "";
+    const op = shape.op;
+    if (op === OPS.prim) return Shape.pp(code);
+    let result = "";
+    result += Shape.pp(code);
+    result += " ";
+    result += Ops.OP_CODE[op];
+    result += "(";
+    if (shape.code1) result += Ops.getBuildStr(shape.code1);
+    if (shape.code2) result += " " + Ops.getBuildStr(shape.code2);
+    result += ")";
+    return result;
   }
 
   static normalize() {
@@ -300,53 +352,6 @@ export class Ops {
     }
   }
 
-  static findShape(code, i = 0) {
-    const shape = allShapes[code];
-    if (shape === undefined) {
-      console.log("Shape not found:", Shape.pp(code));
-      return;
-    }
-    console.log("  ".repeat(i++) + Ops.ShapeToString(shape));
-    shape.code1 !== undefined && Ops.findShape(shape.code1, i);
-    shape.code2 !== undefined && Ops.findShape(shape.code2, i);
-  }
-
-  /**
-   * List all ops for a given shape code.
-   * @param {Number} code
-   */
-  static listOps(code) {
-    const MAX_LENGTH = 8;
-    /** @type {Array} */
-    const ops = allShapes.get(code);
-
-    if (ops == undefined || ops.length == 0) {
-      return "";
-    }
-    ops.sort();
-
-    let result = "";
-    let line;
-    const head = Shape.pp(code);
-    let i = 0;
-    for (i = 0; i < ops.length; i++) {
-      if (i % MAX_LENGTH == 0) {
-        line = head;
-      }
-      line += " ";
-      line += ops[i];
-      if (i % MAX_LENGTH == MAX_LENGTH - 1) {
-        result += line;
-        result += "\n";
-      }
-    }
-    if (i % MAX_LENGTH != MAX_LENGTH - 1) {
-      result += line;
-      result += "\n";
-    }
-    return result;
-  }
-
   static appendFile(filename, data) {
     try {
       appendFileSync(filename, data);
@@ -365,22 +370,9 @@ export class Ops {
     const EOL = "\n";
     const codes = Object.keys(allShapes);
     const data = codes
-      .map((code) => Ops.ShapeToString(allShapes[code]))
+      .map((code) => Ops.shapeToString(allShapes[code]))
       .join(EOL);
     Ops.appendFile(OPS_FILE_NAME, data);
-  }
-
-  static ShapeToString(shape) {
-    if (!shape) return "";
-    const result = [
-      Shape.pp(shape.code),
-      // shape.cost.toString().padStart(2),
-      shape.op.padEnd(WIDTH, " "),
-      shape.code1 === undefined ? "    " : Shape.pp(shape.code1),
-      shape.code2 === undefined ? "    " : Shape.pp(shape.code2),
-      `(${shape.alt})`,
-    ];
-    return result.join(" ");
   }
 
   static displayShapes() {
@@ -389,5 +381,20 @@ export class Ops {
     for (let code of codes) {
       Ops.displayShape(allShapes.get(code));
     }
+  }
+
+  static saveAllBuilds() {
+    try {
+      rmSync(BUILDS_FILE_NAME, { force: true });
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+    const EOL = "\n";
+    const codes = Object.keys(allShapes)
+      .map((v) => Number(v))
+      .filter((code) => code == Shape.keyCode(code));
+    const data = codes.map((code) => Ops.getBuildStr(code)).join(EOL);
+    Ops.appendFile(BUILDS_FILE_NAME, data);
   }
 }

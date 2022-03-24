@@ -32,15 +32,34 @@
  *   - Store (new ways to build) output shapes.
  * - Repeat
  *
+ * Format of transform results: {code, cost, op, code1, code2}
+ *
  */
 
 import { Shape } from "./shape.js";
-import { appendFileSync, rm } from "fs";
+import { appendFileSync, rmSync } from "fs";
 
-const OPS_FILE_NAME = "ops.txt";
-const WIDTH = 10;
-const newShapes = [];
-const allShapes = new Map();
+const FULL_SHAPES = [0xf];
+const FLAT_SHAPES = [
+  0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf,
+];
+const LOGO1_SHAPES = [0x1, 0x2, 0x4, 0x8];
+const LOGO2_SHAPES = [0x12, 0x24, 0x48, 0x81, 0x18, 0x21, 0x42, 0x84];
+const LOGO3_SHAPES = [0x121, 0x242, 0x484, 0x818, 0x181, 0x212, 0x424, 0x848];
+const LOGO4_SHAPES = [
+  0x1212, 0x2424, 0x4848, 0x8181, 0x1818, 0x2121, 0x4242, 0x8484,
+];
+const LOGO_SHAPES = [
+  ...LOGO1_SHAPES,
+  ...LOGO2_SHAPES,
+  ...LOGO3_SHAPES,
+  ...LOGO4_SHAPES,
+];
+
+const OPS_FILE_NAME = "data/ops.txt";
+const WIDTH = 8;
+const newShapes = []; // a[cost][]
+const allShapes = []; // a[code]
 
 export class Ops {
   static logTable(...values) {
@@ -111,99 +130,102 @@ export class Ops {
     return results;
   }
 
+  // Returns [newShape, oldShape]
+  // - newShape - if shape is new or costs less
+  // - oldShape - if old shape costs more
+  static updateAllShapes(newShape) {
+    let result = [null, null];
+    const code = newShape.code;
+    // Do not store empty shapes
+    if (code === 0) return result;
+
+    const oldShape = allShapes[code];
+    if (oldShape === undefined) {
+      allShapes[code] = newShape;
+      newShape.alt = 1;
+      result = [newShape, null];
+      return result;
+    }
+
+    if (newShape.cost < oldShape.cost) {
+      console.debug("#### Lower cost found ####");
+      allShapes[code] = newShape;
+      newShape.alt = 1;
+      result = [newShape, oldShape];
+    }
+
+    if (newShape.cost === oldShape.cost) {
+      // console.debug("#### Same cost found ####");
+      // Ops.displayShape(newShape);
+      oldShape.alt++;
+    }
+
+    return result;
+  }
+
   /**
-   * Given a list of transform results add new shapes to newShapes.
-   * @param {Array} shapes Array of {code, cost, op}
+   * Given a list of transform results
+   * - update allShapes.
+   * - update newShapes.
+   * @param {Array} shapes Array of transform results {code, cost, op, code1, code2}
    */
   static saveShapes(shapes) {
-    const results = [];
+    let newShape, oldShape;
     for (let shape of shapes) {
-      const code = shape.code;
-      // Do not store empty shapes
-      if (code === 0) continue;
-      const entry = allShapes.get(code);
-      if (entry === undefined) {
-        allShapes.set(code, shape);
-        results.push(shape);
-        shape.alt = 0;
-      } else {
-        if (shape.cost === entry.cost) {
-          // console.debug("#### Same cost found ####");
-          // Ops.displayShape(shape);
-          entry.alt++;
-        } else if (shape.cost < entry.cost) {
-          console.error("#### Lower cost found ####");
-          // Ops.displayShape(shape);
-          // Copy contents
-          entry.cost = shape.cost;
-          entry.op = shape.op;
-          entry.code1 = shape.code1;
-          entry.code2 = shape.code2;
-          shape.alt = 0;
-        }
+      [newShape, oldShape] = Ops.updateAllShapes(shape);
+      // Remove old shape
+      if (oldShape) {
+        const entry = newShapes[oldShape.cost];
+        const idx = entry.findIndex((s) => s.code === oldShape.code);
+        entry.splice(idx, 1);
       }
-    }
-    // TODO: shape cost may have changed
-    for (let shape of results) {
-      const cost = shape.cost;
-      const entry = newShapes[cost];
-      if (entry === undefined) {
-        newShapes[cost] = [shape];
-      } else {
-        entry.push(shape);
+      // Insert new shape
+      if (newShape) {
+        const cost = newShape.cost;
+        const entry = newShapes[cost];
+        if (entry === undefined) {
+          newShapes[cost] = [newShape];
+        } else {
+          entry.push(newShape);
+        }
       }
     }
   }
 
   static runOps() {
-    const FULL_SHAPES = [0xf];
-    const FLAT_SHAPES = [
-      0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf,
-    ];
-    const LOGO1_SHAPES = [0x1, 0x2, 0x4, 0x8];
-    const LOGO2_SHAPES = [0x12, 0x24, 0x48, 0x81, 0x18, 0x21, 0x42, 0x84];
-    const LOGO3_SHAPES = [
-      0x121, 0x242, 0x484, 0x818, 0x181, 0x212, 0x424, 0x848,
-    ];
-    const LOGO4_SHAPES = [
-      0x1212, 0x2424, 0x4848, 0x8181, 0x1818, 0x2121, 0x4242, 0x8484,
-    ];
-    const START_SHAPES = [
-      ...FLAT_SHAPES,
-      ...LOGO2_SHAPES,
-      ...LOGO3_SHAPES,
-      ...LOGO4_SHAPES,
-    ];
-    const MAX_ITERS = 13;
-    const seenShapes = [];
+    const START_SHAPES = LOGO_SHAPES;
+    const MAX_ITERS = 24000;
+    const MAX_LEVEL = 4;
+    let iters = 0;
 
-    let cost = 0;
+    Ops.logTable("Iters", "Level", "Total", "ToDo");
+
     Ops.saveShapes(
       START_SHAPES.map((code) => {
-        return { code, cost, op: "prim" };
+        return { code, cost: 0, op: "prim" };
       })
     );
 
-    let iters = 0;
-    Ops.logTable("Iters", "Cost", "Total", "ToDo");
-
-    // Note: Search by increasing cost to avoid reducing the cost of a found shape.
-    for (cost = 0; cost < newShapes.length; cost++) {
-      const shapes = newShapes[cost];
+    const seenShapes = [];
+    // Note: Search by increasing cost level to avoid reducing the cost of a found shape.
+    // Note: When a shape is used for searching, it should have the lowest cost possible.
+    for (let level = 0; level < newShapes.length; level++) {
+      const shapes = newShapes[level];
       if (shapes === undefined) continue;
       while (shapes.length > 0) {
         iters++;
-        // if (cost > 12) break;
         if (iters % 100 == 0) {
-          Ops.logTable(iters, cost, allShapes.size, shapes.length);
+          const total = Object.keys(allShapes).length;
+          Ops.logTable(iters, level, total, shapes.length);
         }
-        // if (iters >= MAX_ITERS) break;
+        // if (iters > MAX_ITERS) break;
+        // if (level > MAX_LEVEL) break;
 
         const shape = shapes.shift();
         seenShapes.push(shape);
 
         // do one input operations
-        Ops.saveShapes(Ops.doOneOps(shape));
+        // Ops.saveShapes(Ops.doOneOps(shape));
 
         // do two input operations
         for (const other of seenShapes) {
@@ -223,7 +245,7 @@ export class Ops {
 
     console.log("Stats");
     console.log("ToDo: ", newShapes.flat().length);
-    console.log("Total:", allShapes.size);
+    console.log("Total:", Object.keys(allShapes).length);
     console.log("");
 
     // Ops.displayShapes();
@@ -240,6 +262,8 @@ export class Ops {
     Ops.findShape(0x1212);
     Ops.findShape(0x4b); // Logo
     Ops.findShape(0xfe1f); // Rocket
+
+    Ops.saveAllShapes();
   }
 
   static normalize() {
@@ -273,12 +297,12 @@ export class Ops {
   }
 
   static findShape(code, i = 0) {
-    const shape = allShapes.get(code);
+    const shape = allShapes[code];
     if (shape === undefined) {
       console.log("Shape not found:", Shape.pp(code));
       return;
     }
-    Ops.displayShape(shape, i++);
+    console.log("  ".repeat(i++) + Ops.ShapeToString(shape));
     shape.code1 !== undefined && Ops.findShape(shape.code1, i);
     shape.code2 !== undefined && Ops.findShape(shape.code2, i);
   }
@@ -318,6 +342,7 @@ export class Ops {
     }
     return result;
   }
+
   static appendFile(filename, data) {
     try {
       appendFileSync(filename, data);
@@ -326,29 +351,32 @@ export class Ops {
     }
   }
 
-  static saveAllOps() {
-    for (let code = 0; code < 0xffff; code++) {
-      const data = Ops.listOps(code);
-      try {
-        rm(OPS_FILE_NAME);
-      } catch (err) {
-        console.error(err);
-      }
-      Ops.appendFile(OPS_FILE_NAME, data);
-      // console.log(data);
+  static saveAllShapes() {
+    try {
+      rmSync(OPS_FILE_NAME, { force: true });
+    } catch (err) {
+      console.error(err);
+      return;
     }
+    const EOL = "\n";
+    const codes = Object.keys(allShapes);
+    const data = codes
+      .map((code) => Ops.ShapeToString(allShapes[code]))
+      .join(EOL);
+    Ops.appendFile(OPS_FILE_NAME, data);
   }
 
-  static displayShape(shape, i = 0) {
-    console.log(
-      "  ".repeat(i),
+  static ShapeToString(shape) {
+    if (!shape) return "";
+    const result = [
       Shape.pp(shape.code),
       // shape.cost.toString().padStart(2),
-      shape.op,
-      shape.code1 === undefined ? "" : Shape.pp(shape.code1),
-      shape.code2 === undefined ? "" : Shape.pp(shape.code2),
-      `(${shape.alt})`
-    );
+      shape.op.padEnd(WIDTH, " "),
+      shape.code1 === undefined ? "    " : Shape.pp(shape.code1),
+      shape.code2 === undefined ? "    " : Shape.pp(shape.code2),
+      `(${shape.alt})`,
+    ];
+    return result.join(" ");
   }
 
   static displayShapes() {

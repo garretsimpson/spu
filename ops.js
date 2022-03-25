@@ -51,9 +51,11 @@ const LOGO4_SHAPES = [
 ];
 const LOGO_SHAPES = [...LOGO2_SHAPES, ...LOGO3_SHAPES, ...LOGO4_SHAPES];
 
+const WIDTH = 8; // Column width
+
+const DB_FILE_NAME = "data/db.bin";
 const OPS_FILE_NAME = "data/ops.txt";
 const BUILDS_FILE_NAME = "data/builds.txt";
-const WIDTH = 8;
 
 /**
  * @typedef ShapeDef
@@ -294,6 +296,7 @@ export class Ops {
 
     Ops.saveAllShapes();
     Ops.saveAllBuilds();
+    Ops.saveDB();
 
     for (let code = 0x1; code <= 0xf; code++) {
       Ops.findShape(code);
@@ -447,5 +450,52 @@ export class Ops {
       .filter((code) => code === Shape.keyCode(code));
     const data = codes.map((code) => Ops.getBuildStr(code)).join(EOL);
     Ops.appendFile(BUILDS_FILE_NAME, data);
+  }
+
+  // { NONE=0, RAW=1, STACK=2, CUT_LEFT=3, CUT_RIGHT=4, ROTATE_1=5, ROTATE_2=6, ROTATE_3=7 };
+  static OP_ENUM = {
+    none: 0,
+    prim: 1,
+    stack: 2,
+    cutLeft: 3,
+    cutRight: 4,
+    right: 5,
+    uturn: 6,
+    left: 7,
+  };
+
+  /**
+   * save database file - used by solutions viewer
+   * The database has 2^16 entries, one for each shape code.
+   * The entries are 5 bytes: <code1><code2><op>
+   */
+  static saveDB() {
+    try {
+      rmSync(DB_FILE_NAME, { force: true });
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+    // Init data
+    const size = 5 * (1 << 16);
+    const data = new Uint8Array(size);
+    // Set entries
+    let entry, pos;
+    for (let code = 0; code <= 0xffff; code++) {
+      entry = allShapes[code];
+      if (entry === undefined) continue;
+      const op = entry.op;
+      // The viewer swaps stack codes
+      const code1 = op === OPS.stack ? entry.code2 : entry.code1;
+      const code2 = op === OPS.stack ? entry.code1 : entry.code2;
+      pos = 5 * code;
+      data[pos++] = code1 & 0xff;
+      data[pos++] = code1 >>> 8;
+      data[pos++] = code2 & 0xff;
+      data[pos++] = code2 >>> 8;
+      data[pos++] = Ops.OP_ENUM[op];
+    }
+    // Write file
+    Ops.appendFile(DB_FILE_NAME, data);
   }
 }

@@ -153,12 +153,14 @@ export class Ops {
       allShapes[code] = newShape;
       newShape.alt = 1;
       result = [newShape, oldShape];
+      return result;
     }
 
     if (newShape.cost === oldShape.cost) {
       // console.debug("#### Same cost found ####");
       // Ops.displayShape(newShape);
       oldShape.alt++;
+      return result;
     }
 
     return result;
@@ -187,6 +189,7 @@ export class Ops {
         if (entry === undefined) {
           newShapes[cost] = [newShape];
         } else {
+          // Priorite non-logo shapes
           if (newShape.logo === 0) {
             entry.unshift(newShape);
           } else {

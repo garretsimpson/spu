@@ -54,7 +54,21 @@ const LOGO_SHAPES = [...LOGO2_SHAPES, ...LOGO3_SHAPES, ...LOGO4_SHAPES];
 const OPS_FILE_NAME = "data/ops.txt";
 const BUILDS_FILE_NAME = "data/builds.txt";
 const WIDTH = 8;
+
+/**
+ * @typedef ShapeDef
+ * @type {object}
+ * @property {string} op
+ * @property {number} cost
+ * @property {number} logo
+ * @property {number} code
+ * @property {number} code1
+ * @property {number} code2
+ */
+
+/** @type {Array<Array<ShapeDef>>} */
 const newShapes = []; // a[cost][]
+/** @type {Array<ShapeDef>} */
 const allShapes = []; // a[code]
 
 const OPS = {
@@ -82,7 +96,8 @@ export class Ops {
 
   /**
    * Do one input transforms
-   * @param {Number} code
+   * @param {ShapeDef} shape1
+   * @returns {Array<ShapeDef>}
    */
   static doOneOps(shape1) {
     const results = [];
@@ -106,7 +121,9 @@ export class Ops {
 
   /**
    * Do two input transforms
-   * @param {Number} code
+   * @param {ShapeDef} shape1
+   * @param {ShapeDef} shape2
+   * @returns {Array<ShapeDef>}
    */
   static doTwoOps(shape1, shape2) {
     const results = [];
@@ -131,9 +148,14 @@ export class Ops {
     return results;
   }
 
-  // Returns [newShape, oldShape]
-  // - newShape - if shape is new or costs less
-  // - oldShape - if old shape costs more
+  /**
+   * @param {ShapeDef} newShape
+   * @returns {[ShapeDef, ShapeDef]}
+   *
+   * Returns [newShape, oldShape]:
+   * - newShape - if shape is new or costs less.
+   * - oldShape - if old shape costs more.
+   */
   static updateAllShapes(newShape) {
     let result = [null, null];
     const code = newShape.code;
@@ -158,7 +180,6 @@ export class Ops {
 
     if (newShape.cost === oldShape.cost) {
       // console.debug("#### Same cost found ####");
-      // Ops.displayShape(newShape);
       oldShape.alt++;
       return result;
     }
@@ -167,10 +188,10 @@ export class Ops {
   }
 
   /**
-   * Given a list of transform results
+   * Given a list of transform results:
    * - update allShapes.
    * - update newShapes.
-   * @param {Array} shapes Array of transform results {code, cost, op, code1, code2}
+   * @param {Array<ShapeDef>} shapes Array of transform results
    */
   static saveShapes(shapes) {
     let newShape, oldShape;
@@ -180,7 +201,11 @@ export class Ops {
       if (oldShape) {
         const entry = newShapes[oldShape.cost];
         const idx = entry.findIndex((s) => s.code === oldShape.code);
-        entry.splice(idx, 1);
+        if (idx === -1) {
+          console.error("#### Old shape not found");
+        } else {
+          entry.splice(idx, 1);
+        }
       }
       // Insert new shape
       if (newShape) {
@@ -283,6 +308,10 @@ export class Ops {
     console.log("Rocket:", Ops.getBuildStr(0xfe1f));
   }
 
+  /**
+   * @param {ShapeDef} shape
+   * @returns {string}
+   */
   static shapeToString(shape) {
     if (!shape) return "";
     const result = [
@@ -296,6 +325,10 @@ export class Ops {
     return result.join(" ");
   }
 
+  /**
+   * @param {number} code
+   * @param {number} [i=0]
+   */
   static findShape(code, i = 0) {
     const shape = allShapes[code];
     if (shape === undefined) {
@@ -316,6 +349,10 @@ export class Ops {
     stack: "ST",
   };
 
+  /**
+   * @param {number} code
+   * @returns {string}
+   */
   static getBuildStr(code) {
     const shape = allShapes[code];
     if (shape === undefined) return "";
@@ -362,6 +399,10 @@ export class Ops {
     }
   }
 
+  /**
+   * @param {string} filename
+   * @param {*} data
+   */
   static appendFile(filename, data) {
     try {
       appendFileSync(filename, data);

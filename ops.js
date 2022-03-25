@@ -49,12 +49,7 @@ const LOGO3_SHAPES = [0x121, 0x242, 0x484, 0x818, 0x181, 0x212, 0x424, 0x848];
 const LOGO4_SHAPES = [
   0x1212, 0x2424, 0x4848, 0x8181, 0x1818, 0x2121, 0x4242, 0x8484,
 ];
-const LOGO_SHAPES = [
-  ...LOGO1_SHAPES,
-  ...LOGO2_SHAPES,
-  ...LOGO3_SHAPES,
-  ...LOGO4_SHAPES,
-];
+const LOGO_SHAPES = [...LOGO2_SHAPES, ...LOGO3_SHAPES, ...LOGO4_SHAPES];
 
 const OPS_FILE_NAME = "data/ops.txt";
 const BUILDS_FILE_NAME = "data/builds.txt";
@@ -102,6 +97,7 @@ export class Ops {
         cost,
         op,
         code1,
+        logo: shape1.logo,
       };
       results.push(result);
     }
@@ -128,6 +124,7 @@ export class Ops {
         op,
         code1,
         code2,
+        logo: shape1.logo || shape2.logo,
       };
       results.push(result);
     }
@@ -190,7 +187,11 @@ export class Ops {
         if (entry === undefined) {
           newShapes[cost] = [newShape];
         } else {
-          entry.push(newShape);
+          if (newShape.logo) {
+            entry.push(newShape);
+          } else {
+            entry.unshift(newShape);
+          }
         }
       }
     }
@@ -198,7 +199,7 @@ export class Ops {
 
   static runOps() {
     // const START_SHAPES = FULL_SHAPES;
-    const START_SHAPES = [...FLAT_SHAPES, ...LOGO_SHAPES];
+    // const START_SHAPES = [...FLAT_SHAPES, ...LOGO_SHAPES];
     const MAX_ITERS = 10000;
     const MAX_LEVEL = 4;
     let iters = 0;
@@ -206,8 +207,14 @@ export class Ops {
     Ops.logTable("Iters", "Level", "Total", "ToDo");
 
     Ops.saveShapes(
-      START_SHAPES.map((code) => {
-        return { code, cost: 0, op: OPS.prim };
+      FLAT_SHAPES.map((code) => {
+        return { code, cost: 0, op: OPS.prim, logo: false };
+      })
+    );
+
+    Ops.saveShapes(
+      LOGO_SHAPES.map((code) => {
+        return { code, cost: 0, op: OPS.prim, logo: true };
       })
     );
 
@@ -393,7 +400,7 @@ export class Ops {
     const EOL = "\n";
     const codes = Object.keys(allShapes)
       .map((v) => Number(v))
-      .filter((code) => code == Shape.keyCode(code));
+      .filter((code) => code === Shape.keyCode(code));
     const data = codes.map((code) => Ops.getBuildStr(code)).join(EOL);
     Ops.appendFile(BUILDS_FILE_NAME, data);
   }

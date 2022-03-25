@@ -124,7 +124,7 @@ export class Ops {
         op,
         code1,
         code2,
-        logo: shape1.logo || shape2.logo,
+        logo: shape1.logo + shape2.logo,
       };
       results.push(result);
     }
@@ -187,10 +187,10 @@ export class Ops {
         if (entry === undefined) {
           newShapes[cost] = [newShape];
         } else {
-          if (newShape.logo) {
-            entry.push(newShape);
-          } else {
+          if (newShape.logo === 0) {
             entry.unshift(newShape);
+          } else {
+            entry.push(newShape);
           }
         }
       }
@@ -208,13 +208,13 @@ export class Ops {
 
     Ops.saveShapes(
       FLAT_SHAPES.map((code) => {
-        return { code, cost: 0, op: OPS.prim, logo: false };
+        return { code, cost: 0, op: OPS.prim, logo: 0 };
       })
     );
 
     Ops.saveShapes(
       LOGO_SHAPES.map((code) => {
-        return { code, cost: 0, op: OPS.prim, logo: true };
+        return { code, cost: 0, op: OPS.prim, logo: 1 };
       })
     );
 
@@ -288,7 +288,7 @@ export class Ops {
       shape.op.padEnd(WIDTH, " "),
       shape.code1 === undefined ? "    " : Shape.pp(shape.code1),
       shape.code2 === undefined ? "    " : Shape.pp(shape.code2),
-      `(${shape.alt})`,
+      `(${shape.alt},${shape.logo})`,
     ];
     return result.join(" ");
   }

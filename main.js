@@ -23,7 +23,7 @@ function main() {
   // Shape.testLogo();
   // Spu.runTests();
   // Spu.runSearch();
-  Ops.runOps();
+  Ops.runMultiOps();
   // Ops.dbToText();
 }
 

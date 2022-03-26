@@ -37,7 +37,7 @@
  */
 
 import { Shape } from "./shape.js";
-import { appendFileSync, rmSync } from "fs";
+import { appendFileSync, readFileSync, writeFileSync, rmSync } from "fs";
 
 const FULL_SHAPES = [0xf];
 const FLAT_SHAPES = [
@@ -51,10 +51,12 @@ const LOGO4_SHAPES = [
 ];
 const LOGO_SHAPES = [...LOGO2_SHAPES, ...LOGO3_SHAPES, ...LOGO4_SHAPES];
 
+const EOL = "\n";
 const WIDTH = 8; // Column width
 
 const DB_FILE_NAME = "data/db.bin";
 const OPS_FILE_NAME = "data/ops.txt";
+const TEXT_FILE_NAME = "data/text.txt";
 const BUILDS_FILE_NAME = "data/builds.txt";
 
 /**
@@ -88,6 +90,16 @@ const OPS = {
   flip: "flip",
 };
 
+const OPS_COST = {
+  prim: 0,
+  left: 1,
+  uturn: 1,
+  right: 1,
+  cutLeft: 1,
+  cutRight: 1,
+  stack: 1,
+};
+
 const ONE_OPS = [OPS.left, OPS.uturn, OPS.right, OPS.cutLeft, OPS.cutRight];
 const TWO_OPS = [OPS.stack];
 
@@ -104,14 +116,14 @@ export class Ops {
   static doOneOps(shape1) {
     const results = [];
     const code1 = shape1.code;
-    const cost = shape1.cost + 1;
+    let cost = shape1.cost;
     for (let op of ONE_OPS) {
       const newCode = Shape[op + "Code"](code1);
       // Skip NOPs
       if (code1 == newCode) continue;
       const result = {
         code: newCode,
-        cost,
+        cost: cost + OPS_COST[op],
         op,
         code1,
         logo: shape1.logo,
@@ -131,7 +143,7 @@ export class Ops {
     const results = [];
     const code1 = shape1.code;
     const code2 = shape2.code;
-    const cost = shape1.cost + shape2.cost + 1;
+    const cost = shape1.cost + shape2.cost;
     let newCode, result;
     for (let op of TWO_OPS) {
       newCode = Shape[op + "Code"](code1, code2);
@@ -139,7 +151,7 @@ export class Ops {
       if (code1 == newCode || code2 == newCode) continue;
       result = {
         code: newCode,
-        cost,
+        cost: cost + OPS_COST[op],
         op,
         code1,
         code2,
@@ -216,7 +228,7 @@ export class Ops {
         if (entry === undefined) {
           newShapes[cost] = [newShape];
         } else {
-          // Priorite non-logo shapes
+          // Prioritize non-logo shapes
           if (newShape.logo === 0) {
             entry.unshift(newShape);
           } else {
@@ -238,13 +250,13 @@ export class Ops {
 
     Ops.saveShapes(
       FLAT_SHAPES.map((code) => {
-        return { code, cost: 0, op: OPS.prim, logo: 0 };
+        return { code, cost: OPS_COST[OPS.prim], op: OPS.prim, logo: 0 };
       })
     );
 
     Ops.saveShapes(
       LOGO_SHAPES.map((code) => {
-        return { code, cost: 0, op: OPS.prim, logo: 1 };
+        return { code, cost: OPS_COST[OPS.prim], op: OPS.prim, logo: 1 };
       })
     );
 
@@ -344,6 +356,7 @@ export class Ops {
   }
 
   static OP_CODE = {
+    prim: "P ",
     left: "RL",
     uturn: "R2",
     right: "RR",
@@ -404,6 +417,33 @@ export class Ops {
 
   /**
    * @param {string} filename
+   * @returns {Uint8Array}
+   */
+  static readFile(filename) {
+    let data;
+    try {
+      data = readFileSync(filename);
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+    return new Uint8Array(data);
+  }
+
+  /**
+   * @param {string} filename
+   * @param {*} data
+   */
+  static writeFile(filename, data) {
+    try {
+      writeFileSync(filename, data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  /**
+   * @param {string} filename
    * @param {*} data
    */
   static appendFile(filename, data) {
@@ -414,19 +454,27 @@ export class Ops {
     }
   }
 
-  static saveAllShapes() {
+  /**
+   *
+   * @param {string} filename
+   * @returns {boolean}
+   */
+  static deleteFile(filename) {
     try {
       rmSync(OPS_FILE_NAME, { force: true });
     } catch (err) {
       console.error(err);
-      return;
+      return false;
     }
-    const EOL = "\n";
+    return true;
+  }
+
+  static saveAllShapes() {
     const codes = Object.keys(allShapes);
     const data = codes
       .map((code) => Ops.shapeToString(allShapes[code]))
       .join(EOL);
-    Ops.appendFile(OPS_FILE_NAME, data);
+    Ops.writeFile(OPS_FILE_NAME, data);
   }
 
   static displayShapes() {
@@ -438,18 +486,11 @@ export class Ops {
   }
 
   static saveAllBuilds() {
-    try {
-      rmSync(BUILDS_FILE_NAME, { force: true });
-    } catch (err) {
-      console.error(err);
-      return;
-    }
-    const EOL = "\n";
     const codes = Object.keys(allShapes)
       .map((v) => Number(v))
       .filter((code) => code === Shape.keyCode(code));
     const data = codes.map((code) => Ops.getBuildStr(code)).join(EOL);
-    Ops.appendFile(BUILDS_FILE_NAME, data);
+    Ops.writeFile(BUILDS_FILE_NAME, data);
   }
 
   // { NONE=0, RAW=1, STACK=2, CUT_LEFT=3, CUT_RIGHT=4, ROTATE_1=5, ROTATE_2=6, ROTATE_3=7 };
@@ -497,5 +538,33 @@ export class Ops {
     }
     // Write file
     Ops.appendFile(DB_FILE_NAME, data);
+  }
+
+  static dbToText() {
+    const data = Ops.readFile(DB_FILE_NAME);
+    if (!data) return;
+
+    const opName = [];
+    for (let name of Object.keys(Ops.OP_ENUM)) {
+      opName[Ops.OP_ENUM[name]] = name;
+    }
+
+    const result = [];
+    let pos, line;
+    for (let code = 0; code <= 0xffff; code++) {
+      pos = 5 * code;
+      const code1 = data[pos++] | (data[pos++] << 8);
+      const code2 = data[pos++] | (data[pos++] << 8);
+      const op = data[pos++];
+      if (op === 0) continue;
+      line = [
+        Shape.pp(code),
+        Ops.OP_CODE[opName[op]],
+        Shape.pp(code1),
+        Shape.pp(code2),
+      ].join(" ");
+      result.push(line);
+    }
+    Ops.writeFile(TEXT_FILE_NAME, result.join(EOL));
   }
 }

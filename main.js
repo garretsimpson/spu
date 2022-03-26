@@ -24,6 +24,7 @@ function main() {
   // Spu.runTests();
   // Spu.runSearch();
   Ops.runOps();
+  // Ops.dbToText();
 }
 
 main();

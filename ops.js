@@ -172,6 +172,10 @@ export class Ops {
     return results;
   }
 
+  static isLogo(shape) {
+    return shape.logo > 0;
+  }
+
   /**
    * @param {ShapeDef} newShape
    * @returns {[ShapeDef, ShapeDef]}
@@ -196,11 +200,12 @@ export class Ops {
     }
 
     // Don't replace non-logo shapes with logo shapes
-    const newLogo = oldShape.logo === 0 && newShape.logo > 0;
+    // const newLogo = oldShape.logo === 0 && newShape.logo > 0;
+    // const bothLogo = oldShape.logo > 0 && newShape.logo > 0;
     const lowerCost =
-      newShape.cost < oldShape.cost ||
-      (newShape.cost === oldShape.cost && newShape.trash < oldShape.trash);
-    if (lowerCost && !newLogo) {
+      (!Ops.isLogo(newShape) && newShape.cost < oldShape.cost) ||
+      (Ops.isLogo(newShape) && newShape.trash < oldShape.trash);
+    if (lowerCost) {
       console.debug("#### Lower cost found ####");
       allShapes[code] = newShape;
       newShape.alt = 1;
@@ -265,30 +270,36 @@ export class Ops {
 
   static runMultiOps() {
     const CONFIGS = [
+      // {
+      //   shapes: [...FLAT_SHAPES, ...LOGO_SHAPES],
+      //   logo: 0,
+      //   trash: 0,
+      //   // maxIter: 500,
+      // },
       {
         shapes: FLAT_SHAPES,
         logo: 0,
         trash: 0,
-        maxIter: 500,
+        // maxIter: 500,
       },
-      {
-        shapes: LOGO2_SHAPES,
-        logo: 1,
-        trash: 2,
-        maxIter: 3500,
-      },
-      {
-        shapes: LOGO3_SHAPES,
-        logo: 1,
-        trash: 3,
-        maxIter: 2500,
-      },
-      {
-        shapes: LOGO4_SHAPES,
-        logo: 1,
-        trash: 4,
-        // maxIter: 8000,
-      },
+      // {
+      //   shapes: LOGO2_SHAPES,
+      //   logo: 1,
+      //   trash: 2,
+      //   // maxIter: 3500,
+      // },
+      // {
+      //   shapes: LOGO3_SHAPES,
+      //   logo: 1,
+      //   trash: 3,
+      //   // maxIter: 2500,
+      // },
+      // {
+      //   shapes: LOGO4_SHAPES,
+      //   logo: 1,
+      //   trash: 4,
+      //   // maxIter: 8000,
+      // },
     ];
 
     let shapes;
@@ -343,7 +354,7 @@ export class Ops {
         Ops.saveShapes([shape]);
 
         // do one input operations
-        // Ops.saveShapes(Ops.doOneOps(shape));
+        Ops.saveShapes(Ops.doOneOps(shape));
 
         // do two input operations
         seenShapes.push(shape);

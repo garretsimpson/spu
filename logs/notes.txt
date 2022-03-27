@@ -7,3 +7,9 @@
 
 3cc3 ST(2442 ST(0024 0042) 1881 ST(0018 0081))
 3cc3 ST(33c4 ST(0031 ST(0003 0001) 02c4 ST(002c ST(0024 0008) 0004)) 0083 ST(0081 0002))
+
+Should have only 1 logo
+--Rr--Rr:Ry--RyRy:--RgRg--:Rw------
+
+2 4-logos
+RrRr----:----RyRy:----RgRg:RwRw----

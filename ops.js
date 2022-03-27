@@ -152,6 +152,7 @@ export class Ops {
     const ops = shape1.ops + shape2.ops;
     const logo = shape1.logo + shape2.logo;
     const trash = shape1.trash + shape2.trash;
+    // TODO: compute additional trash from 5th+ layers
     let newCode, result;
     for (let op of TWO_OPS) {
       newCode = Shape[op + "Code"](code1, code2);
@@ -185,7 +186,7 @@ export class Ops {
     // Do not store empty shapes
     if (code === 0) return result;
 
-    newShape.cost = newShape.ops + newShape.trash;
+    newShape.cost = newShape.ops; // + newShape.trash;
     const oldShape = allShapes[code];
     if (oldShape === undefined) {
       allShapes[code] = newShape;
@@ -194,7 +195,12 @@ export class Ops {
       return result;
     }
 
-    if (newShape.cost < oldShape.cost) {
+    // Don't replace non-logo shapes with logo shapes
+    const newLogo = oldShape.logo === 0 && newShape.logo > 0;
+    const lowerCost =
+      newShape.cost < oldShape.cost ||
+      (newShape.cost === oldShape.cost && newShape.trash < oldShape.trash);
+    if (lowerCost && !newLogo) {
       console.debug("#### Lower cost found ####");
       allShapes[code] = newShape;
       newShape.alt = 1;
@@ -269,13 +275,13 @@ export class Ops {
         shapes: LOGO2_SHAPES,
         logo: 1,
         trash: 2,
-        // maxIter: 8000,
+        maxIter: 3500,
       },
       {
         shapes: LOGO3_SHAPES,
         logo: 1,
         trash: 3,
-        // maxIter: 8000,
+        maxIter: 2500,
       },
       {
         shapes: LOGO4_SHAPES,
@@ -395,7 +401,7 @@ export class Ops {
       Ops.OP_CODE[shape.op],
       shape.code1 === undefined ? "    " : Shape.pp(shape.code1),
       shape.code2 === undefined ? "    " : Shape.pp(shape.code2),
-      `(${shape.cost},${shape.alt},${shape.logo})`,
+      `(${shape.ops},${shape.alt},${shape.logo})`,
     ];
     return result.join(" ");
   }

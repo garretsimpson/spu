@@ -270,18 +270,18 @@ export class Ops {
 
   static runMultiOps() {
     const CONFIGS = [
+      {
+        shapes: [...FLAT_SHAPES, ...LOGO_SHAPES],
+        logo: 0,
+        trash: 0,
+        // maxIter: 8500,
+      },
       // {
-      //   shapes: [...FLAT_SHAPES, ...LOGO_SHAPES],
+      //   shapes: FLAT_SHAPES,
       //   logo: 0,
       //   trash: 0,
       //   // maxIter: 500,
       // },
-      {
-        shapes: FLAT_SHAPES,
-        logo: 0,
-        trash: 0,
-        // maxIter: 500,
-      },
       // {
       //   shapes: LOGO2_SHAPES,
       //   logo: 1,
@@ -321,22 +321,20 @@ export class Ops {
   }
 
   static runOps(startShapes, maxIters) {
-    let iters = 0;
-
     if (!startShapes) {
       startShapes = FLAT4_SHAPES.map((code) => {
-        return { code, cost: OPS_COST[OPS.prim], op: OPS.prim, logo: 0 };
+        return { code, cost: 0, op: OPS.prim, logo: 0, trash: 0 };
       });
     }
+
+    const seenShapes = allShapes.filter((e) => e);
     Ops.clearNewShapes();
-    for (let newShape of startShapes) {
-      Ops.updateNewShapes(newShape);
-    }
+    Ops.saveShapes(startShapes);
 
     Ops.logTable("Iters", "Level", "ToDo", "Total");
 
+    let iters = 0;
     let shape, shapes;
-    const seenShapes = allShapes.filter((e) => e);
     // Note: Search by increasing cost level to avoid reducing the cost of a found shape.
     // Note: When a shape is used for searching, it should have the lowest cost possible.
     for (let level = 0; level < newShapes.length; level++) {
@@ -351,7 +349,6 @@ export class Ops {
         if (maxIters && iters > maxIters) break;
 
         shape = shapes.shift();
-        Ops.saveShapes([shape]);
 
         // do one input operations
         Ops.saveShapes(Ops.doOneOps(shape));

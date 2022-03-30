@@ -128,6 +128,7 @@ export class Ops {
       if (code1 == newCode) continue;
       const result = {
         code: newCode,
+        cost,
         op,
         code1,
         ops: shape1.ops + OPS_COST[op],
@@ -149,6 +150,7 @@ export class Ops {
     const results = [];
     const code1 = shape1.code;
     const code2 = shape2.code;
+    const cost = shape1.cost + shape2.cost;
     const ops = shape1.ops + shape2.ops;
     const logo = shape1.logo + shape2.logo;
     const trash = shape1.trash + shape2.trash;
@@ -160,6 +162,7 @@ export class Ops {
       if (code1 == newCode || code2 == newCode) continue;
       result = {
         code: newCode,
+        cost,
         op,
         code1,
         code2,
@@ -190,7 +193,7 @@ export class Ops {
     // Do not store empty shapes
     if (code === 0) return result;
 
-    newShape.cost = newShape.ops; // + newShape.trash;
+    newShape.cost = newShape.ops + newShape.cost;
     const oldShape = allShapes[code];
     if (oldShape === undefined) {
       allShapes[code] = newShape;
@@ -202,9 +205,10 @@ export class Ops {
     // Don't replace non-logo shapes with logo shapes
     // const newLogo = oldShape.logo === 0 && newShape.logo > 0;
     // const bothLogo = oldShape.logo > 0 && newShape.logo > 0;
-    const lowerCost =
-      (!Ops.isLogo(newShape) && newShape.cost < oldShape.cost) ||
-      (Ops.isLogo(newShape) && newShape.trash < oldShape.trash);
+    // const lowerCost =
+    //   (!Ops.isLogo(newShape) && newShape.cost < oldShape.cost) ||
+    //   (Ops.isLogo(newShape) && newShape.trash < oldShape.trash);
+    const lowerCost = newShape.cost < oldShape.cost;
     if (lowerCost) {
       console.debug("#### Lower cost found ####");
       allShapes[code] = newShape;
@@ -270,18 +274,26 @@ export class Ops {
 
   static runMultiOps() {
     const CONFIGS = [
-      {
-        shapes: [...FLAT_SHAPES, ...LOGO_SHAPES],
-        logo: 0,
-        trash: 0,
-        // maxIter: 8500,
-      },
       // {
-      //   shapes: FLAT_SHAPES,
+      //   shapes: [...FLAT_SHAPES, ...LOGO_SHAPES],
       //   logo: 0,
       //   trash: 0,
-      //   // maxIter: 500,
+      //   // maxIter: 8500,
       // },
+      {
+        shapes: FLAT_SHAPES,
+        cost: 0,
+        logo: 0,
+        trash: 0,
+        maxIter: 500,
+      },
+      {
+        shapes: LOGO_SHAPES,
+        cost: 10,
+        logo: 1,
+        trash: 0,
+        // maxIter: 6500,
+      },
       // {
       //   shapes: LOGO2_SHAPES,
       //   logo: 1,
@@ -308,7 +320,7 @@ export class Ops {
         return {
           code,
           ops: 0,
-          cost: 0,
+          cost: config.cost,
           op: OPS.prim,
           logo: config.logo,
           trash: config.trash,
@@ -351,7 +363,7 @@ export class Ops {
         shape = shapes.shift();
 
         // do one input operations
-        Ops.saveShapes(Ops.doOneOps(shape));
+        // Ops.saveShapes(Ops.doOneOps(shape));
 
         // do two input operations
         seenShapes.push(shape);

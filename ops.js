@@ -568,7 +568,7 @@ export class Ops {
   }
 
   static dbToText() {
-    const data = Ops.readFile(DB_FILE_NAME);
+    const data = Ops.readBinFile(DB_FILE_NAME);
     if (!data) return;
 
     const opName = [];

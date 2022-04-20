@@ -15,9 +15,24 @@ export class Fileops {
 
   /**
    * @param {string} filename
-   * @returns {Uint8Array}
+   * @returns {*}
    */
   static readFile(filename) {
+    let data;
+    try {
+      data = readFileSync(filename);
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+    return data;
+  }
+
+  /**
+   * @param {string} filename
+   * @returns {Uint8Array}
+   */
+  static readBinFile(filename) {
     let data;
     try {
       data = readFileSync(filename);

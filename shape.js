@@ -27,12 +27,15 @@ export class Shape {
   static keyShapes;
 
   /**
-   * @param {Number} code
+   * @param {number} code
    */
   constructor(code) {
     this.code = code;
   }
 
+  /**
+   * @returns {string}
+   */
   toString() {
     return Shape.toShape(this.code);
   }
@@ -49,18 +52,9 @@ export class Shape {
   }
 
   static readShapeFile() {
-    const FILENAME = "data/allShapes.txt";
-    let data;
-    try {
-      console.log("Reading file:", FILENAME);
-      data = readFileSync(FILENAME, "utf8");
-    } catch (e) {
-      console.error(e);
-      return;
-    }
-
-    const EOL = /\r?\n/;
-    const lines = data.toString().trim().split(EOL);
+    const data = Fileops.readFile("data/allShapes.txt");
+    if (!data) return;
+    const lines = data.toString().trim().split(/\r?\n/);
     console.log("lines:", lines.length);
     let badCodes = 0;
     let goodCodes = 0;
@@ -82,6 +76,10 @@ export class Shape {
     console.log("");
   }
 
+  /**
+   * @param {number} code
+   * @returns {string}
+   */
   static codeToHex(code) {
     return code.toString(16).padStart(4, "0");
   }
@@ -89,10 +87,12 @@ export class Shape {
   /**
    * Convert shape code to a shapez constant value.
    * Uses a fixed shape for each piece and a different color for each layer.
-   * @returns {String}
+   * @param {number} code
+   * @returns {string}
    */
   static toShape(code) {
-    const COLORS = ["r", "g", "b", "y"];
+    // const COLORS = ["r", "g", "b", "y"];
+    const COLOR = "u";
     const SHAPE = Shape.RECT;
     const EMPTY = "--";
     const SEP = ":";
@@ -104,8 +104,7 @@ export class Shape {
       if (bin[15 - i] == "1") {
         // const layer = Math.trunc(i / 4);
         // const color = COLORS[layer];
-        const color = "u";
-        val = SHAPE + color;
+        val = SHAPE + COLOR;
       }
       if (i == 4 || i == 8 || i == 12) {
         result += SEP;
@@ -117,8 +116,8 @@ export class Shape {
 
   /**
    * Compute the canonical shape code
-   * @param {Number} code
-   * @returns {Number}
+   * @param {number} code
+   * @returns {number}
    */
   static keyCode(code) {
     const fcode = Shape.mirrorCode(code);
@@ -131,6 +130,11 @@ export class Shape {
     return result;
   }
 
+  /**
+   * @param {number} code
+   * @param {number} steps
+   * @returns {number}
+   */
   static rotateCode(code, steps) {
     const lShift = steps & 0x3;
     const rShift = 4 - lShift;
@@ -140,30 +144,55 @@ export class Shape {
     return result;
   }
 
+  /**
+   * @param {number} code
+   * @returns {number}
+   */
   static rightCode(code) {
     return Shape.rotateCode(code, 1);
   }
 
+  /**
+   * @returns {Shape}
+   */
   right() {
     return new Shape(Shape.rightCode(this.code));
   }
 
+  /**
+   * @param {number} code
+   * @returns {number}
+   */
   static uturnCode(code) {
     return Shape.rotateCode(code, 2);
   }
 
+  /**
+   * @returns {Shape}
+   */
   uturn() {
     return new Shape(Shape.uturnCode(this.code));
   }
 
+  /**
+   * @param {number} code
+   * @returns {number}
+   */
   static leftCode(code) {
     return Shape.rotateCode(code, 3);
   }
 
+  /**
+   * @returns {Shape}
+   */
   left() {
     return new Shape(Shape.leftCode(this.code));
   }
 
+  /**
+   * @param {number} code
+   * @returns {number}
+   */
   static mirrorCode(code) {
     let result = 0;
     for (let i = 0; i < 4; i++) {
@@ -173,11 +202,18 @@ export class Shape {
     return result;
   }
 
+  /**
+   * @returns {Shape}
+   */
   mirror() {
     return new Shape(Shape.mirrorCode(this.code));
   }
 
-  // Remove empty layers
+  /**
+   * Remove empty layers
+   * @param {number} code
+   * @returns {number}
+   */
   static collapse(code) {
     let result = 0;
     for (let i = 0; i < 4; i++) {
@@ -190,25 +226,45 @@ export class Shape {
     return result;
   }
 
+  /**
+   * @param {number} code
+   * @returns {number}
+   */
   static cutCode(code) {
     const left = Shape.cutLeftCode(code);
     const right = Shape.cutRightCode(code);
     return [left, right];
   }
 
+  /**
+   * @param {number} code
+   * @returns {number}
+   */
   static cutLeftCode(code) {
     return Shape.collapse(code & 0xcccc);
   }
 
+  /**
+   * @param {number} code
+   * @returns {number}
+   */
   static cutRightCode(code) {
     return Shape.collapse(code & 0x3333);
   }
 
+  /**
+   * @returns {[Shape,Shape]}
+   */
   cut() {
     const [left, right] = Shape.cutCode(this.code);
     return [new Shape(left), new Shape(right)];
   }
 
+  /**
+   * @param {number} top
+   * @param {number} bottom
+   * @returns {number}
+   */
   static stackCode(top, bottom) {
     for (let offset = 4; offset > 0; offset--) {
       if (((top << ((offset - 1) * 4)) & bottom) != 0) {
@@ -218,6 +274,10 @@ export class Shape {
     return top | bottom;
   }
 
+  /**
+   * @param {Shape} shape
+   * @returns {Shape}
+   */
   stack(shape) {
     const top = shape.code;
     const bottom = this.code;
@@ -225,6 +285,10 @@ export class Shape {
     return new Shape(result);
   }
 
+  /**
+   * @param {number} code
+   * @returns {[number,number]}
+   */
   static unstackCode(code) {
     if (code == 0) return [0, 0];
     const num = Shape.layerCount(code) - 1;
@@ -234,19 +298,35 @@ export class Shape {
     return [bottom, top];
   }
 
+  /**
+   * @param {number} code
+   * @returns {number}
+   */
   static unstackBottomCode(code) {
     return Shape.unstackCode(code)[0];
   }
 
+  /**
+   * @param {number} code
+   * @returns {number}
+   */
   static unstackTopCode(code) {
     return Shape.unstackCode(code)[1];
   }
 
+  /**
+   * @param {Shape} shape
+   * @returns {[Shape,Shape]}
+   */
   unstack(shape) {
     const [bottom, top] = unstackCode(shape.code);
     return [new Shape(bottom), new Shape(top)];
   }
 
+  /**
+   * @param {number} code
+   * @returns {number}
+   */
   static flipCode(code) {
     code = Shape.mirrorCode(code);
     let result = 0;
@@ -258,14 +338,21 @@ export class Shape {
     return result;
   }
 
+  /**
+   * @returns {Shape}
+   */
   flip() {
     return new Shape(Shape.flipCode(this.code));
   }
 
-  // Rotate each layer 90 degrees more than layer above.
-  // Example: (top to bottom)
-  // 1 layer shape: 90
-  // 4 layer shape: 90, 180, 270, 0 (360)
+  /**
+   * Rotate each layer 90 degrees more than layer above.
+   * Example: (top to bottom)
+   * 1 layer shape: 90
+   * 4 layer shape: 90, 180, 270, 0 (360)
+   * @param {number} code
+   * @returns {number}
+   */
   static screwLeftCode(code) {
     let result = 0;
     while (code > 0) {
@@ -277,6 +364,10 @@ export class Shape {
     return result;
   }
 
+  /**
+   * @param {number} code
+   * @returns {number}
+   */
   static screwRightCode(code) {
     let result = 0;
     while (code > 0) {
@@ -288,14 +379,24 @@ export class Shape {
     return result;
   }
 
+  /**
+   * @returns {Shape}
+   */
   screwLeft() {
     return new Shape(Shape.screwLeftCode(this.code));
   }
 
+  /**
+   * @returns {Shape}
+   */
   screwRight() {
     return new Shape(Shape.screwRightCode(this.code));
   }
 
+  /**
+   * @param {number} code
+   * @returns {number}
+   */
   static layerCount(code) {
     let mask = 0xf000;
     for (let num = 4; num > 0; num--) {
@@ -305,7 +406,11 @@ export class Shape {
     return 0;
   }
 
-  // Returns true if the shape contains an empty layer
+  /**
+   * Returns true if the shape contains an empty layer
+   * @param {number} code
+   * @returns {boolean}
+   */
   static isInvalid(code) {
     if (code == 0) return true;
     for (; code > 0; code >>>= 4) {
@@ -316,6 +421,10 @@ export class Shape {
     return false;
   }
 
+  /**
+   * @param {number} code
+   * @returns {boolean}
+   */
   static isPossible(code) {
     if (Shape.allShapes == undefined || Shape.allShapes.length == 0) {
       return false;
@@ -323,7 +432,11 @@ export class Shape {
     return Shape.allShapes.has(code);
   }
 
-  // TODO: This might be simpler with bit logic.
+  /**
+   * TODO: This might be simpler with bit logic.
+   * @param {number} code
+   * @returns {Array<number>}
+   */
   static toLayers(code) {
     const result = [];
     while (code > 0) {
@@ -337,11 +450,11 @@ export class Shape {
   /**
    * Tries to unstack and restack all layers.
    * Layers: 1, 1/1, 1/1/1, 1/1/1/1
+   * @param {number} code
+   * @returns {boolean}
    */
   static canStackAll(code) {
-    if (code == 0) {
-      return false;
-    }
+    if (code == 0) return false;
     let layers = Shape.toLayers(code);
     let result = layers[0];
     for (let i = 1; i < layers.length; i++) {
@@ -354,6 +467,8 @@ export class Shape {
   /**
    * Tries to unstack and restack just some of the layers.
    * Layers: 1, 1/1, 1/2, 2/1, 1/3, 2/2, 3/1
+   * @param {number} code
+   * @returns {boolean}
    */
   static canStackSome(code) {
     if (code == 0) return false;
@@ -371,6 +486,27 @@ export class Shape {
     return false;
   }
 
+  /**
+   * Retruns true if 1-layer shape or bottom layer is supporting the layers above.
+   * @param {number} code
+   * @returns {boolean}
+   */
+  static canStackBottom(code) {
+    if (code == 0) return false;
+    if ((code && 0xfff0) === 0) return true;
+    let layers = Shape.toLayers(code);
+    let result = layers[0];
+    for (let i = 1; i < layers.length; i++) {
+      const bottom = layers[i];
+      result = Shape.stackCode(result, bottom);
+    }
+    return result == code;
+  }
+
+  /**
+   * @param {number} code
+   * @returns {boolean}
+   */
   static canCut(code) {
     if (code == 0) {
       return false;
@@ -389,7 +525,11 @@ export class Shape {
     return false;
   }
 
-  // pretty print
+  /**
+   * pretty print
+   * @param {*} value
+   * @returns {String}
+   */
   static pp(value) {
     if (typeof value === "number") {
       return Shape.codeToHex(value);
@@ -595,6 +735,9 @@ export class Shape {
     Fileops.writeFile("data/chart.txt", chart);
   }
 
+  /**
+   * @param {Array<number>} shapes
+   */
   static chart(shapes) {
     const EOL = "\n";
     const MAX_NUM = 8;
@@ -639,6 +782,10 @@ export class Shape {
     return result;
   }
 
+  /**
+   * @param {number} code
+   * @returns {string}
+   */
   static graph(code) {
     const bin = code.toString(2).padStart(16, "0");
     const ICONS = ["- ", "X "];

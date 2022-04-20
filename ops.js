@@ -37,7 +37,7 @@
  */
 
 import { Shape } from "./shape.js";
-import { appendFileSync, readFileSync, writeFileSync, rmSync } from "fs";
+import { Fileops } from "./fileops.js";
 
 const FLAT1_SHAPES = [0x1, 0x2, 0x4, 0x8];
 const FLAT2_SHAPES = [0x3, 0x5, 0x6, 0x9, 0xa, 0xc];
@@ -501,66 +501,12 @@ export class Ops {
     }
   }
 
-  /**
-   * @param {string} filename
-   * @returns {Uint8Array}
-   */
-  static readFile(filename) {
-    let data;
-    try {
-      data = readFileSync(filename);
-    } catch (err) {
-      console.error(err);
-      return;
-    }
-    return new Uint8Array(data);
-  }
-
-  /**
-   * @param {string} filename
-   * @param {*} data
-   */
-  static writeFile(filename, data) {
-    try {
-      writeFileSync(filename, data);
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  /**
-   * @param {string} filename
-   * @param {*} data
-   */
-  static appendFile(filename, data) {
-    try {
-      appendFileSync(filename, data);
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  /**
-   *
-   * @param {string} filename
-   * @returns {boolean}
-   */
-  static deleteFile(filename) {
-    try {
-      rmSync(OPS_FILE_NAME, { force: true });
-    } catch (err) {
-      console.error(err);
-      return false;
-    }
-    return true;
-  }
-
   static saveAllShapes() {
     const codes = Object.keys(allShapes);
     const data = codes
       .map((code) => Ops.shapeToString(allShapes[code]))
       .join(EOL);
-    Ops.writeFile(OPS_FILE_NAME, data);
+    Fileops.writeFile(OPS_FILE_NAME, data);
   }
 
   static displayShapes() {
@@ -576,7 +522,7 @@ export class Ops {
       .map((v) => Number(v))
       .filter((code) => code === Shape.keyCode(code));
     const data = codes.map((code) => Ops.getBuildStr(code)).join(EOL);
-    Ops.writeFile(BUILDS_FILE_NAME, data);
+    Fileops.writeFile(BUILDS_FILE_NAME, data);
   }
 
   // { NONE=0, RAW=1, STACK=2, CUT_LEFT=3, CUT_RIGHT=4, ROTATE_1=5, ROTATE_2=6, ROTATE_3=7 };
@@ -597,12 +543,7 @@ export class Ops {
    * The entries are 5 bytes: <code1><code2><op>
    */
   static saveDB() {
-    try {
-      rmSync(DB_FILE_NAME, { force: true });
-    } catch (err) {
-      console.error(err);
-      return;
-    }
+    Fileops.rmFile(DB_FILE_NAME);
     // Init data
     const size = 5 * (1 << 16);
     const data = new Uint8Array(size);
@@ -623,7 +564,7 @@ export class Ops {
       data[pos++] = Ops.OP_ENUM[op];
     }
     // Write file
-    Ops.appendFile(DB_FILE_NAME, data);
+    Fileops.appendFile(DB_FILE_NAME, data);
   }
 
   static dbToText() {
@@ -651,6 +592,6 @@ export class Ops {
       ].join(" ");
       result.push(line);
     }
-    Ops.writeFile(TEXT_FILE_NAME, result.join(EOL));
+    Fileops.writeFile(TEXT_FILE_NAME, result.join(EOL));
   }
 }

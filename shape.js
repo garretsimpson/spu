@@ -9,7 +9,6 @@
  * - Basic shape operations: rotate (left, uturn, right), cut, stack, unstack.
  */
 
-import { readFileSync } from "fs";
 import { Fileops } from "./fileops.js";
 
 const FULL_CIRC = "CuCuCuCu"; // 0x000F
@@ -23,7 +22,9 @@ export class Shape {
   static STAR = "S";
   static WIND = "W";
 
+  /** @type {Set<number>} */
   static allShapes;
+  /** @type {Map<number,object>} */
   static keyShapes;
 
   /**
@@ -488,19 +489,24 @@ export class Shape {
 
   /**
    * Retruns true if 1-layer shape or bottom layer is supporting the layers above.
+   * TODO: would be faster with bit ops
    * @param {number} code
    * @returns {boolean}
    */
   static canStackBottom(code) {
     if (code == 0) return false;
-    if ((code && 0xfff0) === 0) return true;
-    let layers = Shape.toLayers(code);
-    let result = layers[0];
-    for (let i = 1; i < layers.length; i++) {
-      const bottom = layers[i];
-      result = Shape.stackCode(result, bottom);
-    }
-    return result == code;
+    const top = code >>> 4;
+    const bottom = code & 0x000f;
+    return Shape.stackCode(top, bottom) == code;
+  }
+
+  /**
+   * Remove the bottom layer
+   * @param {number} code
+   * @returns {number}
+   */
+  static dropBottomCode(code) {
+    return code >>> 4;
   }
 
   /**
@@ -554,6 +560,7 @@ export class Shape {
       ["uturnCode", [0x0001], 0x0004],
       ["cutCode", [0x5aff], [0x48cc, 0x1233]],
       ["cutCode", [0x936c], [0x084c, 0x0132]],
+      ["stackCode", [0x0000, 0x000f], 0x000f],
       ["stackCode", [0x000f, 0x000f], 0x00ff],
       ["stackCode", [0x1111, 0x2222], 0x3333],
       ["stackCode", [0xfffa, 0x5111], 0xf111],
@@ -583,6 +590,8 @@ export class Shape {
       ["canStackSome", [0xffff], true],
       ["canStackAll", [0xfa5f], false],
       ["canStackSome", [0xfa5f], true],
+      ["canStackBottom", [0xfa5f], true],
+      ["canStackBottom", [0xffa5], false],
       ["canCut", [0x0012], true],
       ["canCut", [0x00f1], false],
       ["canCut", [0x00ff], true],
@@ -680,37 +689,37 @@ export class Shape {
 
     const invalidShapes = [];
     const oneLayerStack = [];
-    const unknownShapes = [];
+    const complexShapes = [];
     const possibleShapes = [];
     const impossibleShapes = [];
     for (const [code, value] of keyShapes) {
       if (value.invalid) invalidShapes.push(code);
       if (value.stackAll) oneLayerStack.push(code);
       if (value.possible) possibleShapes.push(code);
-      if (value.possible && !value.stackAll) unknownShapes.push(code);
+      if (value.possible && !value.stackAll) complexShapes.push(code);
       if (!value.possible && !value.invalid) impossibleShapes.push(code);
     }
 
     // Display results
-    const NON = "-";
-    for (const [code, value] of keyShapes) {
-      const unknown = unknownShapes.includes(code);
-      console.log(
-        Shape.pp(code),
-        value.layers.toString() + (value.impossible ? "X" : NON),
-        (value.invalid ? "I" : NON) +
-          (value.cuttable ? "C" : NON) +
-          (value.stackAll ? "S" : NON),
-        unknown ? "XXXX" : ""
-      );
-    }
-    console.log("");
+    // const NON = "-";
+    // for (const [code, value] of keyShapes) {
+    //   const unknown = unknownShapes.includes(code);
+    //   console.log(
+    //     Shape.pp(code),
+    //     value.layers.toString() + (value.impossible ? "X" : NON),
+    //     (value.invalid ? "I" : NON) +
+    //       (value.cuttable ? "C" : NON) +
+    //       (value.stackAll ? "S" : NON),
+    //     unknown ? "XXXX" : ""
+    //   );
+    // }
+    // console.log("");
 
     const TABLE_DATA = [
       ["Total key shapes", keyShapes.size],
       ["Possible shapes", possibleShapes.length],
       ["Standard MAM shapes", oneLayerStack.length],
-      ["Advanced MAM shapes", unknownShapes.length],
+      ["Advanced MAM shapes", complexShapes.length],
       ["Invalid shapes", invalidShapes.length],
       ["Impossible shapes", impossibleShapes.length],
     ];
@@ -720,18 +729,68 @@ export class Shape {
     }
     console.log("");
 
-    if (unknownShapes.length == 0) {
+    const unknownShapes = new Set(complexShapes);
+
+    if (unknownShapes.size == 0) {
       console.log("No unknown shapes");
       return;
     }
 
-    console.log("Number unknown:", unknownShapes.length);
-    let code = unknownShapes[0];
+    // Attempt to deconstruct
+    let oneLayer, twoLayer, bottomLayer;
+
+    const NUM_REPS = 0;
+    for (let rep = 1; rep <= NUM_REPS; rep++) {
+      console.log("Rep:", rep);
+
+      // Remove all 1-layer shapes
+      oneLayer = Array.from(unknownShapes).filter(
+        (c) => Shape.layerCount(c) == 1
+      );
+      console.log("One layer:", oneLayer.length);
+      for (let code of oneLayer) {
+        unknownShapes.delete(code);
+        keyShapes.delete(code);
+      }
+
+      // Remove all 2-layer shapes
+      twoLayer = Array.from(unknownShapes).filter(
+        (c) => Shape.layerCount(c) == 2
+      );
+      console.log("Two layer:", twoLayer.length);
+      for (let code of twoLayer) {
+        unknownShapes.delete(code);
+        keyShapes.delete(code);
+      }
+
+      // Remove bottom support
+      bottomLayer = Array.from(unknownShapes).filter((c) =>
+        Shape.canStackBottom(c)
+      );
+      console.log("Bottom layer:", bottomLayer.length);
+      for (let code of bottomLayer) {
+        unknownShapes.delete(code);
+        keyShapes.delete(code);
+        const newCode = Shape.dropBottomCode(code);
+        unknownShapes.add(newCode);
+        keyShapes.set(newCode, { cflag: true });
+      }
+    }
+
+    const shapes = Array.from(unknownShapes).sort((a, b) => a - b);
+    console.log("");
+    console.log("Number unknown:", shapes.length);
+    let code = shapes[0];
     console.log("First unknown:", Shape.pp(code));
     console.log(Shape.toShape(code));
     console.log("");
     console.log(Shape.graph(code));
-    const chart = Shape.chart(unknownShapes);
+
+    for (let code of shapes) {
+      // keyShapes.get(code).cflag = Shape.canCut(code);
+      keyShapes.get(code).sflag = Shape.canStackBottom(code);
+    }
+    const chart = Shape.chart(shapes);
     Fileops.writeFile("data/chart.txt", chart);
   }
 
@@ -752,6 +811,7 @@ export class Shape {
     //   result += line;
     //   result += EOL;
     // }
+
     for (let i = 0; i < numLines; i++) {
       const pos = MAX_NUM * i;
       const line = shapes.slice(pos, pos + MAX_NUM);
@@ -760,8 +820,8 @@ export class Shape {
           (v) =>
             Shape.pp(v) +
             " " +
-            (keyShapes.get(v).stackSome ? "S" : "-") +
-            (keyShapes.get(v).cuttable ? "C" : "-") +
+            (keyShapes.get(v).sflag ? "S" : "-") +
+            (keyShapes.get(v).cflag ? "C" : "-") +
             " "
         )
         .join("   ");

@@ -32,46 +32,16 @@ export class Shape {
     ...Shape.FLAT_3,
     ...Shape.FLAT_4,
   ];
-  static LOGO_2T = [0x81, 0x18];
-  static LOGO_2R = [0x12, 0x21];
-  static LOGO_2B = [0x24, 0x42];
-  static LOGO_2L = [0x48, 0x84];
-  static LOGO_3T = [0x818, 0x181];
-  static LOGO_3R = [0x121, 0x212];
-  static LOGO_3B = [0x242, 0x424];
-  static LOGO_3L = [0x484, 0x848];
-  static LOGO_4T = [0x8181, 0x1818];
-  static LOGO_4R = [0x1212, 0x2121];
-  static LOGO_4B = [0x2424, 0x4242];
-  static LOGO_4L = [0x4848, 0x8484];
-  static LOGO_T = [
-    [],
-    [],
-    [...Shape.LOGO_2T],
-    [...Shape.LOGO_3T, ...Shape.LOGO_2T],
-    [...Shape.LOGO_4T, ...Shape.LOGO_3T, ...Shape.LOGO_2T],
-  ];
-  static LOGO_R = [
-    [],
-    [],
-    [...Shape.LOGO_2R],
-    [...Shape.LOGO_3R, ...Shape.LOGO_2R],
-    [...Shape.LOGO_4R, ...Shape.LOGO_3R, ...Shape.LOGO_2R],
-  ];
-  static LOGO_B = [
-    [],
-    [],
-    [...Shape.LOGO_2B],
-    [...Shape.LOGO_3B, ...Shape.LOGO_2B],
-    [...Shape.LOGO_4B, ...Shape.LOGO_3B, ...Shape.LOGO_2B],
-  ];
-  static LOGO_L = [
-    [],
-    [],
-    [...Shape.LOGO_2L],
-    [...Shape.LOGO_3L, ...Shape.LOGO_2L],
-    [...Shape.LOGO_4L, ...Shape.LOGO_3L, ...Shape.LOGO_2L],
-  ];
+
+  static MASK_R = [0x0, 0x3, 0x33, 0x333, 0x3333];
+  static MASK_B = [0x0, 0x6, 0x66, 0x666, 0x6666];
+  static MASK_L = [0x0, 0xc, 0xcc, 0xccc, 0xcccc];
+  static MASK_T = [0x0, 0x9, 0x99, 0x999, 0x9999];
+
+  static LOGO_R = [[], [], [0x12, 0x21], [0x121, 0x212], [0x1212, 0x2121]];
+  static LOGO_B = [[], [], [0x24, 0x42], [0x242, 0x424], [0x2424, 0x4242]];
+  static LOGO_L = [[], [], [0x48, 0x84], [0x484, 0x848], [0x4848, 0x8484]];
+  static LOGO_T = [[], [], [0x81, 0x18], [0x818, 0x181], [0x8181, 0x1818]];
 
   // static LOGO2P_SHAPES = [0x13, 0x26, 0x4c, 0x89, 0x19, 0x23, 0x46, 0x8c];
   // static LOGO3P_SHAPES = [
@@ -613,11 +583,21 @@ export class Shape {
 
   /**
    * @param {number} code
+   * @param {number} mask
    * @param {number} value
    * @returns {number}
    */
-  static containsCode(code, value) {
-    return (code & value) == value;
+  static containsCode(code, mask, value) {
+    return (code & mask) == value;
+  }
+
+  /**
+   * @param {number} code
+   * @param {number} value
+   * @returns {number}
+   */
+  static removeCode(code, value) {
+    return code & ~value;
   }
 
   /**
@@ -821,7 +801,9 @@ export class Shape {
     const knownShapes = Shape.knownShapes;
     const unknownShapes = Shape.unknownShapes;
 
-    const testShapes = [0xf, 0x5f];
+    // const testShapes = [0xfa5a];
+    // const testShapes = [0xf, 0x5f, 0x12, 0xff5a];
+    const testShapes = [0x1569, 0x7b4a];
     testShapes.forEach((code) => unknownShapes.set(code, { code }));
     // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
     if (unknownShapes.size == 0) {
@@ -869,6 +851,8 @@ export class Shape {
   }
 
   /**
+   * Deconstruct
+   *
    * Procedure
    * 1> Remove all 1-layer shapes from the bottom.  Shift down.
    * 2> Remove 0, 1 or 2 half logos from bottom.  Shift down.
@@ -880,6 +864,7 @@ export class Shape {
    * Note: Do not extend logo search into 5th layer.
    *
    * TODO: Use shape class object.
+   * TODO: Check for no change and break out of rep loops.
    * TODO: Should 2-layer shapes be removed (since the solution is known)?
    * TODO: Does this avoid branching / backtracking?
    * TODO: Maybe a previously deconstructed shape can be reused if it found again?
@@ -889,34 +874,43 @@ export class Shape {
    * - Maybe only add when 4th layer has more than 1 corner?
    * - Not needed for 1-layer stacked shapes.
    * - Add it conditionally, or later in the process?
+   * - Or remove it later if not needed?
    * TODO: Keep track of 5th layer (as it moves down).
    * - Might be useful for determing the stacking order of hanging parts.
+   * TODO: Can 1-layer check and logo check be combined?
    *
    * @param {object} shape
+   * @returns {object?}
    */
   static deconstruct(shape) {
+    const MAX_LOOPS = 5;
+    const LAYER_REPS = 5;
+    const LOGO_REPS = 1;
+
     const knownShapes = Shape.knownShapes;
     // const unknownShapes = Shape.unknownShapes;
     const shapeCode = shape.code;
     if (knownShapes.get(shapeCode)) return;
     const result = { code: shapeCode, build: [] };
 
-    console.log("Deconstructing:", Shape.pp(shapeCode));
+    console.log("Deconstruct");
+    console.log(Shape.toShape(shapeCode));
+    console.log(Shape.pp(shapeCode));
+    console.log(Shape.graph(shapeCode));
 
     // Add a 5th layer, if needed.
     shape.layers = Shape.layerCount(shapeCode);
     if (shape.layers == 4) {
-      shape.code = 0xf0000 | code;
+      shape.code = 0xf0000 | shapeCode;
       shape.xflag = true;
     }
 
-    const MAX_LOOP = 5;
-    for (let loop = 0; loop < MAX_LOOP; loop++) {
+    for (let loop = 0; loop < MAX_LOOPS; loop++) {
+      console.log("Loop:", loop);
       // TODO: I wonder if reps helps.
       // That is, should all one layer shapes be removed before attempting logos?  Probably.
-      let NUM_REPS = 5;
-      for (let rep = 1; rep <= NUM_REPS; rep++) {
-        console.log("Rep:", rep);
+      for (let rep = 1; rep <= LAYER_REPS; rep++) {
+        console.log("layer rep:", rep);
 
         // Remove all 1-layer shapes
         // oneLayer = Array.from(unknownShapes.keys()).filter(
@@ -938,36 +932,90 @@ export class Shape {
         //   knownShapes.set(code, {});
         // }
 
-        // Remove bottom support
-        // TODO: This probably handles 1-layer removal.
+        // Look for layers
+        let layer = 0;
         if (Shape.canStackBottom(shape.code)) {
-          const bottom = Shape.getBottomCode(shape.code);
-          result.build.push(bottom);
-          const newCode = Shape.dropBottomCode(shape.code);
-          shape.code = newCode;
-          shape.cflag = true;
-          shape.layers--;
+          layer = Shape.getBottomCode(shape.code);
+          console.log("LAYER", Shape.pp(shape.code), Shape.pp(layer));
+        }
+
+        // extract layer
+        if (layer != 0) {
+          shape.code = Shape.removeCode(shape.code, layer);
+          result.build.push(layer);
         }
         if (shape.code == 0) break;
-      }
-
-      NUM_REPS = 0;
-      // TODO: Is more than 1 rep needed?
-      // Should probably do max 2 logos (on opposite sides), and then try 1-layer removal again.
-      for (let rep = 1; rep <= NUM_REPS; rep++) {
-        console.log("Rep:", rep);
-
-        // Look for Logos
-        let found, code;
-        found = Shape.LOGO_2T.filter((value) => {
-          code = unknownShapes.get(key).code;
-          return Shape.containsCode(code, value);
-        });
-        console.log(Shape.pp(key), Shape.pp(found));
 
         // Check for empty layers and move down.
+        for (let i = 0; i < 5; i++) {
+          const bottom = Shape.getBottomCode(shape.code);
+          if (bottom != 0) break;
+          shape.code = Shape.dropBottomCode(shape.code);
+          shape.layers--;
+        }
       }
       if (shape.code == 0) break;
+
+      // TODO: Is more than 1 rep needed?
+      // Should probably do max 2 logos (on opposite sides), and then try 1-layer removal again.
+      for (let rep = 1; rep <= LOGO_REPS; rep++) {
+        console.log("logo rep:", rep);
+
+        // Look for Logos
+        let found_R = [],
+          found_B = [],
+          found_L = [],
+          found_T = [];
+        for (let layer = shape.layers; layer > 1; --layer) {
+          found_R.push(
+            ...Shape.LOGO_R[layer].filter((value) =>
+              Shape.containsCode(shape.code, Shape.MASK_R[layer], value)
+            )
+          );
+          found_B.push(
+            ...Shape.LOGO_B[layer].filter((value) =>
+              Shape.containsCode(shape.code, Shape.MASK_B[layer], value)
+            )
+          );
+          found_L.push(
+            ...Shape.LOGO_L[layer].filter((value) =>
+              Shape.containsCode(shape.code, Shape.MASK_L[layer], value)
+            )
+          );
+          found_T.push(
+            ...Shape.LOGO_T[layer].filter((value) =>
+              Shape.containsCode(shape.code, Shape.MASK_T[layer], value)
+            )
+          );
+        }
+        console.log("R", Shape.pp(shape.code), Shape.pp(found_R));
+        console.log("B", Shape.pp(shape.code), Shape.pp(found_B));
+        console.log("L", Shape.pp(shape.code), Shape.pp(found_L));
+        console.log("T", Shape.pp(shape.code), Shape.pp(found_T));
+        if (found_R.length > 1) found_R.length = 1;
+        if (found_B.length > 1) found_B.length = 1;
+        if (found_L.length > 1) found_L.length = 1;
+        if (found_T.length > 1) found_T.length = 1;
+        const found_LR = found_L.concat(found_R);
+        const found_TB = found_T.concat(found_B);
+        const found = found_TB.length > found_LR.length ? found_TB : found_LR;
+        console.log("LOGO", Shape.pp(shape.code), Shape.pp(found));
+
+        // extract logos
+        for (let code of found) {
+          shape.code = Shape.removeCode(shape.code, code);
+          result.build.push(code);
+        }
+        if (shape.code == 0) break;
+
+        // Check for empty layers and move down.
+        for (let i = 0; i < 5; i++) {
+          const bottom = Shape.getBottomCode(shape.code);
+          if (bottom != 0) break;
+          shape.code = Shape.dropBottomCode(shape.code);
+          shape.layers--;
+        }
+      }
       console.log("");
     }
 
@@ -975,7 +1023,7 @@ export class Shape {
     if (shape.code == 0) {
       result.code = shapeCode;
     } else {
-      result = null;
+      return null;
     }
 
     return result;

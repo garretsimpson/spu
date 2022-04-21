@@ -399,8 +399,8 @@ export class Shape {
    * @returns {number}
    */
   static layerCount(code) {
-    let mask = 0xf000;
-    for (let num = 4; num > 0; num--) {
+    let mask = 0xf0000;
+    for (let num = 5; num > 0; num--) {
       if (code & mask) return num;
       mask >>>= 4;
     }
@@ -489,15 +489,15 @@ export class Shape {
 
   /**
    * Retruns true if 1-layer shape or bottom layer is supporting the layers above.
-   * TODO: would be faster with bit ops
    * @param {number} code
    * @returns {boolean}
    */
   static canStackBottom(code) {
     if (code == 0) return false;
-    const top = code >>> 4;
+    const above = (code & 0x00f0) >>> 4;
+    if (above == 0) return true;
     const bottom = code & 0x000f;
-    return Shape.stackCode(top, bottom) == code;
+    return (above & bottom) != 0;
   }
 
   /**
@@ -729,81 +729,97 @@ export class Shape {
     }
     console.log("");
 
-    const unknownShapes = new Set(complexShapes);
+    const knownShapes = new Map();
+    const unknownShapes = new Map();
 
+    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
     if (unknownShapes.size == 0) {
       console.log("No unknown shapes");
       return;
     }
 
     // Attempt to deconstruct
-    let oneLayer, twoLayer, bottomLayer;
+    let oneLayer, twoLayer, fourLayer, bottomLayer;
 
-    const NUM_REPS = 0;
+    // Add a 5th layer
+    // TODO: Smarter 5th layer - Maybe only 4th layers with more than 1 corner?
+    fourLayer = Array.from(unknownShapes.keys()).filter(
+      (c) => Shape.layerCount(c) == 4
+    );
+    console.log("Four layer:", fourLayer.length);
+    fourLayer.forEach((code) => {
+      const shape = unknownShapes.get(code);
+      shape.code = 0xf0000 | code;
+      shape.xflag = true;
+    });
+    console.log("");
+
+    const NUM_REPS = 2;
     for (let rep = 1; rep <= NUM_REPS; rep++) {
       console.log("Rep:", rep);
 
       // Remove all 1-layer shapes
-      oneLayer = Array.from(unknownShapes).filter(
-        (c) => Shape.layerCount(c) == 1
+      // TODO: Remove if not needed.
+      oneLayer = Array.from(unknownShapes.keys()).filter(
+        (key) => Shape.layerCount(unknownShapes.get(key).code) == 1
       );
       console.log("One layer:", oneLayer.length);
       for (let code of oneLayer) {
         unknownShapes.delete(code);
-        keyShapes.delete(code);
+        knownShapes.set(code, {});
       }
 
       // Remove all 2-layer shapes
-      twoLayer = Array.from(unknownShapes).filter(
-        (c) => Shape.layerCount(c) == 2
+      twoLayer = Array.from(unknownShapes.keys()).filter(
+        (key) => Shape.layerCount(unknownShapes.get(key).code) == 2
       );
       console.log("Two layer:", twoLayer.length);
       for (let code of twoLayer) {
         unknownShapes.delete(code);
-        keyShapes.delete(code);
+        knownShapes.set(code, {});
       }
 
       // Remove bottom support
-      bottomLayer = Array.from(unknownShapes).filter((c) =>
-        Shape.canStackBottom(c)
+      bottomLayer = Array.from(unknownShapes.keys()).filter((key) =>
+        Shape.canStackBottom(unknownShapes.get(key).code)
       );
       console.log("Bottom layer:", bottomLayer.length);
       for (let code of bottomLayer) {
-        unknownShapes.delete(code);
-        keyShapes.delete(code);
-        const newCode = Shape.dropBottomCode(code);
-        unknownShapes.add(newCode);
-        keyShapes.set(newCode, { cflag: true });
+        // TODO: Add extracted shape to solution
+        const shape = unknownShapes.get(code);
+        const newCode = Shape.dropBottomCode(shape.code);
+        shape.code = newCode;
+        shape.cflag = true;
       }
+      console.log("");
     }
 
-    const shapes = Array.from(unknownShapes).sort((a, b) => a - b);
-    console.log("");
-    console.log("Number unknown:", shapes.length);
-    let code = shapes[0];
+    console.log("Number known:", knownShapes.size);
+    console.log("Number unknown:", unknownShapes.size);
+    const codes = Array.from(unknownShapes.keys()).sort((a, b) => a - b);
+    let code = codes[0];
     console.log("First unknown:", Shape.pp(code));
     console.log(Shape.toShape(code));
     console.log("");
     console.log(Shape.graph(code));
 
-    for (let code of shapes) {
-      // keyShapes.get(code).cflag = Shape.canCut(code);
-      keyShapes.get(code).sflag = Shape.canStackBottom(code);
+    for (const value of unknownShapes.values()) {
+      value.sflag = Shape.canStackBottom(value.code);
     }
-    const chart = Shape.chart(shapes);
+    const chart = Shape.chart(unknownShapes);
     Fileops.writeFile("data/chart.txt", chart);
   }
 
   /**
-   * @param {Array<number>} shapes
+   * @param {Map<number,object>} shapes
    */
   static chart(shapes) {
     const EOL = "\n";
     const MAX_NUM = 8;
 
     let result = "";
-    const keyShapes = Shape.keyShapes;
-    const numLines = Math.floor(shapes.length / MAX_NUM) + 1;
+    const codes = Array.from(shapes.keys()).sort((a, b) => a - b);
+    const numLines = Math.floor(codes.length / MAX_NUM) + 1;
     // for (let i = 0; i < numLines; i++) {
     //   const pos = MAX_NUM * i;
     //   const shapes = shapes.slice(pos, pos + MAX_NUM);
@@ -814,22 +830,22 @@ export class Shape {
 
     for (let i = 0; i < numLines; i++) {
       const pos = MAX_NUM * i;
-      const line = shapes.slice(pos, pos + MAX_NUM);
+      const line = codes.slice(pos, pos + MAX_NUM);
       const head = line
         .map(
-          (v) =>
-            Shape.pp(v) +
+          (code) =>
+            Shape.pp(code) +
             " " +
-            (keyShapes.get(v).sflag ? "S" : "-") +
-            (keyShapes.get(v).cflag ? "C" : "-") +
+            (shapes.get(code).sflag ? "S" : "-") +
+            (shapes.get(code).cflag ? "C" : "-") +
             " "
         )
         .join("   ");
       result += head;
       result += EOL;
 
-      const graphs = line.map((v) => Shape.graph(v));
-      for (let i = 0; i < 4; i++) {
+      const graphs = line.map((code) => Shape.graph(shapes.get(code).code));
+      for (let i = 0; i < 5; i++) {
         const row = graphs
           .map((v) => v.split(/\n/))
           .map((v) => v[i])
@@ -847,10 +863,10 @@ export class Shape {
    * @returns {string}
    */
   static graph(code) {
-    const bin = code.toString(2).padStart(16, "0");
+    const bin = code.toString(2).padStart(20, "0");
     const ICONS = ["- ", "X "];
     let result = "";
-    for (let y = 0; y < 4; y++) {
+    for (let y = 0; y < 5; y++) {
       for (let x = 0; x < 4; x++) {
         const pos = 4 * y + (3 - x);
         const bit = bin[pos];

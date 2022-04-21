@@ -22,6 +22,70 @@ export class Shape {
   static STAR = "S";
   static WIND = "W";
 
+  static FLAT_1 = [0x1, 0x2, 0x4, 0x8];
+  static FLAT_2 = [0x3, 0x5, 0x6, 0x9, 0xa, 0xc];
+  static FLAT_3 = [0x7, 0xb, 0xd, 0xe];
+  static FLAT_4 = [0xf];
+  static FLAT = [
+    ...Shape.FLAT_1,
+    ...Shape.FLAT_2,
+    ...Shape.FLAT_3,
+    ...Shape.FLAT_4,
+  ];
+  static LOGO_2T = [0x81, 0x18];
+  static LOGO_2R = [0x12, 0x21];
+  static LOGO_2B = [0x24, 0x42];
+  static LOGO_2L = [0x48, 0x84];
+  static LOGO_3T = [0x818, 0x181];
+  static LOGO_3R = [0x121, 0x212];
+  static LOGO_3B = [0x242, 0x424];
+  static LOGO_3L = [0x484, 0x848];
+  static LOGO_4T = [0x8181, 0x1818];
+  static LOGO_4R = [0x1212, 0x2121];
+  static LOGO_4B = [0x2424, 0x4242];
+  static LOGO_4L = [0x4848, 0x8484];
+  static LOGO_T = [
+    [],
+    [],
+    [...Shape.LOGO_2T],
+    [...Shape.LOGO_3T, ...Shape.LOGO_2T],
+    [...Shape.LOGO_4T, ...Shape.LOGO_3T, ...Shape.LOGO_2T],
+  ];
+  static LOGO_R = [
+    [],
+    [],
+    [...Shape.LOGO_2R],
+    [...Shape.LOGO_3R, ...Shape.LOGO_2R],
+    [...Shape.LOGO_4R, ...Shape.LOGO_3R, ...Shape.LOGO_2R],
+  ];
+  static LOGO_B = [
+    [],
+    [],
+    [...Shape.LOGO_2B],
+    [...Shape.LOGO_3B, ...Shape.LOGO_2B],
+    [...Shape.LOGO_4B, ...Shape.LOGO_3B, ...Shape.LOGO_2B],
+  ];
+  static LOGO_L = [
+    [],
+    [],
+    [...Shape.LOGO_2L],
+    [...Shape.LOGO_3L, ...Shape.LOGO_2L],
+    [...Shape.LOGO_4L, ...Shape.LOGO_3L, ...Shape.LOGO_2L],
+  ];
+
+  // static LOGO2P_SHAPES = [0x13, 0x26, 0x4c, 0x89, 0x19, 0x23, 0x46, 0x8c];
+  // static LOGO3P_SHAPES = [
+  //   0x123, 0x246, 0x48c, 0x819, 0x189, 0x213, 0x426, 0x84c,
+  // ];
+  // static LOGO4P_SHAPES = [
+  //   0x1213, 0x2426, 0x484c, 0x8189, 0x1819, 0x2123, 0x4246, 0x848c,
+  // ];
+  // static LOGOP_SHAPES = [
+  //   ...Shape.LOGO4P_SHAPES,
+  //   ...Shape.LOGO3P_SHAPES,
+  //   ...Shape.LOGO2P_SHAPES,
+  // ];
+
   /** @type {Set<number>} */
   static allShapes;
   /** @type {Map<number,object>} */
@@ -532,6 +596,15 @@ export class Shape {
   }
 
   /**
+   * @param {number} code
+   * @param {number} value
+   * @returns {number}
+   */
+  static containsCode(code, value) {
+    return (code & value) == value;
+  }
+
+  /**
    * pretty print
    * @param {*} value
    * @returns {String}
@@ -732,7 +805,9 @@ export class Shape {
     const knownShapes = new Map();
     const unknownShapes = new Map();
 
-    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    complexShapes.forEach((code) =>
+      unknownShapes.set(code, { code, layers: Shape.layerCount(code) })
+    );
     if (unknownShapes.size == 0) {
       console.log("No unknown shapes");
       return;
@@ -742,7 +817,7 @@ export class Shape {
     let oneLayer, twoLayer, fourLayer, bottomLayer;
 
     // Add a 5th layer
-    // TODO: Smarter 5th layer - Maybe only 4th layers with more than 1 corner?
+    // TODO: Smarter 5th layer - Maybe only add when 4th layer has more than 1 corner?
     fourLayer = Array.from(unknownShapes.keys()).filter(
       (c) => Shape.layerCount(c) == 4
     );
@@ -754,7 +829,7 @@ export class Shape {
     });
     console.log("");
 
-    const NUM_REPS = 2;
+    let NUM_REPS = 2;
     for (let rep = 1; rep <= NUM_REPS; rep++) {
       console.log("Rep:", rep);
 
@@ -791,6 +866,23 @@ export class Shape {
         shape.code = newCode;
         shape.cflag = true;
       }
+
+      console.log("");
+    }
+    NUM_REPS = 3;
+    for (let rep = 1; rep <= NUM_REPS; rep++) {
+      console.log("Rep:", rep);
+
+      // Look for Logos
+      let found, code;
+      Array.from(unknownShapes.keys()).forEach((key) => {
+        found = Shape.LOGO_2T.filter((value) => {
+          code = unknownShapes.get(key).code;
+          return Shape.containsCode(code, value);
+        });
+        console.log(Shape.pp(key), Shape.pp(found));
+      });
+
       console.log("");
     }
 

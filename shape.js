@@ -803,9 +803,10 @@ export class Shape {
 
     // const testShapes = [0xfa5a];
     // const testShapes = [0xf, 0x5f, 0x12, 0xff5a];
-    const testShapes = [0x1569, 0x7b4a];
-    testShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // const testShapes = [0x1569, 0x7b4a];
+    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
     // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    possibleShapes.forEach(code => unknownShapes.set(code, { code }));
     if (unknownShapes.size == 0) {
       console.log("No unknown shapes");
       return;
@@ -835,19 +836,23 @@ export class Shape {
     }
 
     // Log known builds
-    console.log("Known builds");
+    console.log("Saving known builds");
+    let data = "";
     for (const [key, value] of knownShapes) {
-      console.log(Shape.pp(key), Shape.pp(value.build));
+      data += Shape.pp(key);
+      data += " ";
+      data += Shape.pp(value.build);
+      data += "\n";
     }
-    console.log("");
+    Fileops.writeFile("data/known.txt", data);
 
     // Log remaining unknowns
-    console.log("Creating chart of unknowns");
+    console.log("Saving chart of unknowns");
     for (const value of unknownShapes.values()) {
       value.sflag = Shape.canStackBottom(value.code);
     }
     const chart = Shape.chart(unknownShapes);
-    Fileops.writeFile("data/chart.txt", chart);
+    Fileops.writeFile("data/unknown.txt", chart);
   }
 
   /**

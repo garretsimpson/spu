@@ -90,6 +90,10 @@ export class Shape {
   static allShapes;
   /** @type {Map<number,object>} */
   static keyShapes;
+  /** @type {Map<number,object>} */
+  static knownShapes;
+  /** @type {Map<number,object>} */
+  static unknownShapes;
 
   /**
    * @param {number} code
@@ -114,6 +118,9 @@ export class Shape {
       const key = Shape.keyCode(code);
       Shape.keyShapes.set(key, {});
     }
+
+    Shape.knownShapes = new Map();
+    Shape.unknownShapes = new Map();
   }
 
   static readShapeFile() {
@@ -567,10 +574,19 @@ export class Shape {
   /**
    * Remove the bottom layer
    * @param {number} code
-   * @returns {number}
+   * @returns {number} new shape code
    */
   static dropBottomCode(code) {
     return code >>> 4;
+  }
+
+  /**
+   * Get the bottom layer
+   * @param {number} code
+   * @returns {number}
+   */
+  static getBottomCode(code) {
+    return code & 0x000f;
   }
 
   /**
@@ -802,104 +818,167 @@ export class Shape {
     }
     console.log("");
 
-    const knownShapes = new Map();
-    const unknownShapes = new Map();
+    const knownShapes = Shape.knownShapes;
+    const unknownShapes = Shape.unknownShapes;
 
-    complexShapes.forEach((code) =>
-      unknownShapes.set(code, { code, layers: Shape.layerCount(code) })
-    );
+    const testShapes = [0xf, 0x5f];
+    testShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
     if (unknownShapes.size == 0) {
       console.log("No unknown shapes");
       return;
     }
 
-    // Attempt to deconstruct
-    let oneLayer, twoLayer, fourLayer, bottomLayer;
-
-    // Add a 5th layer
-    // TODO: Smarter 5th layer - Maybe only add when 4th layer has more than 1 corner?
-    fourLayer = Array.from(unknownShapes.keys()).filter(
-      (c) => Shape.layerCount(c) == 4
-    );
-    console.log("Four layer:", fourLayer.length);
-    fourLayer.forEach((code) => {
-      const shape = unknownShapes.get(code);
-      shape.code = 0xf0000 | code;
-      shape.xflag = true;
-    });
-    console.log("");
-
-    let NUM_REPS = 2;
-    for (let rep = 1; rep <= NUM_REPS; rep++) {
-      console.log("Rep:", rep);
-
-      // Remove all 1-layer shapes
-      // TODO: Remove if not needed.
-      oneLayer = Array.from(unknownShapes.keys()).filter(
-        (key) => Shape.layerCount(unknownShapes.get(key).code) == 1
-      );
-      console.log("One layer:", oneLayer.length);
-      for (let code of oneLayer) {
-        unknownShapes.delete(code);
-        knownShapes.set(code, {});
-      }
-
-      // Remove all 2-layer shapes
-      twoLayer = Array.from(unknownShapes.keys()).filter(
-        (key) => Shape.layerCount(unknownShapes.get(key).code) == 2
-      );
-      console.log("Two layer:", twoLayer.length);
-      for (let code of twoLayer) {
-        unknownShapes.delete(code);
-        knownShapes.set(code, {});
-      }
-
-      // Remove bottom support
-      bottomLayer = Array.from(unknownShapes.keys()).filter((key) =>
-        Shape.canStackBottom(unknownShapes.get(key).code)
-      );
-      console.log("Bottom layer:", bottomLayer.length);
-      for (let code of bottomLayer) {
-        // TODO: Add extracted shape to solution
-        const shape = unknownShapes.get(code);
-        const newCode = Shape.dropBottomCode(shape.code);
-        shape.code = newCode;
-        shape.cflag = true;
-      }
-
-      console.log("");
-    }
-    NUM_REPS = 3;
-    for (let rep = 1; rep <= NUM_REPS; rep++) {
-      console.log("Rep:", rep);
-
-      // Look for Logos
-      let found, code;
-      Array.from(unknownShapes.keys()).forEach((key) => {
-        found = Shape.LOGO_2T.filter((value) => {
-          code = unknownShapes.get(key).code;
-          return Shape.containsCode(code, value);
-        });
-        console.log(Shape.pp(key), Shape.pp(found));
-      });
-
-      console.log("");
-    }
-
     console.log("Number known:", knownShapes.size);
     console.log("Number unknown:", unknownShapes.size);
     const codes = Array.from(unknownShapes.keys()).sort((a, b) => a - b);
-    let code = codes[0];
+    const code = codes[0];
     console.log("First unknown:", Shape.pp(code));
     console.log(Shape.toShape(code));
     console.log("");
     console.log(Shape.graph(code));
+    // Shape.deconstruct(unknownShapes.get(code));
 
+    // Attempt to deconstruct
+    for (const [key, value] of unknownShapes) {
+      const result = Shape.deconstruct(value);
+      if (result) {
+        console.log(Shape.pp(key), Shape.pp(result.build));
+        knownShapes.set(key, result);
+        unknownShapes.delete(key);
+      } else {
+        console.log(Shape.pp(key), "NOT FOUND");
+      }
+      console.log("");
+    }
+
+    // Log known builds
+    console.log("Known builds");
+    for (const [key, value] of knownShapes) {
+      console.log(Shape.pp(key), Shape.pp(value.build));
+    }
+    console.log("");
+
+    // Log remaining unknowns
+    console.log("Creating chart of unknowns");
     for (const value of unknownShapes.values()) {
       value.sflag = Shape.canStackBottom(value.code);
     }
     const chart = Shape.chart(unknownShapes);
     Fileops.writeFile("data/chart.txt", chart);
+  }
+
+  /**
+   * Procedure
+   * 1> Remove all 1-layer shapes from the bottom.  Shift down.
+   * 2> Remove 0, 1 or 2 half logos from bottom.  Shift down.
+   *    - First look for logos on top and bottom sides, there should be max 1 on each side.
+   *    - Then look for logos on left and right sides, also max 1 on each side.
+   *    - If there are more (2 vs 1, 1 vs 0) then use those results.
+   * 3> If empty then done, else repeat.
+   *
+   * Note: Do not extend logo search into 5th layer.
+   *
+   * TODO: Use shape class object.
+   * TODO: Should 2-layer shapes be removed (since the solution is known)?
+   * TODO: Does this avoid branching / backtracking?
+   * TODO: Maybe a previously deconstructed shape can be reused if it found again?
+   * TODO: Use a mask to make sure empty spots on LOGOs are empty.
+   * - But might not need to?
+   * TODO: Smarter 5th layer.
+   * - Maybe only add when 4th layer has more than 1 corner?
+   * - Not needed for 1-layer stacked shapes.
+   * - Add it conditionally, or later in the process?
+   * TODO: Keep track of 5th layer (as it moves down).
+   * - Might be useful for determing the stacking order of hanging parts.
+   *
+   * @param {object} shape
+   */
+  static deconstruct(shape) {
+    const knownShapes = Shape.knownShapes;
+    // const unknownShapes = Shape.unknownShapes;
+    const shapeCode = shape.code;
+    if (knownShapes.get(shapeCode)) return;
+    const result = { code: shapeCode, build: [] };
+
+    console.log("Deconstructing:", Shape.pp(shapeCode));
+
+    // Add a 5th layer, if needed.
+    shape.layers = Shape.layerCount(shapeCode);
+    if (shape.layers == 4) {
+      shape.code = 0xf0000 | code;
+      shape.xflag = true;
+    }
+
+    const MAX_LOOP = 5;
+    for (let loop = 0; loop < MAX_LOOP; loop++) {
+      // TODO: I wonder if reps helps.
+      // That is, should all one layer shapes be removed before attempting logos?  Probably.
+      let NUM_REPS = 5;
+      for (let rep = 1; rep <= NUM_REPS; rep++) {
+        console.log("Rep:", rep);
+
+        // Remove all 1-layer shapes
+        // oneLayer = Array.from(unknownShapes.keys()).filter(
+        //   (key) => Shape.layerCount(unknownShapes.get(key).code) == 1
+        // );
+        // console.log("One layer:", oneLayer.length);
+        // for (let code of oneLayer) {
+        //   unknownShapes.delete(code);
+        //   knownShapes.set(code, {});
+        // }
+
+        // Remove all 2-layer shapes
+        // twoLayer = Array.from(unknownShapes.keys()).filter(
+        //   (key) => Shape.layerCount(unknownShapes.get(key).code) == 2
+        // );
+        // console.log("Two layer:", twoLayer.length);
+        // for (let code of twoLayer) {
+        //   unknownShapes.delete(code);
+        //   knownShapes.set(code, {});
+        // }
+
+        // Remove bottom support
+        // TODO: This probably handles 1-layer removal.
+        if (Shape.canStackBottom(shape.code)) {
+          const bottom = Shape.getBottomCode(shape.code);
+          result.build.push(bottom);
+          const newCode = Shape.dropBottomCode(shape.code);
+          shape.code = newCode;
+          shape.cflag = true;
+          shape.layers--;
+        }
+        if (shape.code == 0) break;
+      }
+
+      NUM_REPS = 0;
+      // TODO: Is more than 1 rep needed?
+      // Should probably do max 2 logos (on opposite sides), and then try 1-layer removal again.
+      for (let rep = 1; rep <= NUM_REPS; rep++) {
+        console.log("Rep:", rep);
+
+        // Look for Logos
+        let found, code;
+        found = Shape.LOGO_2T.filter((value) => {
+          code = unknownShapes.get(key).code;
+          return Shape.containsCode(code, value);
+        });
+        console.log(Shape.pp(key), Shape.pp(found));
+
+        // Check for empty layers and move down.
+      }
+      if (shape.code == 0) break;
+      console.log("");
+    }
+
+    // If remaining shape is empty (0), then done.
+    if (shape.code == 0) {
+      result.code = shapeCode;
+    } else {
+      result = null;
+    }
+
+    return result;
   }
 
   /**

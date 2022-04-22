@@ -1,0 +1,108 @@
+C:\Program Files\nodejs\node.exe --max-old-space-size=25000 .\main.js
+Shape Processing Unit 0.5
+Fri Apr 22 2022 12:37:54 GMT-0700 (Pacific Daylight Time)
+
+lines: 9316
+good: 48432
+bad: 2625
+
+All shapes: 48432
+Key shapes: 9316
+
+Analysis...
+  9316 Total key shapes
+  6691 Possible shapes
+  3885 Standard MAM shapes
+  2806 Advanced MAM shapes
+  1790 Invalid shapes
+   835 Impossible shapes
+
+Number known: 0
+Number unknown: 5
+First unknown: 0014
+----Ru--:Ru------:--------:--------
+
+- - - - 
+- - - - 
+- - - - 
+X - - - 
+- - X -
+Deconstruct
+----Ru--:Ru------:--------:--------
+0014
+- - - - 
+- - - - 
+- - - - 
+X - - - 
+- - X -
+EXTRA 0014 [0004]
+LAYER 0001 [0001]
+ORDER 01+2+3+ [0004,0001] 0005
+ORDER 0123+++ [0004,0001] 0005
+ORDER 01+23++ [0004,0001] 0005
+FAIL  0014 [0004,0001]
+
+Deconstruct
+------Ru:RuRuRu--:Ru------:--------
+0178
+- - - - 
+- - - - 
+X - - - 
+X X X - 
+- - - X
+LOGO+ 0178 [0018]
+LOGO  0016 [0012]
+LAYER 0004 [0004]
+ORDER 01+2+3+ [0018,0012,0004] 013c
+ORDER 0123+++ [0018,0012,0004] 0178
+PASS  0178 [0018,0012,0004]
+
+Deconstruct
+Ru----Ru:--RuRu--:Ru--Ru--:Ru------
+1569
+- - - - 
+X - - - 
+X - X - 
+- X X - 
+X - - X
+LOGO+ 1569 [0121,0048]
+LOGO+ 1448 [0048]
+EXTRA 0014 [0004]
+LAYER 0001 [0001]
+ORDER 01+2+3+ [0121,0048,0004,0001] 1569
+PASS  1569 [0121,0048,0004,0001]
+
+Deconstruct
+----Ru--:--Ru----:----Ru--:RuRu----
+3424
+- - - - 
+X X - - 
+- - X - 
+- X - - 
+- - X -
+LOGO  3424 [2424,0424,0024]
+LAYER 0001 [0001]
+ORDER 01+2+3+ [2424,0001] 2425
+ORDER 0123+++ [2424,0001] 2425
+ORDER 01+23++ [2424,0001] 2425
+FAIL  3424 [2424,0001]
+
+Deconstruct
+--Ru--Ru:----Ru--:RuRu--Ru:RuRuRu--
+7b4a
+- - - - 
+X X X - 
+X X - X 
+- - X - 
+- X - X
+LOGO+ 7b4a [0242]
+LAYER 7908 [0008]
+LAYER 0079 [0009]
+LAYER 0007 [0007]
+ORDER 01+2+3+ [0242,0008,0009,0007] 72da
+ORDER 0123+++ [0242,0008,0009,0007] 7bc2
+ORDER 01+23++ [0242,0008,0009,0007] 7b4a
+PASS  7b4a [0242,0008,0009,0007]
+
+Saving known builds
+Saving chart of unknowns

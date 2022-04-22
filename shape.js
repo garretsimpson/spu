@@ -456,9 +456,7 @@ export class Shape {
   static isInvalid(code) {
     if (code == 0) return true;
     for (; code > 0; code >>>= 4) {
-      if ((code & 0xf) == 0) {
-        return true;
-      }
+      if ((code & 0xf) == 0) return true;
     }
     return false;
   }
@@ -582,6 +580,19 @@ export class Shape {
   }
 
   /**
+   * Returns true if the value supports the layer above it.
+   * @param {number} code
+   * @param {number} value
+   * @returns {number}
+   */
+  static supportsCode(code, value) {
+    code = code >>> 4;
+    const num = Shape.layerCount(value);
+    const mask = 0xf << (4 * (num - 1));
+    return (code & value & mask) != 0;
+  }
+
+  /**
    * @param {number} code
    * @param {number} mask
    * @param {number} value
@@ -630,6 +641,7 @@ export class Shape {
       ["cutCode", [0x5aff], [0x48cc, 0x1233]],
       ["cutCode", [0x936c], [0x084c, 0x0132]],
       ["stackCode", [0x0000, 0x000f], 0x000f],
+      ["stackCode", [0x000f, 0x0000], 0x000f],
       ["stackCode", [0x000f, 0x000f], 0x00ff],
       ["stackCode", [0x1111, 0x2222], 0x3333],
       ["stackCode", [0xfffa, 0x5111], 0xf111],
@@ -664,6 +676,10 @@ export class Shape {
       ["canCut", [0x0012], true],
       ["canCut", [0x00f1], false],
       ["canCut", [0x00ff], true],
+      ["supportsCode", [0x0011, 0x0001], true],
+      ["supportsCode", [0x0021, 0x0001], false],
+      ["supportsCode", [0x0521, 0x0021], false],
+      ["supportsCode", [0x0f21, 0x0021], true],
     ];
 
     let testNum = 0;
@@ -802,8 +818,8 @@ export class Shape {
     const unknownShapes = Shape.unknownShapes;
 
     // const testShapes = [0xfa5a];
-    const testShapes = [0xf, 0x5f, 0x12, 0xff5a];
-    // const testShapes = [0x1569, 0x7b4a];
+    // const testShapes = [0xf, 0x5f, 0x12, 0xff5a];
+    const testShapes = [0x0014, 0x0178, 0x1569, 0x3424, 0x7b4a];
     testShapes.forEach((code) => unknownShapes.set(code, { code }));
     // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
@@ -826,7 +842,12 @@ export class Shape {
     for (const [key, value] of unknownShapes) {
       const result = Shape.deconstruct(value);
       if (result) {
-        console.log(Shape.pp(key), Shape.pp(result.build));
+        const pass = Shape.verifyBuild(result);
+        console.log(
+          pass ? "PASS " : "FAIL ",
+          Shape.pp(key),
+          Shape.pp(result.build)
+        );
         knownShapes.set(key, result);
         unknownShapes.delete(key);
       } else {
@@ -853,6 +874,43 @@ export class Shape {
     }
     const chart = Shape.chart(unknownShapes);
     Fileops.writeFile("data/unknown.txt", chart);
+  }
+
+  /**
+   * Verify build - try stacking the results
+   * @param {object} data
+   * @returns {boolean}
+   */
+  static verifyBuild(data) {
+    const ORDERS = ["01+2+3+", "0123+++", "01+23++"];
+    let code;
+    for (const order of ORDERS) {
+      code = Shape.stackOrder(data.build, order);
+      if (data.code == code) return true;
+    }
+    return false;
+  }
+
+  /**
+   * Stack in the given order
+   * @param {Array<number>} codes
+   * @param {string} order
+   * @returns {number}
+   */
+  static stackOrder(codes, order) {
+    const stack = [];
+    let code;
+    for (const i of order) {
+      if (i == "+") {
+        code = Shape.stackCode(stack.pop(), stack.pop());
+      } else {
+        code = codes[i];
+      }
+      stack.push(code);
+    }
+    const result = stack.pop();
+    console.log("ORDER", order, Shape.pp(codes), Shape.pp(result));
+    return result;
   }
 
   /**
@@ -885,6 +943,9 @@ export class Shape {
    * - Might be useful for determing the stacking order of hanging parts.
    * TODO: Can 1-layer check and logo check be combined?
    * - Use masks for all checks?
+   * TODO: Auto-detect impossible shapes.
+   * - Such as when the first found is extra.
+   * TODO: Determine the build order based on the order of the types found.
    *
    * @param {object} shape
    * @returns {object?}
@@ -903,21 +964,22 @@ export class Shape {
     console.log(Shape.pp(shapeCode));
     console.log(Shape.graph(shapeCode));
 
-    // Add a 5th layer, if needed.
     shape.layers = Shape.layerCount(shapeCode);
-    if (shape.layers == 4) {
-      shape.code = 0xf0000 | shapeCode;
-      shape.xflag = true;
-    }
+    // Add a 5th layer, if needed.
+    // shape.codex = shapeCode;
+    // if (shape.layers == 4) {
+    //   shape.code = 0xf0000 | shapeCode;
+    //   shape.xflag = true;
+    // }
 
     for (let loop = 0; loop < MAX_LOOPS; loop++) {
-      console.log("Loop:", loop);
+      // console.log("Loop:", loop);
       let foundCode = 0;
       do {
         // Look for layers
         if (Shape.canStackBottom(shape.code)) {
           foundCode = Shape.getBottomCode(shape.code);
-          console.log("LAYER", Shape.pp(shape.code), Shape.pp(foundCode));
+          console.log("LAYER", Shape.pp(shape.code), Shape.pp([foundCode]));
           break;
         }
 
@@ -925,7 +987,7 @@ export class Shape {
         let data;
         let found = [];
         for (let layer = shape.layers; layer > 1; --layer) {
-          // TODO: Refactor this constant
+          // TODO: Refactor this as a constant
           data = [
             [Shape.MASK_E[layer], Shape.LOGO_E[layer]],
             [Shape.MASK_S[layer], Shape.LOGO_S[layer]],
@@ -943,22 +1005,33 @@ export class Shape {
         }
 
         // Find logos that are supporting the layer above
-
-        console.log("LOGO", Shape.pp(shape.code), Shape.pp(found));
+        const foundx = found.filter((value) =>
+          Shape.supportsCode(shape.code, value)
+        );
+        if (foundx.length > 0) {
+          console.log("LOGO+", Shape.pp(shape.code), Shape.pp(foundx));
+          foundCode = foundx[0];
+          break;
+        }
         if (found.length > 0) {
+          console.log("LOGO ", Shape.pp(shape.code), Shape.pp(found));
           foundCode = found[0];
           break;
         }
 
-        // if no layer or logo, then extract bottom later
+        // if no layer or logo, then extract bottom layer
         foundCode = Shape.getBottomCode(shape.code);
+        console.log("EXTRA", Shape.pp(shape.code), Shape.pp([foundCode]));
       } while (false);
 
       // extract found shape
-      if (foundCode != 0) {
+      if (foundCode == 0) {
+        console.log("ERROR", Shape.pp(shape.code));
+      } else {
         shape.code = Shape.removeCode(shape.code, foundCode);
         result.build.push(foundCode);
       }
+      if (shape.code == 0) break;
 
       // Check for empty layers and move down.
       if (shape.code == 0) break;
@@ -969,14 +1042,12 @@ export class Shape {
         shape.layers--;
       }
 
-      // Check if remaining shape is already known.
-
-      console.log("");
+      // TODO: Check if remaining shape is already known.
     }
 
     // If remaining shape is empty (0), then done.
     if (shape.code == 0) {
-      result.code = shapeCode;
+      shape.code = shapeCode;
     } else {
       return null;
     }

@@ -859,12 +859,16 @@ export class Shape {
    * Deconstruct
    *
    * Procedure
-   * 1> Remove all 1-layer shapes from the bottom.  Shift down.
-   * 2> Remove 0, 1 or 2 half logos from bottom.  Shift down.
-   *    - First look for logos on top and bottom sides, there should be max 1 on each side.
-   *    - Then look for logos on left and right sides, also max 1 on each side.
-   *    - If there are more (2 vs 1, 1 vs 0) then use those results.
-   * 3> If empty then done, else repeat.
+   * 0> Add 5th layer if needed (original shape has 4 layers).
+   * Do the following until the shape is empty...
+   * 1> Look for 1-layer shape on the bottom.  If found, goto #4.
+   * - Layer above is empty or is being supported by bottom layer.
+   * 2> Look for half logos from bottom.  If found, goto #4.
+   * - Find largest half logo that is supporting a piece above it.
+   * - If not supporting, then find largest half logo.
+   * 3> Pick bottom layer.
+   * 4> Remove found piece from shape and add it to the build list.
+   * 5> If bottom layer is empty, shift other layers down.  Repeat #5.
    *
    * Note: Do not extend logo search into 5th layer.
    *
@@ -872,8 +876,6 @@ export class Shape {
    * TODO: Should 2-layer shapes be removed (since the solution is known)?
    * TODO: Does this avoid branching / backtracking?
    * TODO: Maybe a previously deconstructed shape can be reused if it found again?
-   * TODO: Use a mask to make sure empty spots on LOGOs are empty.
-   * - But might not need to?
    * TODO: Smarter 5th layer.
    * - Maybe only add when 4th layer has more than 1 corner?
    * - Not needed for 1-layer stacked shapes.
@@ -920,43 +922,28 @@ export class Shape {
         }
 
         // Look for Logos
-        let found_E = [],
-          found_S = [],
-          found_W = [],
-          found_N = [];
+        let data;
+        let found = [];
         for (let layer = shape.layers; layer > 1; --layer) {
-          found_E.push(
-            ...Shape.LOGO_E[layer].filter((value) =>
-              Shape.containsCode(shape.code, Shape.MASK_E[layer], value)
-            )
-          );
-          found_S.push(
-            ...Shape.LOGO_S[layer].filter((value) =>
-              Shape.containsCode(shape.code, Shape.MASK_S[layer], value)
-            )
-          );
-          found_W.push(
-            ...Shape.LOGO_W[layer].filter((value) =>
-              Shape.containsCode(shape.code, Shape.MASK_W[layer], value)
-            )
-          );
-          found_N.push(
-            ...Shape.LOGO_N[layer].filter((value) =>
-              Shape.containsCode(shape.code, Shape.MASK_N[layer], value)
-            )
-          );
+          // TODO: Refactor this constant
+          data = [
+            [Shape.MASK_E[layer], Shape.LOGO_E[layer]],
+            [Shape.MASK_S[layer], Shape.LOGO_S[layer]],
+            [Shape.MASK_W[layer], Shape.LOGO_W[layer]],
+            [Shape.MASK_N[layer], Shape.LOGO_N[layer]],
+          ];
+          for (const [mask, values] of data) {
+            found.push(
+              ...values.filter((value) =>
+                Shape.containsCode(shape.code, mask, value)
+              )
+            );
+          }
+          // if (found.length > 0) break;
         }
-        console.log("E", Shape.pp(shape.code), Shape.pp(found_E));
-        console.log("S", Shape.pp(shape.code), Shape.pp(found_S));
-        console.log("W", Shape.pp(shape.code), Shape.pp(found_W));
-        console.log("N", Shape.pp(shape.code), Shape.pp(found_N));
-        if (found_E.length > 1) found_E.length = 1;
-        if (found_S.length > 1) found_S.length = 1;
-        if (found_W.length > 1) found_W.length = 1;
-        if (found_N.length > 1) found_N.length = 1;
-        const found_EW = found_E.concat(found_W);
-        const found_NS = found_N.concat(found_S);
-        const found = found_NS.length > found_EW.length ? found_NS : found_EW;
+
+        // Find logos that are supporting the layer above
+
         console.log("LOGO", Shape.pp(shape.code), Shape.pp(found));
         if (found.length > 0) {
           foundCode = found[0];
@@ -981,6 +968,9 @@ export class Shape {
         shape.code = Shape.dropBottomCode(shape.code);
         shape.layers--;
       }
+
+      // Check if remaining shape is already known.
+
       console.log("");
     }
 

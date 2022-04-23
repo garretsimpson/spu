@@ -26,11 +26,11 @@ export class Shape {
   static FLAT_2 = [0x3, 0x5, 0x6, 0x9, 0xa, 0xc];
   static FLAT_3 = [0x7, 0xb, 0xd, 0xe];
   static FLAT_4 = [0xf];
-  static FLAT = [
-    ...Shape.FLAT_1,
-    ...Shape.FLAT_2,
-    ...Shape.FLAT_3,
+  static FLATS = [
     ...Shape.FLAT_4,
+    ...Shape.FLAT_3,
+    ...Shape.FLAT_2,
+    ...Shape.FLAT_1,
   ];
 
   static MASK_E = [0, 0x3, 0x33, 0x333, 0x3333];
@@ -42,6 +42,70 @@ export class Shape {
   static LOGO_S = [[], [], [0x24, 0x42], [0x242, 0x424], [0x2424, 0x4242]];
   static LOGO_W = [[], [], [0x48, 0x84], [0x484, 0x848], [0x4848, 0x8484]];
   static LOGO_N = [[], [], [0x81, 0x18], [0x818, 0x181], [0x8181, 0x1818]];
+
+  static LOGO_2 = [
+    [0x33, 0x12],
+    [0x33, 0x21],
+    [0x66, 0x24],
+    [0x66, 0x42],
+    [0xcc, 0x48],
+    [0xcc, 0x84],
+    [0x99, 0x81],
+    [0x99, 0x18],
+  ];
+  static LOGO_3 = [
+    [0x333, 0x121],
+    [0x333, 0x212],
+    [0x666, 0x242],
+    [0x666, 0x424],
+    [0xccc, 0x484],
+    [0xccc, 0x848],
+    [0x999, 0x818],
+    [0x999, 0x181],
+  ];
+  static LOGO_4 = [
+    [0x3333, 0x1212],
+    [0x3333, 0x2121],
+    [0x6666, 0x2424],
+    [0x6666, 0x4242],
+    [0xcccc, 0x4848],
+    [0xcccc, 0x8484],
+    [0x9999, 0x8181],
+    [0x9999, 0x1818],
+  ];
+
+  static LOGO_2L = [
+    [0x13, 0x12],
+    [0x23, 0x21],
+    [0x26, 0x24],
+    [0x46, 0x42],
+    [0x4c, 0x48],
+    [0x8c, 0x84],
+    [0x89, 0x81],
+    [0x19, 0x18],
+  ];
+  static LOGO_3L = [
+    [0x133, 0x121],
+    [0x233, 0x212],
+    [0x266, 0x242],
+    [0x466, 0x424],
+    [0x4cc, 0x484],
+    [0x8cc, 0x848],
+    [0x899, 0x818],
+    [0x199, 0x181],
+  ];
+  static LOGO_4L = [
+    [0x1333, 0x1212],
+    [0x2333, 0x2121],
+    [0x2666, 0x2424],
+    [0x4666, 0x4242],
+    [0x4ccc, 0x4848],
+    [0x8ccc, 0x8484],
+    [0x8999, 0x8181],
+    [0x1999, 0x1818],
+  ];
+
+  static LOGOS = [[], [], Shape.LOGO_2, Shape.LOGO_3, Shape.LOGO_4];
 
   // static LOGO2P_SHAPES = [0x13, 0x26, 0x4c, 0x89, 0x19, 0x23, 0x46, 0x8c];
   // static LOGO3P_SHAPES = [
@@ -581,15 +645,18 @@ export class Shape {
 
   /**
    * Returns true if the value supports the layer above it.
+   * Note: For half-logo values, the top 2 layer may be supports.
+   * Note: Currently assuming this is only used for half-logos.
    * @param {number} code
    * @param {number} value
    * @returns {number}
    */
   static supportsCode(code, value) {
-    code = code >>> 4;
     const num = Shape.layerCount(value);
-    const mask = 0xf << (4 * (num - 1));
-    return (code & value & mask) != 0;
+    const maskA = 0xf << (4 * num);
+    const maskB = maskA >>> 4;
+    const result = code & (value << 4);
+    return (result & maskA) != 0; // || (result & maskB) != 0;
   }
 
   /**
@@ -680,6 +747,7 @@ export class Shape {
       ["supportsCode", [0x0021, 0x0001], false],
       ["supportsCode", [0x0521, 0x0021], false],
       ["supportsCode", [0x0f21, 0x0021], true],
+      ["supportsCode", [0x0361, 0x0121], true],
     ];
 
     let testNum = 0;
@@ -819,7 +887,8 @@ export class Shape {
 
     // const testShapes = [0xfa5a];
     // const testShapes = [0xf, 0x5f, 0x12, 0xff5a];
-    const testShapes = [0x0014, 0x0178, 0x1569, 0x3424, 0x7b4a];
+    // const testShapes = [0x0014, 0x0178, 0x1569, 0x3424, 0x7b4a];
+    const testShapes = [0x0361, 0x1361, 0x13a1, 0x1642, 0x7b4a];
     testShapes.forEach((code) => unknownShapes.set(code, { code }));
     // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
@@ -839,22 +908,27 @@ export class Shape {
     // Shape.deconstruct(unknownShapes.get(code));
 
     // Attempt to deconstruct
+    let pass;
     for (const [key, value] of unknownShapes) {
       const result = Shape.deconstruct(value);
       if (result) {
-        const pass = Shape.verifyBuild(result);
+        pass = Shape.verifyBuild(result);
         console.log(
           pass ? "PASS " : "FAIL ",
           Shape.pp(key),
           Shape.pp(result.build)
         );
-        knownShapes.set(key, result);
-        unknownShapes.delete(key);
+        if (pass) {
+          knownShapes.set(key, result);
+          unknownShapes.delete(key);
+        }
       } else {
         console.log(Shape.pp(key), "NOT FOUND");
       }
       console.log("");
     }
+    console.log("Knowns:", knownShapes.size);
+    console.log("Unknowns:", unknownShapes.size);
 
     // Log known builds
     console.log("Saving known builds");
@@ -869,9 +943,9 @@ export class Shape {
 
     // Log remaining unknowns
     console.log("Saving chart of unknowns");
-    for (const value of unknownShapes.values()) {
-      value.sflag = Shape.canStackBottom(value.code);
-    }
+    // for (const value of unknownShapes.values()) {
+    //   value.sflag = Shape.canStackBottom(value.code);
+    // }
     const chart = Shape.chart(unknownShapes);
     Fileops.writeFile("data/unknown.txt", chart);
   }
@@ -882,7 +956,7 @@ export class Shape {
    * @returns {boolean}
    */
   static verifyBuild(data) {
-    const ORDERS = ["01+2+3+", "0123+++", "01+23++"];
+    const ORDERS = ["01+2+3+", "0123+++", "01+23++", "012++3+"];
     let code;
     for (const order of ORDERS) {
       code = Shape.stackOrder(data.build, order);
@@ -983,27 +1057,23 @@ export class Shape {
           break;
         }
 
-        // Look for Logos
-        let data;
-        let found = [];
+        // Look for logos
+        const found = [];
         for (let layer = shape.layers; layer > 1; --layer) {
           // TODO: Refactor this as a constant
-          data = [
-            [Shape.MASK_E[layer], Shape.LOGO_E[layer]],
-            [Shape.MASK_S[layer], Shape.LOGO_S[layer]],
-            [Shape.MASK_W[layer], Shape.LOGO_W[layer]],
-            [Shape.MASK_N[layer], Shape.LOGO_N[layer]],
-          ];
-          for (const [mask, values] of data) {
-            found.push(
-              ...values.filter((value) =>
-                Shape.containsCode(shape.code, mask, value)
-              )
-            );
+          // data = [
+          //   [Shape.MASK_E[layer], Shape.LOGO_E[layer]],
+          //   [Shape.MASK_S[layer], Shape.LOGO_S[layer]],
+          //   [Shape.MASK_W[layer], Shape.LOGO_W[layer]],
+          //   [Shape.MASK_N[layer], Shape.LOGO_N[layer]],
+          // ];
+          for (const [mask, value] of Shape.LOGOS[layer]) {
+            if (Shape.containsCode(shape.code, mask, value)) found.push(value);
           }
           // if (found.length > 0) break;
         }
 
+        // console.log("LOGO*", Shape.pp(shape.code), Shape.pp(found));
         // Find logos that are supporting the layer above
         const foundx = found.filter((value) =>
           Shape.supportsCode(shape.code, value)

@@ -264,37 +264,40 @@ export class Ops {
       //   // maxIter: 8500,
       // },
       {
-        shapes: FLAT_SHAPES,
+        shapes: Shape.FLATS,
         cost: 0,
         logo: 0,
         trash: 0,
         maxIter: 500,
       },
+      // {
+      //   shapes: Shape.LOGOS.flat(),
+      //   cost: 0,
+      //   logo: 1,
+      //   trash: 0,
+      //   // maxIter: 6500,
+      // },
       {
-        shapes: LOGO_SHAPES,
-        cost: 10,
+        shapes: Shape.LOGO_2,
+        cost: 2,
         logo: 1,
-        trash: 0,
-        // maxIter: 6500,
+        trash: 2,
+        // maxIter: 3500,
       },
-      // {
-      //   shapes: LOGO2_SHAPES,
-      //   logo: 1,
-      //   trash: 2,
-      //   // maxIter: 3500,
-      // },
-      // {
-      //   shapes: LOGO3_SHAPES,
-      //   logo: 1,
-      //   trash: 3,
-      //   // maxIter: 2500,
-      // },
-      // {
-      //   shapes: LOGO4_SHAPES,
-      //   logo: 1,
-      //   trash: 4,
-      //   // maxIter: 8000,
-      // },
+      {
+        shapes: Shape.LOGO_3,
+        cost: 3,
+        logo: 1,
+        trash: 3,
+        // maxIter: 2500,
+      },
+      {
+        shapes: Shape.LOGO_4,
+        cost: 4,
+        logo: 1,
+        trash: 4,
+        // maxIter: 8000,
+      },
     ];
 
     let shapes;
@@ -317,7 +320,7 @@ export class Ops {
 
   static runOps(startShapes, maxIters) {
     if (!startShapes) {
-      startShapes = FLAT4_SHAPES.map((code) => {
+      startShapes = Shape.FLAT_4.map((code) => {
         return { code, cost: 0, op: OPS.prim, logo: 0, trash: 0 };
       });
     }

@@ -572,19 +572,29 @@ export class Shape {
   }
 
   /**
-   * Returns true if the value supports the layer above it.
-   * Note: For half-logo values, the top 2 layer may be supports.
-   * Note: Currently assuming this is only used for half-logos.
+   * Find the top layer of value.  Return true if there is a piece above it.
+   * Note: Assuming this is only used for half-logos currently.
    * @param {number} code
    * @param {number} value
    * @returns {number}
    */
-  static supportsCode(code, value) {
+  static supportACode(code, value) {
     const num = Shape.layerCount(value);
-    const maskA = 0xf << (4 * num);
-    const maskB = maskA >>> 4;
-    const result = code & (value << 4);
-    return (result & maskA) != 0; // || (result & maskB) != 0;
+    const maskA = value & (0xf << (4 * (num - 1)));
+    return (code & (maskA << 4)) != 0;
+  }
+
+  /**
+   * Find the next to top layer of value.  Return true if there is a piece above it.
+   * Note: Assuming this is only used for half-logos currently.
+   * @param {number} code
+   * @param {number} value
+   * @returns {number}
+   */
+  static supportBCode(code, value) {
+    const num = Shape.layerCount(value);
+    const maskB = value & (0xf << (4 * (num - 2)));
+    return (code & (maskB << 4)) != 0;
   }
 
   /**
@@ -607,14 +617,31 @@ export class Shape {
   }
 
   /**
+   * Strict logo mask - empty seat
    * @param {number} code
    * @returns {number}
    */
-  static logoMask(code) {
+  static logoMaskX(code) {
     const layers = Shape.toLayers(code);
     if (layers.length < 2) return 0;
     const mask = layers[0] | layers[1];
     let result = 0;
+    for (const layer of layers) {
+      result = (result << 4) + mask;
+    }
+    return result;
+  }
+
+  /**
+   * Loose logo mask - seat unknown
+   * @param {number} code
+   * @returns {number}
+   */
+  static logoMaskY(code) {
+    const layers = Shape.toLayers(code);
+    if (layers.length < 2) return 0;
+    const mask = layers[0] | layers[1];
+    let result = layers.shift();
     for (const layer of layers) {
       result = (result << 4) + mask;
     }
@@ -686,11 +713,14 @@ export class Shape {
       ["canCut", [0x0012], true],
       ["canCut", [0x00f1], false],
       ["canCut", [0x00ff], true],
-      ["supportsCode", [0x0011, 0x0001], true],
-      ["supportsCode", [0x0021, 0x0001], false],
-      ["supportsCode", [0x0521, 0x0021], false],
-      ["supportsCode", [0x0f21, 0x0021], true],
-      ["supportsCode", [0x0361, 0x0121], true],
+      ["supportACode", [0x0521, 0x0021], false],
+      ["supportACode", [0x0f21, 0x0021], true],
+      ["supportACode", [0x0361, 0x0121], false],
+      ["supportBCode", [0x0521, 0x0021], false],
+      ["supportBCode", [0x0f21, 0x0021], false],
+      ["supportBCode", [0x0361, 0x0121], true],
+      ["logoMaskX", [0x121], 0x333],
+      ["logoMaskY", [0x121], 0x133],
     ];
 
     let testNum = 0;
@@ -828,17 +858,23 @@ export class Shape {
     const knownShapes = Shape.knownShapes;
     const unknownShapes = Shape.unknownShapes;
 
+    // const testShapes = [];
+    // for (let code = 0; code < 0x1000; ++code) {
+    //   testShapes.push(code);
+    // }
     // const testShapes = [0xfa5a];
     // const testShapes = [0xf, 0x5f, 0x12, 0xff5a];
     // const testShapes = [0x0014, 0x0178, 0x1569, 0x3424, 0x7b4a];
     // const testShapes = [0x0361, 0x0f3c, 0x1361, 0x13a1, 0x1642, 0x7b4a];
-    const testShapes = [];
-    for (let code = 0; code < 0x1000; ++code) {
-      testShapes.push(code);
-    }
+    // const testShapes = [0x0178, 0x0361, 0x0378, 0x03d2, 0x07b4];
+    // const testShapes = [0x13a1, 0x1642, 0x1643, 0x164a];
+    const testShapes = [0x0361, 0x13a1, 0x1569, 0x1642];
     testShapes.forEach((code) => unknownShapes.set(code, { code }));
     // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // complexShapes
+    //   .filter((code) => keyShapes.get(code).layers < 4)
+    //   .forEach((code) => unknownShapes.set(code, { code }));
 
     if (unknownShapes.size == 0) {
       console.log("No unknown shapes");
@@ -847,12 +883,12 @@ export class Shape {
 
     console.log("Number known:", knownShapes.size);
     console.log("Number unknown:", unknownShapes.size);
-    const codes = Array.from(unknownShapes.keys()).sort((a, b) => a - b);
-    const code = codes[0];
-    console.log("First unknown:", Shape.pp(code));
-    console.log(Shape.toShape(code));
-    console.log("");
-    console.log(Shape.graph(code));
+    // const codes = Array.from(unknownShapes.keys()).sort((a, b) => a - b);
+    // const code = codes[0];
+    // console.log("First unknown:", Shape.pp(code));
+    // console.log(Shape.toShape(code));
+    // console.log("");
+    // console.log(Shape.graph(code));
     // Shape.deconstruct(unknownShapes.get(code));
 
     // Attempt to deconstruct
@@ -891,6 +927,7 @@ export class Shape {
     }
     console.log("Knowns:", knownShapes.size);
     console.log("Unknowns:", unknownShapes.size);
+    console.log(Shape.pp(Array.from(unknownShapes.keys())));
 
     // Log known builds
     console.log("Saving known builds");
@@ -1032,30 +1069,61 @@ export class Shape {
         }
 
         // Look for logos
-        const found = [];
+        const logox = [];
         for (let layer = shape.layers; layer > 1; --layer) {
           let mask;
           for (const value of Shape.LOGOS[layer]) {
             // TODO: Refactor this as a constant
-            mask = Shape.logoMask(value);
-            if (Shape.containsCode(shape.code, mask, value)) found.push(value);
+            mask = Shape.logoMaskX(value);
+            if (Shape.containsCode(shape.code, mask, value)) logox.push(value);
           }
           // if (found.length > 0) break;
         }
+        console.log("L.X  ", Shape.pp(shape.code), Shape.pp(logox));
 
-        // console.log("LOGO*", Shape.pp(shape.code), Shape.pp(found));
-        // Find logos that are supporting the layer above
-        const foundx = found.filter((value) =>
-          Shape.supportsCode(shape.code, value)
+        const logoy = [];
+        for (let layer = shape.layers; layer > 1; --layer) {
+          let mask;
+          for (const value of Shape.LOGOS[layer]) {
+            // TODO: Refactor this as a constant
+            mask = Shape.logoMaskY(value);
+            if (Shape.containsCode(shape.code, mask, value)) logoy.push(value);
+          }
+          // if (found.length > 0) break;
+        }
+        console.log("L.Y  ", Shape.pp(shape.code), Shape.pp(logoy));
+
+        // Find logos that support the layer above
+        const logoxa = logox.filter((value) =>
+          Shape.supportACode(shape.code, value)
         );
-        if (foundx.length > 0) {
-          console.log("LOGO+", Shape.pp(shape.code), Shape.pp(foundx));
-          foundCode = foundx[0];
+        console.log("L.XA ", Shape.pp(shape.code), Shape.pp(logoxa));
+
+        // Find logos that have an item in the layer above
+        const logoya = logoy.filter((value) =>
+          Shape.supportACode(shape.code, value)
+        );
+        console.log("L.YA ", Shape.pp(shape.code), Shape.pp(logoya));
+
+        // Find logos that have an item in the seat
+        const logoyb = logoy.filter((value) =>
+          Shape.supportBCode(shape.code, value)
+        );
+        console.log("L.YB ", Shape.pp(shape.code), Shape.pp(logoyb));
+
+        if (logoyb.length > 0) {
+          foundCode = logoyb[0];
+          console.log("LOGO ", Shape.pp(shape.code), Shape.pp([foundCode]));
           break;
         }
-        if (found.length > 0) {
-          console.log("LOGO ", Shape.pp(shape.code), Shape.pp(found));
-          foundCode = found[0];
+        if (logoxa.length > 0) {
+          foundCode = logoya[0];
+          console.log("LOGO ", Shape.pp(shape.code), Shape.pp([foundCode]));
+          break;
+        }
+        if (logox.length > 0) {
+          foundCode = logoy[0];
+          console.log("LOGO ", Shape.pp(shape.code), Shape.pp([foundCode]));
           break;
         }
 

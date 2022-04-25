@@ -48,19 +48,6 @@ export class Shape {
 
   static LOGOS = [[], [], Shape.LOGO_2, Shape.LOGO_3, Shape.LOGO_4];
 
-  // static LOGO2P_SHAPES = [0x13, 0x26, 0x4c, 0x89, 0x19, 0x23, 0x46, 0x8c];
-  // static LOGO3P_SHAPES = [
-  //   0x123, 0x246, 0x48c, 0x819, 0x189, 0x213, 0x426, 0x84c,
-  // ];
-  // static LOGO4P_SHAPES = [
-  //   0x1213, 0x2426, 0x484c, 0x8189, 0x1819, 0x2123, 0x4246, 0x848c,
-  // ];
-  // static LOGOP_SHAPES = [
-  //   ...Shape.LOGO4P_SHAPES,
-  //   ...Shape.LOGO3P_SHAPES,
-  //   ...Shape.LOGO2P_SHAPES,
-  // ];
-
   /** @type {Set<number>} */
   static allShapes;
   /** @type {Map<number,object>} */
@@ -620,6 +607,21 @@ export class Shape {
   }
 
   /**
+   * @param {number} code
+   * @returns {number}
+   */
+  static logoMask(code) {
+    const layers = Shape.toLayers(code);
+    if (layers.length < 2) return 0;
+    const mask = layers[0] | layers[1];
+    let result = 0;
+    for (const layer of layers) {
+      result = (result << 4) + mask;
+    }
+    return result;
+  }
+
+  /**
    * pretty print
    * @param {*} value
    * @returns {String}
@@ -829,10 +831,15 @@ export class Shape {
     // const testShapes = [0xfa5a];
     // const testShapes = [0xf, 0x5f, 0x12, 0xff5a];
     // const testShapes = [0x0014, 0x0178, 0x1569, 0x3424, 0x7b4a];
-    const testShapes = [0x0361, 0x1361, 0x13a1, 0x1642, 0x7b4a];
+    // const testShapes = [0x0361, 0x0f3c, 0x1361, 0x13a1, 0x1642, 0x7b4a];
+    const testShapes = [];
+    for (let code = 0; code < 0x1000; ++code) {
+      testShapes.push(code);
+    }
     testShapes.forEach((code) => unknownShapes.set(code, { code }));
     // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
+
     if (unknownShapes.size == 0) {
       console.log("No unknown shapes");
       return;
@@ -851,6 +858,20 @@ export class Shape {
     // Attempt to deconstruct
     let pass;
     for (const [key, value] of unknownShapes) {
+      if (Shape.isInvalid(key)) {
+        console.log(Shape.pp(key), "INVALID");
+        console.log("");
+        unknownShapes.delete(key);
+        continue;
+      }
+      // TODO: The deconstructor should be able to determine this.
+      // const keyCode = Shape.keyCode(key);
+      if (!Shape.isPossible(key)) {
+        console.log(Shape.pp(key), "IMPOSSIBLE");
+        console.log("");
+        unknownShapes.delete(key);
+        continue;
+      }
       const result = Shape.deconstruct(value);
       if (result) {
         pass = Shape.verifyBuild(result);
@@ -878,6 +899,8 @@ export class Shape {
       data += Shape.pp(key);
       data += " ";
       data += Shape.pp(value.build);
+      data += " ";
+      data += value.order;
       data += "\n";
     }
     Fileops.writeFile("data/known.txt", data);
@@ -897,11 +920,21 @@ export class Shape {
    * @returns {boolean}
    */
   static verifyBuild(data) {
-    const ORDERS = ["01+2+3+", "0123+++", "01+23++", "012++3+"];
+    const ORDERS = [
+      [],
+      ["0"],
+      ["01+"],
+      ["01+2+", "012++"],
+      ["01+2+3+", "0123+++", "01+23++", "012++3+"],
+    ];
+    const num = data.build.length;
     let code;
-    for (const order of ORDERS) {
+    for (const order of ORDERS[num]) {
       code = Shape.stackOrder(data.build, order);
-      if (data.code == code) return true;
+      if (data.code == code) {
+        data.order = order;
+        return true;
+      }
     }
     return false;
   }
@@ -963,7 +996,7 @@ export class Shape {
    * TODO: Determine the build order based on the order of the types found.
    *
    * @param {object} shape
-   * @returns {object?}
+   * @returns {object?} { code: shapeCode, build: [] };
    */
   static deconstruct(shape) {
     const shapeCode = shape.code;
@@ -1001,14 +1034,10 @@ export class Shape {
         // Look for logos
         const found = [];
         for (let layer = shape.layers; layer > 1; --layer) {
-          // TODO: Refactor this as a constant
-          // data = [
-          //   [Shape.MASK_E[layer], Shape.LOGO_E[layer]],
-          //   [Shape.MASK_S[layer], Shape.LOGO_S[layer]],
-          //   [Shape.MASK_W[layer], Shape.LOGO_W[layer]],
-          //   [Shape.MASK_N[layer], Shape.LOGO_N[layer]],
-          // ];
-          for (const [mask, value] of Shape.LOGOS[layer]) {
+          let mask;
+          for (const value of Shape.LOGOS[layer]) {
+            // TODO: Refactor this as a constant
+            mask = Shape.logoMask(value);
             if (Shape.containsCode(shape.code, mask, value)) found.push(value);
           }
           // if (found.length > 0) break;

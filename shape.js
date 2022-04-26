@@ -605,7 +605,7 @@ export class Shape {
 
   /**
    * Find the top layer of value.  Return true if there is a piece above it.
-   * Note: Assuming this is only used for half-logos currently.
+   * Note: Assuming this is only used for half-logos.
    * @param {number} code
    * @param {number} value
    * @returns {number}
@@ -618,7 +618,7 @@ export class Shape {
 
   /**
    * Find the next to top layer of value.  Return true if there is a piece above it.
-   * Note: Assuming this is only used for half-logos currently.
+   * Note: Assuming this is only used for half-logos.
    * @param {number} code
    * @param {number} value
    * @returns {number}
@@ -665,7 +665,7 @@ export class Shape {
   }
 
   /**
-   * Loose logo mask - seat unknown
+   * Loose logo mask - unknown seat
    * @param {number} code
    * @returns {number}
    */
@@ -901,7 +901,7 @@ export class Shape {
     // const testShapes = [0x0361, 0x0f3c, 0x1361, 0x13a1, 0x1642, 0x7b4a];
     // const testShapes = [0x0178, 0x0361, 0x0378, 0x03d2, 0x07b4];
     // const testShapes = [0x13a1, 0x1642, 0x1643, 0x164a];
-    const testShapes = [0x0361, 0x13a1, 0x1569, 0x1642];
+    const testShapes = [0x0361, 0x03d2, 0x13a1, 0x1569, 0x1642, 0x7b4a];
     testShapes.forEach((code) => unknownShapes.set(code, { code }));
     // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
@@ -1104,18 +1104,18 @@ export class Shape {
 
         // Look for logos
         const logox = [];
-        for (let layer = shape.layers; layer > 1; --layer) {
-          let mask;
-          for (const value of Shape.LOGOS[layer]) {
-            // TODO: Refactor this as a constant
-            mask = Shape.logoMaskX(value);
-            if (Shape.containsCode(shape.code, mask, value)) logox.push(value);
-          }
-          // if (found.length > 0) break;
-        }
-        console.log("L.X  ", Shape.pp(shape.code), Shape.pp(logox));
+        // for (let layer = shape.layers; layer > 1; --layer) {
+        //   let mask;
+        //   for (const value of Shape.LOGOS[layer]) {
+        //     // TODO: Refactor this as a constant
+        //     mask = Shape.logoMaskX(value);
+        //     if (Shape.containsCode(shape.code, mask, value)) logox.push(value);
+        //   }
+        //   // if (found.length > 0) break;
+        // }
+        // console.log("L.X  ", Shape.pp(shape.code), Shape.pp(logox));
 
-        const logoy = [];
+        let logoy = [];
         for (let layer = shape.layers; layer > 1; --layer) {
           let mask;
           for (const value of Shape.LOGOS[layer]) {
@@ -1127,52 +1127,49 @@ export class Shape {
         }
         console.log("L.Y  ", Shape.pp(shape.code), Shape.pp(logoy));
 
-        // Find logos that support the layer above
-        const logoxa = logox.filter((value) =>
-          Shape.supportACode(shape.code, value)
+        // Remove logos that cut off support from top
+        logoy = logoy.filter((value) =>
+          Shape.canStackLayer(shape.code, Shape.layerCount(value))
         );
-        console.log("L.XA ", Shape.pp(shape.code), Shape.pp(logoxa));
+        console.log("L.Y- ", Shape.pp(shape.code), Shape.pp(logoy));
+
+        // Find logos that do have piece above or in the seat.
+        // TODO: Might need to count supported pieces, and use the logo with the least.
+        const logoyn = logoy.filter(
+          (value) =>
+            !Shape.supportACode(shape.code, value) ||
+            !Shape.supportBCode(shape.code, value)
+        );
+        console.log("L.YN ", Shape.pp(shape.code), Shape.pp(logoyn));
+
+        // Find logos that support the layer above
+        // const logoxa = logox.filter((value) =>
+        //   Shape.supportACode(shape.code, value)
+        // );
+        // console.log("L.XA ", Shape.pp(shape.code), Shape.pp(logoxa));
 
         // Find logos that have an item in the layer above
-        const logoya = logoy.filter((value) =>
-          Shape.supportACode(shape.code, value)
-        );
-        console.log("L.YA ", Shape.pp(shape.code), Shape.pp(logoya));
+        // const logoya = logoy.filter((value) =>
+        //   Shape.supportACode(shape.code, value)
+        // );
+        // console.log("L.YA ", Shape.pp(shape.code), Shape.pp(logoya));
 
         // Find logos that have an item in the seat
-        const logoyb = logoy.filter((value) =>
-          Shape.supportBCode(shape.code, value)
-        );
-        console.log("L.YB ", Shape.pp(shape.code), Shape.pp(logoyb));
+        // const logoyb = logoy.filter((value) =>
+        //   Shape.supportBCode(shape.code, value)
+        // );
+        // console.log("L.YB ", Shape.pp(shape.code), Shape.pp(logoyb));
 
-        for (const code of logoy) {
-          if (!Shape.canStackLayerOtherHalf(shape.code, code, Shape.layerCount(code))) {
-            continue;
-          }
-          if (!Shape.canStackLayerOtherHalf(shape.code, code, Shape.layerCount(code) - 2)) {
-            continue;
-          }
-          foundCode = code;
+        if (logoyn.length > 0) {
+          foundCode = logoyn[0];
           console.log("LOGO-", Shape.pp(shape.code), Shape.pp([foundCode]));
           break;
         }
-        if (foundCode != 0) break;
-
-        // if (logoyb.length > 0) {
-        //   foundCode = logoyb[0];
-        //   console.log("LOGO ", Shape.pp(shape.code), Shape.pp([foundCode]));
-        //   break;
-        // }
-        // if (logoxa.length > 0) {
-        //   foundCode = logoya[0];
-        //   console.log("LOGO ", Shape.pp(shape.code), Shape.pp([foundCode]));
-        //   break;
-        // }
-        // if (logox.length > 0) {
-        //   foundCode = logoy[0];
-        //   console.log("LOGO ", Shape.pp(shape.code), Shape.pp([foundCode]));
-        //   break;
-        // }
+        if (logoy.length > 0) {
+          foundCode = logoy[0];
+          console.log("LOGO-", Shape.pp(shape.code), Shape.pp([foundCode]));
+          break;
+        }
 
         // if no layer or logo, then extract bottom layer
         foundCode = Shape.getBottomCode(shape.code);

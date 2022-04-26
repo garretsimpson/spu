@@ -901,7 +901,10 @@ export class Shape {
     // const testShapes = [0x0361, 0x0f3c, 0x1361, 0x13a1, 0x1642, 0x7b4a];
     // const testShapes = [0x0178, 0x0361, 0x0378, 0x03d2, 0x07b4];
     // const testShapes = [0x13a1, 0x1642, 0x1643, 0x164a];
-    const testShapes = [0x0361, 0x03d2, 0x13a1, 0x1569, 0x1642, 0x7b4a];
+    const testShapes = [
+      0x015a, 0x0178, 0x035a, 0x0378, 0x0361, 0x03d2, 0x13a1, 0x1569, 0x1642,
+      0x7b4a,
+    ];
     testShapes.forEach((code) => unknownShapes.set(code, { code }));
     // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
@@ -1103,7 +1106,7 @@ export class Shape {
         }
 
         // Look for logos
-        const logox = [];
+        // const logox = [];
         // for (let layer = shape.layers; layer > 1; --layer) {
         //   let mask;
         //   for (const value of Shape.LOGOS[layer]) {
@@ -1141,24 +1144,6 @@ export class Shape {
             !Shape.supportBCode(shape.code, value)
         );
         console.log("L.YN ", Shape.pp(shape.code), Shape.pp(logoyn));
-
-        // Find logos that support the layer above
-        // const logoxa = logox.filter((value) =>
-        //   Shape.supportACode(shape.code, value)
-        // );
-        // console.log("L.XA ", Shape.pp(shape.code), Shape.pp(logoxa));
-
-        // Find logos that have an item in the layer above
-        // const logoya = logoy.filter((value) =>
-        //   Shape.supportACode(shape.code, value)
-        // );
-        // console.log("L.YA ", Shape.pp(shape.code), Shape.pp(logoya));
-
-        // Find logos that have an item in the seat
-        // const logoyb = logoy.filter((value) =>
-        //   Shape.supportBCode(shape.code, value)
-        // );
-        // console.log("L.YB ", Shape.pp(shape.code), Shape.pp(logoyb));
 
         if (logoyn.length > 0) {
           foundCode = logoyn[0];

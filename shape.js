@@ -532,6 +532,38 @@ export class Shape {
   }
 
   /**
+   * Retruns true if layer is supported.
+   * @param {number} code
+   * @returns {boolean}
+   */
+  static canStackLayer(code, layer) {
+    if (code == 0) return false;
+    if (layer <= 0) return true;
+    const mask = 0xf << (4 * layer);
+    const above = code & mask;
+    if (above == 0) return true;
+    const below = (code << 4) & mask;
+    return (above & below) != 0;
+  }
+
+  /**
+   * Retruns true if layer is supported.
+   * @param {number} code
+   * @returns {boolean}
+   */
+  static canStackLayerOtherHalf(code, logo, layer) {
+    if (code == 0) return false;
+    if (layer <= 0) return true;
+    const layers = Shape.toLayers(logo);
+    if (layers.length < 2) return 0;
+    const mask = Shape.rotateCode(layers[0] | layers[1], 2) << (4 * layer);
+    const above = code & mask;
+    if (above == 0) return true;
+    const below = (code << 4) & mask;
+    return (above & below) != 0;
+  }
+
+  /**
    * Remove the bottom layer
    * @param {number} code
    * @returns {number} new shape code
@@ -708,8 +740,9 @@ export class Shape {
       ["canStackSome", [0xffff], true],
       ["canStackAll", [0xfa5f], false],
       ["canStackSome", [0xfa5f], true],
-      ["canStackBottom", [0xfa5f], true],
-      ["canStackBottom", [0xffa5], false],
+      ["canStackLayer", [0x000f, 1], true],
+      ["canStackLayer", [0xfa5f, 1], true],
+      ["canStackLayer", [0xffa5, 1], false],
       ["canCut", [0x0012], true],
       ["canCut", [0x00f1], false],
       ["canCut", [0x00ff], true],
@@ -881,13 +914,13 @@ export class Shape {
       return;
     }
 
-    console.log("Number known:", knownShapes.size);
-    console.log("Number unknown:", unknownShapes.size);
+    console.log("Knowns:", knownShapes.size);
+    console.log("Unknowns:", unknownShapes.size);
+    console.log("");
     // const codes = Array.from(unknownShapes.keys()).sort((a, b) => a - b);
     // const code = codes[0];
     // console.log("First unknown:", Shape.pp(code));
     // console.log(Shape.toShape(code));
-    // console.log("");
     // console.log(Shape.graph(code));
     // Shape.deconstruct(unknownShapes.get(code));
 
@@ -963,6 +996,7 @@ export class Shape {
       ["01+"],
       ["01+2+", "012++"],
       ["01+2+3+", "0123+++", "01+23++", "012++3+"],
+      ["01+2+3+4+", "01234++++", "01+234+++", "012++34++"],
     ];
     const num = data.build.length;
     let code;
@@ -1111,21 +1145,34 @@ export class Shape {
         );
         console.log("L.YB ", Shape.pp(shape.code), Shape.pp(logoyb));
 
-        if (logoyb.length > 0) {
-          foundCode = logoyb[0];
-          console.log("LOGO ", Shape.pp(shape.code), Shape.pp([foundCode]));
+        for (const code of logoy) {
+          if (!Shape.canStackLayerOtherHalf(shape.code, code, Shape.layerCount(code))) {
+            continue;
+          }
+          if (!Shape.canStackLayerOtherHalf(shape.code, code, Shape.layerCount(code) - 2)) {
+            continue;
+          }
+          foundCode = code;
+          console.log("LOGO-", Shape.pp(shape.code), Shape.pp([foundCode]));
           break;
         }
-        if (logoxa.length > 0) {
-          foundCode = logoya[0];
-          console.log("LOGO ", Shape.pp(shape.code), Shape.pp([foundCode]));
-          break;
-        }
-        if (logox.length > 0) {
-          foundCode = logoy[0];
-          console.log("LOGO ", Shape.pp(shape.code), Shape.pp([foundCode]));
-          break;
-        }
+        if (foundCode != 0) break;
+
+        // if (logoyb.length > 0) {
+        //   foundCode = logoyb[0];
+        //   console.log("LOGO ", Shape.pp(shape.code), Shape.pp([foundCode]));
+        //   break;
+        // }
+        // if (logoxa.length > 0) {
+        //   foundCode = logoya[0];
+        //   console.log("LOGO ", Shape.pp(shape.code), Shape.pp([foundCode]));
+        //   break;
+        // }
+        // if (logox.length > 0) {
+        //   foundCode = logoy[0];
+        //   console.log("LOGO ", Shape.pp(shape.code), Shape.pp([foundCode]));
+        //   break;
+        // }
 
         // if no layer or logo, then extract bottom layer
         foundCode = Shape.getBottomCode(shape.code);

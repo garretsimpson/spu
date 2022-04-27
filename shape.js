@@ -604,6 +604,7 @@ export class Shape {
   }
 
   /**
+   * Has "hat"
    * Find the top layer of value.  Return true if there is a piece above it.
    * Note: Assuming this is only used for half-logos.
    * @param {number} code
@@ -617,6 +618,7 @@ export class Shape {
   }
 
   /**
+   * Has "chip" on shoulder, something in the "seat"
    * Find the next to top layer of value.  Return true if there is a piece above it.
    * Note: Assuming this is only used for half-logos.
    * @param {number} code
@@ -891,6 +893,11 @@ export class Shape {
     const knownShapes = Shape.knownShapes;
     const unknownShapes = Shape.unknownShapes;
 
+    // Reverse the logo patterns
+    // for (let layer = 0; layer <= 4; ++layer) {
+    //   Shape.LOGOS[layer].reverse();
+    // }
+
     // const testShapes = [];
     // for (let code = 0; code < 0x1000; ++code) {
     //   testShapes.push(code);
@@ -901,10 +908,12 @@ export class Shape {
     // const testShapes = [0x0361, 0x0f3c, 0x1361, 0x13a1, 0x1642, 0x7b4a];
     // const testShapes = [0x0178, 0x0361, 0x0378, 0x03d2, 0x07b4];
     // const testShapes = [0x13a1, 0x1642, 0x1643, 0x164a];
-    const testShapes = [
-      0x015a, 0x0178, 0x035a, 0x0378, 0x0361, 0x03d2, 0x13a1, 0x1569, 0x1642,
-      0x7b4a,
-    ];
+    // const testShapes = [
+    //   0x015a, 0x0178, 0x035a, 0x0378, 0x0361, 0x03d2, 0x13a1, 0x1569, 0x1642,
+    //   0x7b4a,
+    // ];
+
+    const testShapes = [0x0178, 0x0378, 0x03d2, 0x07b4]; // 3-layer unknowns
     testShapes.forEach((code) => unknownShapes.set(code, { code }));
     // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
@@ -1098,7 +1107,12 @@ export class Shape {
       // console.log("Loop:", loop);
       let foundCode = 0;
       do {
+        // Get layers
+        const layers = Shape.toLayers(shape.code);
+
         // Look for layers
+        // TODO: if layers[1] is empty, just take the bottom layer.
+        // TODO: that is, no need to check if layers[1] is empty.
         if (Shape.canStackBottom(shape.code)) {
           foundCode = Shape.getBottomCode(shape.code);
           console.log("LAYER", Shape.pp(shape.code), Shape.pp([foundCode]));
@@ -1130,26 +1144,36 @@ export class Shape {
         }
         console.log("L.Y  ", Shape.pp(shape.code), Shape.pp(logoy));
 
+        // Remove 2-layer logos that have no hat
+        logoy = logoy.filter((value) => {
+          if (Shape.layerCount(value) == 2) {
+            if (layers[2]) {
+              return Shape.supportACode(shape.code, value);
+            }
+          }
+          return true;
+        });
+
         // Remove logos that cut off support from top
-        logoy = logoy.filter((value) =>
-          Shape.canStackLayer(shape.code, Shape.layerCount(value))
-        );
-        console.log("L.Y- ", Shape.pp(shape.code), Shape.pp(logoy));
+        // logoy = logoy.filter((value) =>
+        //   Shape.canStackLayer(shape.code, Shape.layerCount(value))
+        // );
+        // console.log("L.Y- ", Shape.pp(shape.code), Shape.pp(logoy));
 
         // Find logos that do have piece above or in the seat.
         // TODO: Might need to count supported pieces, and use the logo with the least.
-        const logoyn = logoy.filter(
-          (value) =>
-            !Shape.supportACode(shape.code, value) ||
-            !Shape.supportBCode(shape.code, value)
-        );
-        console.log("L.YN ", Shape.pp(shape.code), Shape.pp(logoyn));
+        // const logoyn = logoy.filter(
+        //   (value) =>
+        //     !Shape.supportACode(shape.code, value) ||
+        //     !Shape.supportBCode(shape.code, value)
+        // );
+        // console.log("L.YN ", Shape.pp(shape.code), Shape.pp(logoyn));
 
-        if (logoyn.length > 0) {
-          foundCode = logoyn[0];
-          console.log("LOGO-", Shape.pp(shape.code), Shape.pp([foundCode]));
-          break;
-        }
+        // if (logoyn.length > 0) {
+        //   foundCode = logoyn[0];
+        //   console.log("LOGO-", Shape.pp(shape.code), Shape.pp([foundCode]));
+        //   break;
+        // }
         if (logoy.length > 0) {
           foundCode = logoy[0];
           console.log("LOGO-", Shape.pp(shape.code), Shape.pp([foundCode]));

@@ -609,7 +609,7 @@ export class Shape {
    * Note: Assuming this is only used for half-logos.
    * @param {number} code
    * @param {number} value
-   * @returns {number}
+   * @returns {boolean}
    */
   static supportACode(code, value) {
     const num = Shape.layerCount(value);
@@ -623,7 +623,7 @@ export class Shape {
    * Note: Assuming this is only used for half-logos.
    * @param {number} code
    * @param {number} value
-   * @returns {number}
+   * @returns {boolean}
    */
   static supportBCode(code, value) {
     const num = Shape.layerCount(value);
@@ -904,7 +904,7 @@ export class Shape {
     }
 
     // const testShapes = [];
-    // for (let code = 0; code < 0x1000; ++code) {
+    // for (let code = 0; code <= 0x0fff; ++code) {
     //   testShapes.push(code);
     // }
     // const testShapes = [0xfa5a];
@@ -919,16 +919,14 @@ export class Shape {
     // ];
 
     // const testShapes = [0x0178, 0x0378, 0x03d2, 0x07b4]; // 3-layer unknowns
-    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
+    const testShapes = [0x13a1, 0x1642, 0x1643, 0x164a]; // first 4 4-layer unknowns
+    testShapes.forEach((code) => unknownShapes.set(code, { code }));
+
     // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
-    // possibleShapes
+    // complexShapes
     //   .filter((code) => keyShapes.get(code).layers < 4)
     //   .forEach((code) => unknownShapes.set(code, { code }));
-
-    for (let code = 0; code <= 0xfff; ++code) {
-      unknownShapes.set(code, { code });
-    }
 
     if (unknownShapes.size == 0) {
       console.log("No unknown shapes");
@@ -1155,12 +1153,11 @@ export class Shape {
 
         // Filter out 2-layer logos that have no hat
         const logoyp = logoy.filter((value) => {
-          if (Shape.layerCount(value) == 2) {
-            return Shape.supportACode(shape.code, value);
-          }
-          if (Shape.layerCount(value) == 3) {
-            return Shape.supportBCode(shape.code, value);
-          }
+          const hasHat = Shape.supportACode(shape.code, value);
+          const hasPad = Shape.supportBCode(shape.code, value);
+          const hasLayer3 = !!layers[3];
+          if (Shape.layerCount(value) == 2) return hasHat;
+          if (Shape.layerCount(value) == 3) return +hasLayer3 ^ +hasPad;
           return true;
         });
         console.log("L.Y+ ", Shape.pp(shape.code), Shape.pp(logoyp));

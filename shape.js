@@ -40,10 +40,10 @@ export class Shape {
     N: [0, 0x9, 0x99, 0x999, 0x9999],
   };
 
-  static LOGO_2 = [0x12, 0x21, 0x24, 0x42, 0x48, 0x84, 0x81, 0x18];
-  static LOGO_3 = [0x121, 0x212, 0x242, 0x424, 0x484, 0x848, 0x818, 0x181];
+  static LOGO_2 = [0x81, 0x21, 0x12, 0x42, 0x24, 0x84, 0x48, 0x18];
+  static LOGO_3 = [0x181, 0x121, 0x212, 0x242, 0x424, 0x484, 0x848, 0x818];
   static LOGO_4 = [
-    0x1212, 0x2121, 0x2424, 0x4242, 0x4848, 0x8484, 0x8181, 0x1818,
+    0x8181, 0x2121, 0x1212, 0x4242, 0x2424, 0x8484, 0x4848, 0x1818,
   ];
 
   static LOGOS = [[], [], Shape.LOGO_2, Shape.LOGO_3, Shape.LOGO_4];
@@ -893,10 +893,15 @@ export class Shape {
     const knownShapes = Shape.knownShapes;
     const unknownShapes = Shape.unknownShapes;
 
+    const reverse = false;
+    // const reverse = true;
+
     // Reverse the logo patterns
-    // for (let layer = 0; layer <= 4; ++layer) {
-    //   Shape.LOGOS[layer].reverse();
-    // }
+    if (reverse) {
+      for (let layer = 0; layer <= 4; ++layer) {
+        Shape.LOGOS[layer].reverse();
+      }
+    }
 
     // const testShapes = [];
     // for (let code = 0; code < 0x1000; ++code) {
@@ -913,13 +918,17 @@ export class Shape {
     //   0x7b4a,
     // ];
 
-    const testShapes = [0x0178, 0x0378, 0x03d2, 0x07b4]; // 3-layer unknowns
-    testShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // const testShapes = [0x0178, 0x0378, 0x03d2, 0x07b4]; // 3-layer unknowns
+    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
     // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
-    // complexShapes
+    // possibleShapes
     //   .filter((code) => keyShapes.get(code).layers < 4)
     //   .forEach((code) => unknownShapes.set(code, { code }));
+
+    for (let code = 0; code <= 0xfff; ++code) {
+      unknownShapes.set(code, { code });
+    }
 
     if (unknownShapes.size == 0) {
       console.log("No unknown shapes");
@@ -1132,7 +1141,7 @@ export class Shape {
         // }
         // console.log("L.X  ", Shape.pp(shape.code), Shape.pp(logox));
 
-        let logoy = [];
+        const logoy = [];
         for (let layer = shape.layers; layer > 1; --layer) {
           let mask;
           for (const value of Shape.LOGOS[layer]) {
@@ -1144,15 +1153,17 @@ export class Shape {
         }
         console.log("L.Y  ", Shape.pp(shape.code), Shape.pp(logoy));
 
-        // Remove 2-layer logos that have no hat
-        logoy = logoy.filter((value) => {
+        // Filter out 2-layer logos that have no hat
+        const logoyp = logoy.filter((value) => {
           if (Shape.layerCount(value) == 2) {
-            if (layers[2]) {
-              return Shape.supportACode(shape.code, value);
-            }
+            return Shape.supportACode(shape.code, value);
+          }
+          if (Shape.layerCount(value) == 3) {
+            return Shape.supportBCode(shape.code, value);
           }
           return true;
         });
+        console.log("L.Y+ ", Shape.pp(shape.code), Shape.pp(logoyp));
 
         // Remove logos that cut off support from top
         // logoy = logoy.filter((value) =>
@@ -1174,6 +1185,11 @@ export class Shape {
         //   console.log("LOGO-", Shape.pp(shape.code), Shape.pp([foundCode]));
         //   break;
         // }
+        if (logoyp.length > 0) {
+          foundCode = logoyp[0];
+          console.log("LOGO+", Shape.pp(shape.code), Shape.pp([foundCode]));
+          break;
+        }
         if (logoy.length > 0) {
           foundCode = logoy[0];
           console.log("LOGO-", Shape.pp(shape.code), Shape.pp([foundCode]));

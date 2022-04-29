@@ -63,6 +63,24 @@ export class Shape {
     [0x4848, 0x8181, 0x1212, 0x2424, 0x8484, 0x1818, 0x2121, 0x4242],
   ];
 
+  // Rotate 180 of LOGO_A
+  static LOGO_C = [
+    [],
+    [],
+    [0x84, 0x42, 0x21, 0x18, 0x48, 0x24, 0x12, 0x81],
+    [0x484, 0x242, 0x121, 0x818, 0x848, 0x424, 0x212, 0x181],
+    [0x8484, 0x4242, 0x2121, 0x1818, 0x4848, 0x2424, 0x1212, 0x8181],
+  ];
+
+  // Reverse of LOGO_A
+  static LOGO_D = [
+    [],
+    [],
+    [0x24, 0x48, 0x81, 0x12, 0x42, 0x84, 0x18, 0x21],
+    [0x424, 0x848, 0x181, 0x212, 0x242, 0x484, 0x818, 0x121],
+    [0x2424, 0x4848, 0x8181, 0x1212, 0x4242, 0x8484, 0x1818, 0x2121],
+  ];
+
   /** @type {Set<number>} */
   static allShapes;
   /** @type {Map<number,object>} */
@@ -683,6 +701,7 @@ export class Shape {
 
   /**
    * Loose logo mask - unknown seat
+   * TODO: Only alter top layer of mask of num layers > 2.
    * @param {number} code
    * @returns {number}
    */
@@ -918,11 +937,12 @@ export class Shape {
       }
     }
 
-    // const testShapes = [];
-    // for (let code = 0; code <= 0xffff; ++code) {
-    //   testShapes.push(code);
-    // }
+    const testShapes = [];
+    for (let code = 0; code <= 0xffff; ++code) {
+      testShapes.push(code);
+    }
     // const testShapes = [0xfa5a];
+    // const testShapes = [0xffff];
     // const testShapes = [0xf, 0x5f, 0x12, 0xff5a];
     // const testShapes = [0x0014, 0x0178, 0x1569, 0x3424, 0x7b4a];
     // const testShapes = [0x0361, 0x0f3c, 0x1361, 0x13a1, 0x1642, 0x7b4a];
@@ -937,11 +957,14 @@ export class Shape {
     // const testShapes = [0x13a1, 0x1642, 0x1643, 0x164a]; // first 4 4-layer unknowns
     // const testShapes = [0x1361, 0x13d2, 0x1634, 0x16b4]; // next 4 4-layer unknowns
 
-    // const testShapes = [0x0125, 0x012d, 0x0178, 0x0378]; // first 4 unknowns
-    // const testShapes = [0x03d2, 0x07b4]; // 3-layer unknowns
-    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // const testShapes = [0x0361, 0x1361, 0x1634, 0x17a4, 0x1b61, 0x36c2, 0x37a4]; // must use seat joint
+    // const testShapes = [0x7187];
+    testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
-    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // Unknown shapes when using LOGO_A and LOGO_C
+    // [03d2,07b4,121a,121e,125a,12b4,1385,1387,13a4,13b4,13d2,1678,16b4,1785,1787,17a4,17b4,1b61,1e78,3185,3187,31d2,3425,342d,3478,34a5,3585,3587,35a1,35a4,35b4,361a,361e,3658,3678,36b4,3785,3787,37a4,37b4,521a,521e,52b4,5385,5387,53a4,53b4,7185,7187,71d2,721a,721e,72b4,7385,7387,73a4,73b4,794a,794b,7952,79d2]
+
+    // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     // complexShapes
     //   .filter((code) => keyShapes.get(code).layers < 4)
@@ -987,7 +1010,13 @@ export class Shape {
       //   Shape.pp(result.build)
       // );
       if (result != null) {
-        console.log("FOUND", Shape.pp(result.code), Shape.pp(result.build));
+        console.log(
+          "FOUND",
+          Shape.pp(result.code),
+          Shape.pp(result.build),
+          result.round,
+          result.order
+        );
         knownShapes.set(key, result);
         unknownShapes.delete(key);
       } else {
@@ -1007,6 +1036,8 @@ export class Shape {
       data += Shape.pp(key);
       data += " ";
       data += Shape.pp(value.build);
+      data += " ";
+      data += value.round;
       data += " ";
       data += value.order;
       data += "\n";
@@ -1034,7 +1065,7 @@ export class Shape {
       ["01+"],
       ["01+2+", "012++"],
       ["01+2+3+", "0123+++", "01+23++", "012++3+"],
-      ["01+2+3+4+", "01234++++", "01+234+++", "012++34++"],
+      ["01+2+3+4+", "01234++++", "01+234+++", "012++34++"], // not used: 01+2+3+4+
     ];
     const num = data.build.length;
     let code;
@@ -1066,7 +1097,7 @@ export class Shape {
       stack.push(code);
     }
     const result = stack.pop();
-    console.log("ORDER", order, Shape.pp(codes), Shape.pp(result));
+    // console.log("ORDER", order, Shape.pp(codes), Shape.pp(result));
     return result;
   }
 
@@ -1128,10 +1159,15 @@ export class Shape {
 
     // call deconRound with each config
     let result;
-    for (let i = 0; i < configs.length; ++i) {
-      console.log("ROUND", i + 1);
-      result = Shape.deconRound(shape, configs[i]);
-      if (result != null) break;
+    let num = 1;
+    for (const config of configs) {
+      console.log("ROUND", num);
+      result = Shape.deconRound(shape, config);
+      if (result != null) {
+        result.round = num;
+        break;
+      }
+      num++;
     }
     return result;
   }
@@ -1148,7 +1184,7 @@ export class Shape {
     const result = { code, build: [] };
     const layers = Shape.toLayers(code);
 
-    // Add a 5th layer
+    // Add a 5th layer, if needed
     if (layers.length == 4) {
       code = 0xf0000 | code;
     }

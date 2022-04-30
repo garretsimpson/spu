@@ -40,11 +40,11 @@ export class Shape {
     S: [0, 0x6, 0x66, 0x666, 0x6666],
   };
 
-  // static LOGO_2 = [0x81, 0x21, 0x12, 0x42, 0x24, 0x84, 0x48, 0x18];
-  // static LOGO_3 = [0x181, 0x121, 0x212, 0x242, 0x424, 0x484, 0x848, 0x818];
-  // static LOGO_4 = [
-  //   0x8181, 0x2121, 0x1212, 0x4242, 0x2424, 0x8484, 0x4848, 0x1818,
-  // ];
+  static LOGO_2 = [0x81, 0x21, 0x12, 0x42, 0x24, 0x84, 0x48, 0x18];
+  static LOGO_3 = [0x181, 0x121, 0x212, 0x242, 0x424, 0x484, 0x848, 0x818];
+  static LOGO_4 = [
+    0x8181, 0x2121, 0x1212, 0x4242, 0x2424, 0x8484, 0x4848, 0x1818,
+  ];
 
   static LOGO_A = [
     [],
@@ -152,13 +152,21 @@ export class Shape {
   }
 
   /**
+   * @param {number} code
+   * @returns {string}
+   */
+  static countPieces(code) {
+    return Array.from(code.toString(2)).filter((v) => v == 1).length;
+  }
+
+  /**
    * Convert shape code to a shapez constant value.
    * Uses a fixed shape for each piece and a different color for each layer.
    * @param {number} code
    * @returns {string}
    */
   static toShape(code) {
-    // const COLORS = ["r", "g", "b", "y"];
+    const COLORS = ["r", "g", "b", "y"];
     const COLOR = "u";
     const SHAPE = Shape.RECT;
     const EMPTY = "--";
@@ -169,9 +177,9 @@ export class Shape {
     for (let i = 0; i < 16; i++) {
       let val = EMPTY;
       if (bin[15 - i] == "1") {
-        // const layer = Math.trunc(i / 4);
-        // const color = COLORS[layer];
-        val = SHAPE + COLOR;
+        const layer = Math.trunc(i / 4);
+        const color = COLORS[layer];
+        val = SHAPE + color;
       }
       if (i == 4 || i == 8 || i == 12) {
         result += SEP;
@@ -350,6 +358,21 @@ export class Shape {
     const bottom = this.code;
     const result = Shape.stackCode(top, bottom);
     return new Shape(result);
+  }
+
+  /**
+   * Return the number trashed pieces cause by stack.
+   * @param {number} top
+   * @param {number} bottom
+   * @returns {number}
+   */
+  static stackTrash(top, bottom) {
+    const code = Shape.stackCode(top, bottom);
+    let result = 0;
+    result += Shape.countPieces(top);
+    result += Shape.countPieces(bottom);
+    result -= Shape.countPieces(code);
+    return result;
   }
 
   /**
@@ -737,6 +760,9 @@ export class Shape {
   static runTests() {
     const TESTS = [
       ["toShape", [0x004b], "RrRr--Rr:----Rg--:--------:--------"],
+      ["countPieces", [0x0], 0],
+      ["countPieces", [0xf], 4],
+      ["countPieces", [0xffff], 16],
       ["mirrorCode", [0x1234], 0x84c2],
       ["keyCode", [0x4321], 0x1624],
       ["leftCode", [0x0001], 0x0008],
@@ -937,10 +963,10 @@ export class Shape {
       }
     }
 
-    const testShapes = [];
-    for (let code = 0; code <= 0xffff; ++code) {
-      testShapes.push(code);
-    }
+    // const testShapes = [];
+    // for (let code = 0; code <= 0xffff; ++code) {
+    //   testShapes.push(code);
+    // }
     // const testShapes = [0xfa5a];
     // const testShapes = [0xffff];
     // const testShapes = [0xf, 0x5f, 0x12, 0xff5a];
@@ -959,12 +985,10 @@ export class Shape {
 
     // const testShapes = [0x0361, 0x1361, 0x1634, 0x17a4, 0x1b61, 0x36c2, 0x37a4]; // must use seat joint
     // const testShapes = [0x7187];
-    testShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // const testShapes = [0x3612, 0x7a58];
+    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
-    // Unknown shapes when using LOGO_A and LOGO_C
-    // [03d2,07b4,121a,121e,125a,12b4,1385,1387,13a4,13b4,13d2,1678,16b4,1785,1787,17a4,17b4,1b61,1e78,3185,3187,31d2,3425,342d,3478,34a5,3585,3587,35a1,35a4,35b4,361a,361e,3658,3678,36b4,3785,3787,37a4,37b4,521a,521e,52b4,5385,5387,53a4,53b4,7185,7187,71d2,721a,721e,72b4,7385,7387,73a4,73b4,794a,794b,7952,79d2]
-
-    // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     // complexShapes
     //   .filter((code) => keyShapes.get(code).layers < 4)
@@ -1038,6 +1062,7 @@ export class Shape {
       data += Shape.pp(value.build);
       data += " ";
       data += value.round;
+      // data += value.order.length;
       data += " ";
       data += value.order;
       data += "\n";
@@ -1066,6 +1091,11 @@ export class Shape {
       ["01+2+", "012++"],
       ["01+2+3+", "0123+++", "01+23++", "012++3+"],
       ["01+2+3+4+", "01234++++", "01+234+++", "012++34++"], // not used: 01+2+3+4+
+      [],
+      [],
+      [],
+      [],
+      [],
     ];
     const num = data.build.length;
     let code;
@@ -1151,10 +1181,12 @@ export class Shape {
 
     // Build the needed configs
     const configs = [
+      // { logos: Shape.LOGO_A, maskFunc: Shape.logoMaskX, max: 2 },
+      // { logos: Shape.LOGO_B, maskFunc: Shape.logoMaskX, max: 2 },
       { logos: Shape.LOGO_A, maskFunc: Shape.logoMaskX, max: 4 },
-      { logos: Shape.LOGO_A, maskFunc: Shape.logoMaskY, max: 3 },
+      { logos: Shape.LOGO_A, maskFunc: Shape.logoMaskY, max: 4 },
       { logos: Shape.LOGO_B, maskFunc: Shape.logoMaskX, max: 4 },
-      { logos: Shape.LOGO_B, maskFunc: Shape.logoMaskY, max: 3 },
+      { logos: Shape.LOGO_B, maskFunc: Shape.logoMaskY, max: 4 },
     ];
 
     // call deconRound with each config

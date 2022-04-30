@@ -43,6 +43,7 @@ const EOL = "\n";
 
 const DB_FILE_NAME = "data/db.bin";
 const OPS_FILE_NAME = "data/ops.txt";
+const KEYS_FILE_NAME = "data/keys.txt";
 const TEXT_FILE_NAME = "data/text.txt";
 const BUILDS_FILE_NAME = "data/builds.txt";
 
@@ -50,8 +51,8 @@ const BUILDS_FILE_NAME = "data/builds.txt";
  * @typedef ShapeDef
  * @type {object}
  * @property {string} op
+ * @property {number} alt Number of alternates for the same shape.
  * @property {number} cost
- * @property {number} logo
  * @property {number} code
  * @property {number} code1
  * @property {number} code2
@@ -104,19 +105,17 @@ export class Ops {
   static doOneOps(shape1) {
     const results = [];
     const code1 = shape1.code;
-    let cost = shape1.cost;
+    const cost = shape1.cost;
+    let newCode, result;
     for (let op of ONE_OPS) {
-      const newCode = Shape[op + "Code"](code1);
+      newCode = Shape[op + "Code"](code1);
       // Skip NOPs
       if (code1 == newCode) continue;
-      const result = {
+      result = {
         code: newCode,
-        cost,
         op,
+        cost: cost + OPS_COST[op],
         code1,
-        ops: shape1.ops + OPS_COST[op],
-        logo: shape1.logo,
-        trash: shape1.trash, // TODO: compute additional trash for cut
       };
       results.push(result);
     }
@@ -131,13 +130,9 @@ export class Ops {
    */
   static doTwoOps(shape1, shape2) {
     const results = [];
+    const cost = shape1.cost + shape2.cost;
     const code1 = shape1.code;
     const code2 = shape2.code;
-    const cost = shape1.cost + shape2.cost;
-    const ops = shape1.ops + shape2.ops;
-    const logo = shape1.logo + shape2.logo;
-    const trash = shape1.trash + shape2.trash;
-    // TODO: compute additional trash from 5th+ layers
     let newCode, result;
     for (let op of TWO_OPS) {
       newCode = Shape[op + "Code"](code1, code2);
@@ -145,13 +140,10 @@ export class Ops {
       if (code1 == newCode || code2 == newCode) continue;
       result = {
         code: newCode,
-        cost,
         op,
+        cost: cost + OPS_COST[op],
         code1,
         code2,
-        ops: ops + OPS_COST[op],
-        logo,
-        trash,
       };
       results.push(result);
     }
@@ -176,7 +168,6 @@ export class Ops {
     // Do not store empty shapes
     if (code === 0) return result;
 
-    newShape.cost = newShape.ops + newShape.cost;
     const oldShape = allShapes[code];
     if (oldShape === undefined) {
       allShapes[code] = newShape;
@@ -185,12 +176,6 @@ export class Ops {
       return result;
     }
 
-    // Don't replace non-logo shapes with logo shapes
-    // const newLogo = oldShape.logo === 0 && newShape.logo > 0;
-    // const bothLogo = oldShape.logo > 0 && newShape.logo > 0;
-    // const lowerCost =
-    //   (!Ops.isLogo(newShape) && newShape.cost < oldShape.cost) ||
-    //   (Ops.isLogo(newShape) && newShape.trash < oldShape.trash);
     const lowerCost = newShape.cost < oldShape.cost;
     if (lowerCost) {
       console.debug("#### Lower cost found ####");
@@ -256,47 +241,26 @@ export class Ops {
   }
 
   static runMultiOps() {
+    const stats = {};
     const CONFIGS = [
-      // {
-      //   shapes: [...FLAT_SHAPES, ...LOGO_SHAPES],
-      //   logo: 0,
-      //   trash: 0,
-      //   // maxIter: 8500,
-      // },
       {
+        name: "1-layer",
         shapes: Shape.FLATS,
-        cost: 0,
-        logo: 0,
-        trash: 0,
         maxIter: 500,
       },
-      // {
-      //   shapes: Shape.LOGOS.flat(),
-      //   cost: 0,
-      //   logo: 1,
-      //   trash: 0,
-      //   // maxIter: 6500,
-      // },
       {
+        name: "2-logo ",
         shapes: Shape.LOGO_2,
-        cost: 2,
-        logo: 1,
-        trash: 2,
-        // maxIter: 3500,
+        maxIter: 4000,
       },
       {
+        name: "3-logo ",
         shapes: Shape.LOGO_3,
-        cost: 3,
-        logo: 1,
-        trash: 3,
-        // maxIter: 2500,
+        maxIter: 2500,
       },
       {
+        name: "4-logo ",
         shapes: Shape.LOGO_4,
-        cost: 4,
-        logo: 1,
-        trash: 4,
-        // maxIter: 8000,
       },
     ];
 
@@ -305,15 +269,28 @@ export class Ops {
       shapes = config.shapes.map((code) => {
         return {
           code,
-          ops: 0,
-          cost: config.cost,
           op: OPS.prim,
-          logo: config.logo,
-          trash: config.trash,
+          cost: config.cost || 0,
         };
       });
       Ops.runOps(shapes, config.maxIter);
+
+      const codes = Object.keys(allShapes);
+      const keys = codes
+        .map((v) => Shape.keyCode(v))
+        .filter((v, i, a) => a.indexOf(v) === i);
+      const stat = {};
+      stat.numShapes = codes.length;
+      stat.numKeys = keys.length;
+      stats[config.name] = stat;
     }
+
+    Ops.logTable("Name", "Shapes", "Keys");
+    for (const name in stats) {
+      const stat = stats[name];
+      Ops.logTable(name, stat.numShapes, stat.numKeys);
+    }
+    console.log("");
 
     Ops.processShapes();
   }
@@ -321,7 +298,7 @@ export class Ops {
   static runOps(startShapes, maxIters) {
     if (!startShapes) {
       startShapes = Shape.FLAT_4.map((code) => {
-        return { code, cost: 0, op: OPS.prim, logo: 0, trash: 0 };
+        return { code, op: OPS.prim, cost: 0 };
       });
     }
 
@@ -402,12 +379,16 @@ export class Ops {
    */
   static shapeToString(shape) {
     if (!shape) return "";
+    let stackTrash = 0;
+    if (shape.op === OPS.stack) {
+      stackTrash = Shape.stackTrash(shape.code1, shape.code2);
+    }
     const result = [
       Shape.pp(shape.code),
       Ops.OP_CODE[shape.op],
       shape.code1 === undefined ? "    " : Shape.pp(shape.code1),
       shape.code2 === undefined ? "    " : Shape.pp(shape.code2),
-      `(${shape.ops},${shape.alt},${shape.logo})`,
+      `(${shape.cost},${shape.alt},${stackTrash})`,
     ];
     return result.join(" ");
   }
@@ -488,11 +469,15 @@ export class Ops {
   }
 
   static saveAllShapes() {
+    let data;
     const codes = Object.keys(allShapes);
-    const data = codes
-      .map((code) => Ops.shapeToString(allShapes[code]))
-      .join(EOL);
+    data = codes.map((code) => Ops.shapeToString(allShapes[code])).join(EOL);
     Fileops.writeFile(OPS_FILE_NAME, data);
+    const keys = codes
+      .map((v) => Shape.keyCode(v))
+      .filter((v, i, a) => a.indexOf(v) === i);
+    data = keys.map((code) => Ops.shapeToString(allShapes[code])).join(EOL);
+    Fileops.writeFile(KEYS_FILE_NAME, data);
   }
 
   static displayShapes() {

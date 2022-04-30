@@ -251,16 +251,19 @@ export class Ops {
       {
         name: "2-logo ",
         shapes: Shape.LOGO_2,
+        // cost: 1,
         maxIter: 4000,
       },
       {
         name: "3-logo ",
         shapes: Shape.LOGO_3,
+        // cost: 2,
         maxIter: 2500,
       },
       {
         name: "4-logo ",
         shapes: Shape.LOGO_4,
+        // cost: 3,
       },
     ];
 

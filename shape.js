@@ -1060,8 +1060,8 @@ export class Shape {
       data += Shape.pp(key);
       data += " ";
       data += Shape.pp(value.build);
-      data += " ";
-      data += value.round;
+      // data += " ";
+      // data += value.round;
       // data += value.order.length;
       data += " ";
       data += value.order;
@@ -1184,9 +1184,9 @@ export class Shape {
       // { logos: Shape.LOGO_A, maskFunc: Shape.logoMaskX, max: 2 },
       // { logos: Shape.LOGO_B, maskFunc: Shape.logoMaskX, max: 2 },
       { logos: Shape.LOGO_A, maskFunc: Shape.logoMaskX, max: 4 },
-      { logos: Shape.LOGO_A, maskFunc: Shape.logoMaskY, max: 4 },
+      { logos: Shape.LOGO_A, maskFunc: Shape.logoMaskY, max: 3 },
       { logos: Shape.LOGO_B, maskFunc: Shape.logoMaskX, max: 4 },
-      { logos: Shape.LOGO_B, maskFunc: Shape.logoMaskY, max: 4 },
+      { logos: Shape.LOGO_B, maskFunc: Shape.logoMaskY, max: 3 },
     ];
 
     // call deconRound with each config

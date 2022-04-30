@@ -75,6 +75,7 @@ const OPS = {
   unstackTop: "unstackTop",
   screwLeft: "screwLeft",
   screwRight: "screwRight",
+  mirror: "mirror",
   flip: "flip",
 };
 
@@ -114,7 +115,7 @@ export class Ops {
       result = {
         code: newCode,
         op,
-        cost: cost + OPS_COST[op],
+        cost: cost + (OPS_COST[op] || 0),
         code1,
       };
       results.push(result);
@@ -141,17 +142,13 @@ export class Ops {
       result = {
         code: newCode,
         op,
-        cost: cost + OPS_COST[op],
+        cost: cost + (OPS_COST[op] || 0),
         code1,
         code2,
       };
       results.push(result);
     }
     return results;
-  }
-
-  static isLogo(shape) {
-    return shape.logo > 0;
   }
 
   /**
@@ -258,7 +255,7 @@ export class Ops {
         name: "3-logo ",
         shapes: Shape.LOGO_3,
         // cost: 2,
-        maxIter: 2500,
+        // maxIter: 2500,
       },
       {
         name: "4-logo ",
@@ -383,7 +380,7 @@ export class Ops {
   static shapeToString(shape) {
     if (!shape) return "";
     let stackTrash = 0;
-    if (shape.op === OPS.stack) {
+    if (shape.code1 != undefined && shape.code2 != undefined) {
       stackTrash = Shape.stackTrash(shape.code1, shape.code2);
     }
     const result = [

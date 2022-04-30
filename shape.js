@@ -350,6 +350,23 @@ export class Shape {
   }
 
   /**
+   * Return bottom code if stack would cause trash.
+   * @param {number} top
+   * @param {number} bottom
+   * @returns {number}
+   */
+  static stack4Code(top, bottom) {
+    for (let offset = 4; offset > 0; offset--) {
+      if (((top << ((offset - 1) * 4)) & bottom) != 0) {
+        const result = (top << (offset * 4)) | bottom;
+        if (result > 0xffff) return bottom;
+        return result & 0xffff;
+      }
+    }
+    return top | bottom;
+  }
+
+  /**
    * @param {Shape} shape
    * @returns {Shape}
    */

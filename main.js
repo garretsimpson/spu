@@ -18,12 +18,12 @@ function main() {
   console.log("");
 
   // Shape.runTests();
-  Shape.testAllShapes();
+  // Shape.testAllShapes();
   // Shape.testPerf();
   // Shape.testLogo();
   // Spu.runTests();
   // Spu.runSearch();
-  // Ops.runMultiOps();
+  Ops.runMultiOps();
   // Ops.dbToText();
 }
 

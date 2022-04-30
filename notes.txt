@@ -23,3 +23,11 @@ logos cost 123
 2 piece 485
   total 558
 
+No 5th layer
+          Shapes  Keys
+ 1-layer   28112  3885
+ 2-logo    42324  5855
+ 3-logo    44230  6118
+ 4-logo    44328  6132
+
+Missing: 6691-6132 = 559

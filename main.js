@@ -10,7 +10,7 @@ import { Shape } from "./shape.js";
 import { Spu } from "./spu.js";
 import { Ops } from "./ops.js";
 
-const APP_NAME = "Shape Processing Unit 0.5";
+const APP_NAME = "Shape Processing Tools";
 
 function main() {
   console.log(APP_NAME);
@@ -18,13 +18,13 @@ function main() {
   console.log("");
 
   // Shape.runTests();
-  // Shape.testAllShapes();
+  Shape.testAllShapes();
   // Shape.testPerf();
   // Shape.testLogo();
   // Spu.runTests();
   // Spu.runSearch();
-  Ops.runMultiOps();
-  // Ops.dbToText();
+  // Ops.runMultiOps();
+  // Ops.dbToText("data/db_no5.bin");
 }
 
 main();

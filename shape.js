@@ -10,6 +10,7 @@
  */
 
 import { Fileops } from "./fileops.js";
+import { Ops } from "./ops.js";
 
 const FULL_CIRC = "CuCuCuCu"; // 0x000F
 const HALF_RECT = "RuRu----"; // 0x0003
@@ -1003,6 +1004,7 @@ export class Shape {
     // const testShapes = [0x0361, 0x1361, 0x1634, 0x17a4, 0x1b61, 0x36c2, 0x37a4]; // must use seat joint
     // const testShapes = [0x7187];
     // const testShapes = [0x3612, 0x7a58];
+    // testShapes = [0x3612, 0x3616, 0x361a, 0x361e, 0x3652]; // some extra 5th layer found by TMAM
     // testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     complexShapes.forEach((code) => unknownShapes.set(code, { code }));
@@ -1010,6 +1012,12 @@ export class Shape {
     // complexShapes
     //   .filter((code) => keyShapes.get(code).layers < 4)
     //   .forEach((code) => unknownShapes.set(code, { code }));
+
+    // Remove known shapes
+    // const no5 = Ops.readDB("data/db_no5.bin");
+    // for (const shape of no5) {
+    //   unknownShapes.delete(shape.code);
+    // }
 
     if (unknownShapes.size == 0) {
       console.log("No unknown shapes");
@@ -1027,43 +1035,41 @@ export class Shape {
     // Shape.deconstruct(unknownShapes.get(code));
 
     // Attempt to deconstruct
-    let pass;
-    for (const [key, value] of unknownShapes) {
-      if (Shape.isInvalid(key)) {
-        console.log(Shape.pp(key), "INVALID");
-        console.log("");
-        unknownShapes.delete(key);
-        continue;
-      }
-      // TODO: The deconstructor should be able to determine this.
-      // const keyCode = Shape.keyCode(key);
-      // if (!Shape.isPossible(key)) {
-      //   console.log(Shape.pp(key), "IMPOSSIBLE");
-      //   console.log("");
-      //   unknownShapes.delete(key);
-      //   continue;
-      // }
+    const doDecon = true;
+    if (doDecon) {
+      for (const [key, value] of unknownShapes) {
+        if (Shape.isInvalid(key)) {
+          console.log(Shape.pp(key), "INVALID");
+          console.log("");
+          unknownShapes.delete(key);
+          continue;
+        }
+        // TODO: The deconstructor should be able to determine this.
+        // const keyCode = Shape.keyCode(key);
+        // if (!Shape.isPossible(key)) {
+        //   console.log(Shape.pp(key), "IMPOSSIBLE");
+        //   console.log("");
+        //   unknownShapes.delete(key);
+        //   continue;
+        // }
 
-      const result = Shape.deconstruct(value);
-      // console.log(
-      //   pass ? "PASS " : "FAIL ",
-      //   Shape.pp(key),
-      //   Shape.pp(result.build)
-      // );
-      if (result != null) {
-        console.log(
-          "FOUND",
-          Shape.pp(result.code),
-          Shape.pp(result.build),
-          result.round,
-          result.order
-        );
-        knownShapes.set(key, result);
-        unknownShapes.delete(key);
-      } else {
-        console.log(Shape.pp(key), "NOT FOUND");
+        let result = null;
+        result = Shape.deconstruct(value);
+        if (result != null) {
+          console.log(
+            "FOUND",
+            Shape.pp(result.code),
+            Shape.pp(result.build),
+            result.round,
+            result.order
+          );
+          knownShapes.set(key, result);
+          unknownShapes.delete(key);
+        } else {
+          console.log(Shape.pp(key), "NOT FOUND");
+        }
+        console.log("");
       }
-      console.log("");
     }
 
     console.log("Knowns:", knownShapes.size);

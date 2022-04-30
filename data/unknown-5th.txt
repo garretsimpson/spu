@@ -173,325 +173,318 @@ X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X -
 - - - X    - - - X    X - - X    - X - X    - X - X    X X - X    - - X X    - - X X 
 - X X X    X X X X    - X - -    X - - -    - - X -    - - X -    X - - -    - X - - 
 
-35e1 --    3612 --    3616 --    361a --    361e --    3652 --    3c11 --    3c13 -- 
+35e1 --    3c11 --    3c13 --    3c15 --    3c17 --    3c18 --    3c19 --    3c1a -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
-X - X -    - X X -    - X X -    - X X -    - X X -    - X X -    - - X X    - - X X 
-- X X X    X - - -    X - - -    X - - -    X - - -    X - X -    X - - -    X - - - 
-X - - -    - X - -    - X X -    - X - X    - X X X    - X - -    X - - -    X X - - 
+X - X -    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X 
+- X X X    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - - 
+X - - -    X - - -    X X - -    X - X -    X X X -    - - - X    X - - X    - X - X 
 
-3c15 --    3c17 --    3c18 --    3c19 --    3c1a --    3c1b --    3c1c --    3c1d -- 
+3c1b --    3c1c --    3c1d --    3c1e --    3c1f --    3c34 --    3c52 --    3c58 -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
 - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X    - - X X 
+X - - -    X - - -    X - - -    X - - -    X - - -    X X - -    X - X -    X - X - 
+X X - X    - - X X    X - X X    - X X X    X X X X    - - X -    - X - -    - - - X 
+
+3c68 --    3d24 --    3d2c --    3d34 --    5211 --    5212 --    5213 --    5215 -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X X - -    X X - -    X X - -    X X - -    X - X -    X - X -    X - X -    X - X - 
+- - X X    X - X X    X - X X    X - X X    - X - -    - X - -    - X - -    - X - - 
+- X X -    - X - -    - X - -    X X - -    X - - -    X - - -    X - - -    X - - - 
+- - - X    - - X -    - - X X    - - X -    X - - -    - X - -    X X - -    X - X - 
+
+5216 --    5217 --    5219 --    521a --    521b --    521d --    521e --    521f -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - - 
+- X X -    X X X -    X - - X    - X - X    X X - X    X - X X    - X X X    X X X X 
+
+5221 --    5222 --    5223 --    5225 --    5227 --    5229 --    522a --    522b -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
+X - - -    - X - -    X X - -    X - X -    X X X -    X - - X    - X - X    X X - X 
+
+522d --    522f --    5231 --    5232 --    5233 --    5234 --    5235 --    5236 -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
+- X - -    - X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
+X - X X    X X X X    X - - -    - X - -    X X - -    - - X -    X - X -    - X X - 
+
+5237 --    5239 --    523a --    523b --    523c --    523d --    523e --    523f -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
+X X X -    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X 
+
+5251 --    5253 --    5255 --    5257 --    5259 --    525a --    525b --    525d -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+X - - -    X X - -    X - X -    X X X -    X - - X    - X - X    X X - X    X - X X 
+
+525f --    5271 --    5272 --    5273 --    5275 --    5277 --    5279 --    527a -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
+X - X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
+X X X X    X - - -    - X - -    X X - -    X - X -    X X X -    X - - X    - X - X 
+
+527b --    527d --    527f --    5291 --    5293 --    5295 --    5296 --    5297 -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
+X X X -    X X X -    X X X -    X - - X    X - - X    X - - X    X - - X    X - - X 
+X X - X    X - X X    X X X X    X - - -    X X - -    X - X -    - X X -    X X X - 
+
+5298 --    5299 --    529a --    529b --    529c --    529d --    529e --    529f -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
+X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X 
+- - - X    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X 
+
+52a2 --    52a3 --    52a5 --    52a7 --    52a8 --    52a9 --    52aa --    52ab -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X 
+- X - -    X X - -    X - X -    X X X -    - - - X    X - - X    - X - X    X X - X 
+
+52ad --    52af --    52b1 --    52b2 --    52b3 --    52b4 --    52b5 --    52b6 -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
+- X - X    - X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X 
+X - X X    X X X X    X - - -    - X - -    X X - -    - - X -    X - X -    - X X - 
+
+52b7 --    52b8 --    52b9 --    52ba --    52bb --    52bc --    52bd --    52be -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X 
+X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X 
+
+52bf --    52d1 --    52d3 --    52d5 --    52d7 --    52d8 --    52d9 --    52da -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
+X X - X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X 
+X X X X    X - - -    X X - -    X - X -    X X X -    - - - X    X - - X    - X - X 
+
+52db --    52dd --    52df --    52f1 --    52f2 --    52f3 --    52f5 --    52f7 -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
+X - X X    X - X X    X - X X    X X X X    X X X X    X X X X    X X X X    X X X X 
+X X - X    X - X X    X X X X    X - - -    - X - -    X X - -    X - X -    X X X - 
+
+52f8 --    52f9 --    52fa --    52fb --    52fd --    52ff --    5342 --    5343 -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    X X - -    X X - - 
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    - - X -    - - X - 
+- - - X    X - - X    - X - X    X X - X    X - X X    X X X X    - X - -    X X - - 
+
+5344 --    5345 --    5346 --    5347 --    534a --    534b --    534c --    534d -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X - 
+- - X -    X - X -    - X X -    X X X -    - X - X    X X - X    - - X X    X - X X 
+
+534e --    534f --    5352 --    5358 --    5381 --    5383 --    5385 --    5387 -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
+- - X -    - - X -    X - X -    X - X -    - - - X    - - - X    - - - X    - - - X 
+- X X X    X X X X    - X - -    - - - X    X - - -    X X - -    X - X -    X X X - 
+
+5388 --    5389 --    538a --    538b --    538c --    538d --    538e --    538f -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
+- - - X    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X 
+
+53a1 --    53a4 --    53c1 --    53c2 --    5a11 --    5a12 --    5a13 --    5a15 -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+X X - -    X X - -    X X - -    X X - -    - X - X    - X - X    - X - X    - X - X 
+- X - X    - X - X    - - X X    - - X X    X - - -    X - - -    X - - -    X - - - 
+X - - -    - - X -    X - - -    - X - -    X - - -    - X - -    X X - -    X - X - 
+
+5a16 --    5a17 --    5a1a --    5a1b --    5a1e --    5a1f --    5a34 --    5a38 -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X 
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X X - -    X X - - 
+- X X -    X X X -    - X - X    X X - X    - X X X    X X X X    - - X -    - - - X 
+
+5a52 --    5a78 --    5b42 --    5b43 --    5b44 --    5b45 --    5b46 --    5b47 -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+- X - X    - X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X 
+X - X -    X X X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X - 
+- X - -    - - - X    - X - -    X X - -    - - X -    X - X -    - X X -    X X X - 
+
+5b4a --    5b4b --    5b4e --    5b4f --    5b52 --    5b68 --    7811 --    7813 -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X X X -    X X X - 
+X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    - - - X    - - - X 
+- - X -    - - X -    - - X -    - - X -    X - X -    - X X -    X - - -    X - - - 
+- X - X    X X - X    - X X X    X X X X    - X - -    - - - X    X - - -    X X - - 
+
+7815 --    7817 --    7818 --    7819 --    781a --    781b --    781c --    781d -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
 X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - - 
 X - X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X 
 
-3c1e --    3c1f --    3c34 --    3c52 --    3c58 --    3c68 --    3d24 --    3d2c -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
-- - X X    - - X X    - - X X    - - X X    - - X X    - - X X    X - X X    X - X X 
-X - - -    X - - -    X X - -    X - X -    X - X -    - X X -    - X - -    - X - - 
-- X X X    X X X X    - - X -    - X - -    - - - X    - - - X    - - X -    - - X X 
-
-3d34 --    5211 --    5212 --    5213 --    5215 --    5216 --    5217 --    5219 -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X X - -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-X - X X    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
-X X - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - - 
-- - X -    X - - -    - X - -    X X - -    X - X -    - X X -    X X X -    X - - X 
-
-521a --    521b --    521d --    521e --    521f --    5221 --    5222 --    5223 -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
-X - - -    X - - -    X - - -    X - - -    X - - -    - X - -    - X - -    - X - - 
-- X - X    X X - X    X - X X    - X X X    X X X X    X - - -    - X - -    X X - - 
-
-5225 --    5227 --    5229 --    522a --    522b --    522d --    522f --    5231 -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
-- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    X X - - 
-X - X -    X X X -    X - - X    - X - X    X X - X    X - X X    X X X X    X - - - 
-
-5232 --    5233 --    5234 --    5235 --    5236 --    5237 --    5239 --    523a -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
-X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
-- X - -    X X - -    - - X -    X - X -    - X X -    X X X -    X - - X    - X - X 
-
-523b --    523c --    523d --    523e --    523f --    5251 --    5253 --    5255 -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
-X X - -    X X - -    X X - -    X X - -    X X - -    X - X -    X - X -    X - X - 
-X X - X    - - X X    X - X X    - X X X    X X X X    X - - -    X X - -    X - X - 
-
-5257 --    5259 --    525a --    525b --    525d --    525f --    5271 --    5272 -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X X X -    X X X - 
-X X X -    X - - X    - X - X    X X - X    X - X X    X X X X    X - - -    - X - - 
-
-5273 --    5275 --    5277 --    5279 --    527a --    527b --    527d --    527f -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
-X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
-X X - -    X - X -    X X X -    X - - X    - X - X    X X - X    X - X X    X X X X 
-
-5291 --    5293 --    5295 --    5296 --    5297 --    5298 --    5299 --    529a -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
-X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X 
-X - - -    X X - -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X 
-
-529b --    529c --    529d --    529e --    529f --    52a2 --    52a3 --    52a5 -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
-X - - X    X - - X    X - - X    X - - X    X - - X    - X - X    - X - X    - X - X 
-X X - X    - - X X    X - X X    - X X X    X X X X    - X - -    X X - -    X - X - 
-
-52a7 --    52a8 --    52a9 --    52aa --    52ab --    52ad --    52af --    52b1 -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
-- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    X X - X 
-X X X -    - - - X    X - - X    - X - X    X X - X    X - X X    X X X X    X - - - 
-
-52b2 --    52b3 --    52b4 --    52b5 --    52b6 --    52b7 --    52b8 --    52b9 -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
-X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X 
-- X - -    X X - -    - - X -    X - X -    - X X -    X X X -    - - - X    X - - X 
-
-52ba --    52bb --    52bc --    52bd --    52be --    52bf --    52d1 --    52d3 -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
-X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X - X X    X - X X 
-- X - X    X X - X    - - X X    X - X X    - X X X    X X X X    X - - -    X X - - 
-
-52d5 --    52d7 --    52d8 --    52d9 --    52da --    52db --    52dd --    52df -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
-X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X 
-X - X -    X X X -    - - - X    X - - X    - X - X    X X - X    X - X X    X X X X 
-
-52f1 --    52f2 --    52f3 --    52f5 --    52f7 --    52f8 --    52f9 --    52fa -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-- X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
-X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X 
-X - - -    - X - -    X X - -    X - X -    X X X -    - - - X    X - - X    - X - X 
-
-52fb --    52fd --    52ff --    5342 --    5343 --    5344 --    5345 --    5346 -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-- X - -    - X - -    - X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
-X X X X    X X X X    X X X X    - - X -    - - X -    - - X -    - - X -    - - X - 
-X X - X    X - X X    X X X X    - X - -    X X - -    - - X -    X - X -    - X X - 
-
-5347 --    534a --    534b --    534c --    534d --    534e --    534f --    5352 -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
-- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    X - X - 
-X X X -    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - - 
-
-5358 --    5381 --    5383 --    5385 --    5387 --    5388 --    5389 --    538a -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
-X - X -    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
-- - - X    X - - -    X X - -    X - X -    X X X -    - - - X    X - - X    - X - X 
-
-538b --    538c --    538d --    538e --    538f --    53a1 --    53a4 --    53c1 -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
-- - - X    - - - X    - - - X    - - - X    - - - X    - X - X    - X - X    - - X X 
-X X - X    - - X X    X - X X    - X X X    X X X X    X - - -    - - X -    X - - - 
-
-53c2 --    5a11 --    5a12 --    5a13 --    5a15 --    5a16 --    5a17 --    5a1a -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-X X - -    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X 
-- - X X    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - - 
-- X - -    X - - -    - X - -    X X - -    X - X -    - X X -    X X X -    - X - X 
-
-5a1b --    5a1e --    5a1f --    5a34 --    5a38 --    5a52 --    5a78 --    5b42 -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    X X - X 
-X - - -    X - - -    X - - -    X X - -    X X - -    X - X -    X X X -    - - X - 
-X X - X    - X X X    X X X X    - - X -    - - - X    - X - -    - - - X    - X - - 
-
-5b43 --    5b44 --    5b45 --    5b46 --    5b47 --    5b4a --    5b4b --    5b4e -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
-X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X 
-- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X - 
-X X - -    - - X -    X - X -    - X X -    X X X -    - X - X    X X - X    - X X X 
-
-5b4f --    5b52 --    5b68 --    7811 --    7813 --    7815 --    7817 --    7818 -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X - X -    X - X -    X - X -    X X X -    X X X -    X X X -    X X X -    X X X - 
-X X - X    X X - X    X X - X    - - - X    - - - X    - - - X    - - - X    - - - X 
-- - X -    X - X -    - X X -    X - - -    X - - -    X - - -    X - - -    X - - - 
-X X X X    - X - -    - - - X    X - - -    X X - -    X - X -    X X X -    - - - X 
-
-7819 --    781a --    781b --    781c --    781d --    781e --    781f --    7831 -- 
+781e --    781f --    7831 --    7832 --    7833 --    7835 --    7836 --    7837 -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
 - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
-X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X X - - 
+X - - -    X - - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
+- X X X    X X X X    X - - -    - X - -    X X - -    X - X -    - X X -    X X X - 
+
+7839 --    783a --    783b --    783c --    783d --    783e --    783f --    7851 -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X - X - 
 X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X    X - - - 
 
-7832 --    7833 --    7835 --    7836 --    7837 --    7839 --    783a --    783b -- 
+7853 --    7855 --    7857 --    7859 --    785a --    785b --    785d --    785f -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
 - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
-X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - - 
-- X - -    X X - -    X - X -    - X X -    X X X -    X - - X    - X - X    X X - X 
+X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X -    X - X - 
+X X - -    X - X -    X X X -    X - - X    - X - X    X X - X    X - X X    X X X X 
 
-783c --    783d --    783e --    783f --    7851 --    7853 --    7855 --    7857 -- 
+7871 --    7872 --    7873 --    7875 --    7877 --    7879 --    787a --    787b -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
 - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
-X X - -    X X - -    X X - -    X X - -    X - X -    X - X -    X - X -    X - X - 
-- - X X    X - X X    - X X X    X X X X    X - - -    X X - -    X - X -    X X X - 
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
+X - - -    - X - -    X X - -    X - X -    X X X -    X - - X    - X - X    X X - X 
 
-7859 --    785a --    785b --    785d --    785f --    7871 --    7872 --    7873 -- 
+787d --    787f --    7881 --    7883 --    7885 --    7887 --    7888 --    7889 -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
 - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
-X - X -    X - X -    X - X -    X - X -    X - X -    X X X -    X X X -    X X X - 
-X - - X    - X - X    X X - X    X - X X    X X X X    X - - -    - X - -    X X - - 
+X X X -    X X X -    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
+X - X X    X X X X    X - - -    X X - -    X - X -    X X X -    - - - X    X - - X 
 
-7875 --    7877 --    7879 --    787a --    787b --    787d --    787f --    7881 -- 
+788a --    788b --    788d --    788f --    7891 --    7893 --    7894 --    7895 -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
 - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
-X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    - - - X 
-X - X -    X X X -    X - - X    - X - X    X X - X    X - X X    X X X X    X - - - 
+- - - X    - - - X    - - - X    - - - X    X - - X    X - - X    X - - X    X - - X 
+- X - X    X X - X    X - X X    X X X X    X - - -    X X - -    - - X -    X - X - 
 
-7883 --    7885 --    7887 --    7888 --    7889 --    788a --    788b --    788d -- 
+7896 --    7897 --    7898 --    7899 --    789a --    789b --    789c --    789d -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
 - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
-- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
-X X - -    X - X -    X X X -    - - - X    X - - X    - X - X    X X - X    X - X X 
+X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X 
+- X X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X 
 
-788f --    7891 --    7893 --    7894 --    7895 --    7896 --    7897 --    7898 -- 
+789e --    789f --    78a2 --    78a3 --    78a5 --    78a7 --    78a8 --    78a9 -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
 - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
-- - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X 
-X X X X    X - - -    X X - -    - - X -    X - X -    - X X -    X X X -    - - - X 
+X - - X    X - - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X 
+- X X X    X X X X    - X - -    X X - -    X - X -    X X X -    - - - X    X - - X 
 
-7899 --    789a --    789b --    789c --    789d --    789e --    789f --    78a2 -- 
+78aa --    78ab --    78ad --    78af --    78b1 --    78b2 --    78b3 --    78b4 -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
 - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
-X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    - X - X 
-X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X    - X - - 
+- X - X    - X - X    - X - X    - X - X    X X - X    X X - X    X X - X    X X - X 
+- X - X    X X - X    X - X X    X X X X    X - - -    - X - -    X X - -    - - X - 
 
-78a3 --    78a5 --    78a7 --    78a8 --    78a9 --    78aa --    78ab --    78ad -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
-- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
-- X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X 
-X X - -    X - X -    X X X -    - - - X    X - - X    - X - X    X X - X    X - X X 
-
-78af --    78b1 --    78b2 --    78b3 --    78b4 --    78b5 --    78b6 --    78b7 -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
-- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
-- X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X 
-X X X X    X - - -    - X - -    X X - -    - - X -    X - X -    - X X -    X X X - 
-
-78b8 --    78b9 --    78ba --    78bb --    78bc --    78bd --    78be --    78bf -- 
+78b5 --    78b6 --    78b7 --    78b8 --    78b9 --    78ba --    78bb --    78bc -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
 - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
 X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X    X X - X 
-- - - X    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X 
+X - X -    - X X -    X X X -    - - - X    X - - X    - X - X    X X - X    - - X X 
 
-78d1 --    78d3 --    78d5 --    78d7 --    78d8 --    78d9 --    78da --    78db -- 
+78bd --    78be --    78bf --    78d1 --    78d3 --    78d5 --    78d7 --    78d8 -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
 - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
-X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X    X - X X 
-X - - -    X X - -    X - X -    X X X -    - - - X    X - - X    - X - X    X X - X 
+X X - X    X X - X    X X - X    X - X X    X - X X    X - X X    X - X X    X - X X 
+X - X X    - X X X    X X X X    X - - -    X X - -    X - X -    X X X -    - - - X 
 
-78dd --    78df --    78f1 --    78f2 --    78f3 --    78f5 --    78f7 --    78f8 -- 
+78d9 --    78da --    78db --    78dd --    78df --    78f1 --    78f2 --    78f3 -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
 - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
-X - X X    X - X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X 
-X - X X    X X X X    X - - -    - X - -    X X - -    X - X -    X X X -    - - - X 
-
-78f9 --    78fa --    78fb --    78fd --    78ff --    7921 --    7922 --    7923 -- 
-- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
-X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
-- - - X    - - - X    - - - X    - - - X    - - - X    X - - X    X - - X    X - - X 
-X X X X    X X X X    X X X X    X X X X    X X X X    - X - -    - X - -    - X - - 
+X - X X    X - X X    X - X X    X - X X    X - X X    X X X X    X X X X    X X X X 
 X - - X    - X - X    X X - X    X - X X    X X X X    X - - -    - X - -    X X - - 
 
-7925 --    7926 --    7927 --    7929 --    792a --    792b --    792d --    792e -- 
+78f5 --    78f7 --    78f8 --    78f9 --    78fa --    78fb --    78fd --    78ff -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
+- - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X    - - - X 
+X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X    X X X X 
+X - X -    X X X -    - - - X    X - - X    - X - X    X X - X    X - X X    X X X X 
+
+7921 --    7922 --    7923 --    7925 --    7926 --    7927 --    7929 --    792a -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
 X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X 
 - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - -    - X - - 
-X - X -    - X X -    X X X -    X - - X    - X - X    X X - X    X - X X    - X X X 
+X - - -    - X - -    X X - -    X - X -    - X X -    X X X -    X - - X    - X - X 
 
-792f --    7944 --    7945 --    7946 --    7947 --    7948 --    7949 --    794a -- 
+792b --    792d --    792e --    792f --    7944 --    7945 --    7946 --    7947 -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
 X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X 
-- X - -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X - 
-X X X X    - - X -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X 
+- X - -    - X - -    - X - -    - X - -    - - X -    - - X -    - - X -    - - X - 
+X X - X    X - X X    - X X X    X X X X    - - X -    X - X -    - X X -    X X X - 
 
-794b --    794c --    794d --    794e --    794f --    7952 --    7958 --    7961 -- 
+7948 --    7949 --    794a --    794b --    794c --    794d --    794e --    794f -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
 X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    X - - X 
-- - X -    - - X -    - - X -    - - X -    - - X -    X - X -    X - X -    - X X - 
-X X - X    - - X X    X - X X    - X X X    X X X X    - X - -    - - - X    X - - - 
+- - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X -    - - X - 
+- - - X    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X    X X X X 
 
-7968 --    79a1 --    79a4 --    7a11 --    7a12 --    7a13 --    7a15 --    7a16 -- 
+7952 --    7958 --    7961 --    7968 --    79a1 --    79a4 --    7a11 --    7a12 -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
-X - - X    X - - X    X - - X    - X - X    - X - X    - X - X    - X - X    - X - X 
-- X X -    - X - X    - X - X    X - - -    X - - -    X - - -    X - - -    X - - - 
-- - - X    X - - -    - - X -    X - - -    - X - -    X X - -    X - X -    - X X - 
+X - - X    X - - X    X - - X    X - - X    X - - X    X - - X    - X - X    - X - X 
+X - X -    X - X -    - X X -    - X X -    - X - X    - X - X    X - - -    X - - - 
+- X - -    - - - X    X - - -    - - - X    X - - -    - - X -    X - - -    - X - - 
 
-7a17 --    7a18 --    7a19 --    7a1a --    7a1b --    7a1c --    7a1d --    7a1e -- 
+7a13 --    7a15 --    7a16 --    7a17 --    7a18 --    7a19 --    7a1a --    7a1b -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
 - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X 
 X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - - 
-X X X -    - - - X    X - - X    - X - X    X X - X    - - X X    X - X X    - X X X 
+X X - -    X - X -    - X X -    X X X -    - - - X    X - - X    - X - X    X X - X 
 
-7a1f --    7a34 --    7a38 --    7a52 --    7a58 --    7a78 --    7a92 --    7a94 -- 
+7a1c --    7a1d --    7a1e --    7a1f --    7a34 --    7a38 --    7a52 --    7a58 -- 
 - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
 X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
 - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X    - X - X 
-X - - -    X X - -    X X - -    X - X -    X - X -    X X X -    X - - X    X - - X 
-X X X X    - - X -    - - - X    - X - -    - - - X    - - - X    - X - -    - - X - 
+X - - -    X - - -    X - - -    X - - -    X X - -    X X - -    X - X -    X - X - 
+- - X X    X - X X    - X X X    X X X X    - - X -    - - - X    - X - -    - - - X 
 
-7ad2 --    7b48 --    7b49 --    7b68 -- 
-- - - -    - - - -    - - - -    - - - - 
-X X X -    X X X -    X X X -    X X X - 
-- X - X    X X - X    X X - X    X X - X 
-X - X X    - - X -    - - X -    - X X - 
-- X - -    - - - X    X - - X    - - - X 
+7a78 --    7a92 --    7a94 --    7ad2 --    7b48 --    7b49 --    7b68 -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X X X -    X X X -    X X X -    X X X -    X X X -    X X X -    X X X - 
+- X - X    - X - X    - X - X    - X - X    X X - X    X X - X    X X - X 
+X X X -    X - - X    X - - X    X - X X    - - X -    - - X -    - X X - 
+- - - X    - X - -    - - X -    - X - -    - - - X    X - - X    - - - X 
 

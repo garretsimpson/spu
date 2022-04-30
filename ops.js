@@ -538,9 +538,14 @@ export class Ops {
     Fileops.appendFile(DB_FILE_NAME, data);
   }
 
-  static dbToText() {
-    const data = Ops.readBinFile(DB_FILE_NAME);
-    if (!data) return;
+  /**
+   * @param {string} filename
+   * @returns {Array<object>}
+   */
+  static readDB(filename) {
+    console.log("Read DB:", filename);
+    const data = Fileops.readBinFile(filename);
+    if (!data) return [];
 
     const opName = [];
     for (let name of Object.keys(Ops.OP_ENUM)) {
@@ -548,21 +553,37 @@ export class Ops {
     }
 
     const result = [];
-    let pos, line;
+    let pos, code1, code2, op, shape;
     for (let code = 0; code <= 0xffff; code++) {
       pos = 5 * code;
-      const code1 = data[pos++] | (data[pos++] << 8);
-      const code2 = data[pos++] | (data[pos++] << 8);
-      const op = data[pos++];
+      code1 = data[pos++] | (data[pos++] << 8);
+      code2 = data[pos++] | (data[pos++] << 8);
+      op = data[pos++];
       if (op === 0) continue;
+      op = Ops.OP_CODE[opName[op]];
+      shape = { code, op, code1, code2 };
+      result.push(shape);
+    }
+    console.log("DB entries:", result.length);
+    return result;
+  }
+
+  static dbToText(filename) {
+    const shapes = Ops.readDB(filename);
+    if (shapes.length == 0) return;
+
+    const result = [];
+    let line;
+    for (const shape of shapes) {
       line = [
-        Shape.pp(code),
-        Ops.OP_CODE[opName[op]],
-        Shape.pp(code1),
-        Shape.pp(code2),
+        Shape.pp(shape.code),
+        shape.op,
+        Shape.pp(shape.code1),
+        Shape.pp(shape.code2),
       ].join(" ");
       result.push(line);
     }
+    console.log("Save DB text:", TEXT_FILE_NAME);
     Fileops.writeFile(TEXT_FILE_NAME, result.join(EOL));
   }
 }

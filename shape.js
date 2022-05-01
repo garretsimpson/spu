@@ -1003,8 +1003,9 @@ export class Shape {
 
     // const testShapes = [0x0361, 0x1361, 0x1634, 0x17a4, 0x1b61, 0x36c2, 0x37a4]; // must use seat joint
     // const testShapes = [0x7187];
-    // const testShapes = [0x3612, 0x7a58];
-    // testShapes = [0x3612, 0x3616, 0x361a, 0x361e, 0x3652]; // some extra 5th layer found by TMAM
+    // const testShapes = [0x3612, 0x3616, 0x361a, 0x361e, 0x3652]; // some extra 5th layer found by TMAM
+    // const testShapes = [0x16d2]; // can't make if layer and size are reversed in search.
+
     // testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     complexShapes.forEach((code) => unknownShapes.set(code, { code }));

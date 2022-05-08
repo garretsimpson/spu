@@ -120,7 +120,9 @@ export class Shape {
   }
 
   static readShapeFile() {
-    const data = Fileops.readFile("data/allShapes.txt");
+    const FILENAME = "data/allShapes.txt";
+    console.log("Reading shape file:", FILENAME);
+    const data = Fileops.readFile(FILENAME);
     if (!data) return;
     const lines = data.toString().trim().split(/\r?\n/);
     console.log("lines:", lines.length);
@@ -142,6 +144,13 @@ export class Shape {
     console.log("good:", goodCodes);
     console.log("bad:", badCodes);
     console.log("");
+  }
+
+  /**
+   * @returns {Array<code>}
+   */
+  static getAllShapes() {
+    return Array.from(Shape.allShapes).sort((a, b) => a - b);
   }
 
   /**
@@ -1004,7 +1013,7 @@ export class Shape {
     // const testShapes = [0x0361, 0x1361, 0x1634, 0x17a4, 0x1b61, 0x36c2, 0x37a4]; // must use seat joint
     // const testShapes = [0x7187];
     // const testShapes = [0x3612, 0x3616, 0x361a, 0x361e, 0x3652]; // some extra 5th layer found by TMAM
-    // const testShapes = [0x16d2]; // can't make if layer and size are reversed in search.
+    // const testShapes = [0x16d2]; // can't make if position and size are reversed in search.
 
     // testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
@@ -1205,8 +1214,6 @@ export class Shape {
 
     // Build the needed configs
     const configs = [
-      // { logos: Shape.LOGO_A, maskFunc: Shape.logoMaskX, max: 2 },
-      // { logos: Shape.LOGO_B, maskFunc: Shape.logoMaskX, max: 2 },
       { logos: Shape.LOGO_A, maskFunc: Shape.logoMaskX, max: 4 },
       { logos: Shape.LOGO_A, maskFunc: Shape.logoMaskY, max: 3 },
       { logos: Shape.LOGO_B, maskFunc: Shape.logoMaskX, max: 4 },
@@ -1315,6 +1322,7 @@ export class Shape {
 
   /**
    * @param {Map<number,object>} shapes
+   * @returns {string}
    */
   static chart(shapes) {
     const EOL = "\n";

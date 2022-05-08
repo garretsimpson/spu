@@ -44,3 +44,6 @@ No 5th layer
 Missing: 6691-6132 = 559
 
 [0x16d2] // can't make if layer and size are reversed in search.
+
+// Can't make if using only Y mask (seat joints)
+[1642,1643,16c3,16d2,1792,17c2,3521,3529,3561]

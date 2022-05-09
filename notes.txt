@@ -47,3 +47,31 @@ Missing: 6691-6132 = 559
 
 // Can't make if using only Y mask (seat joints)
 [1642,1643,16c3,16d2,1792,17c2,3521,3529,3561]
+02-Mar-2022
+
+- Building a TMAM
+
+- State machine
+
+states
+S0 - off
+SH - halt
+SI - init
+SA - round-1 (logo mask-X, forwards)
+SB - round-2 (logo mask-Y, forwards)
+SC - round-3 (logo mask-X, backwards)
+SD - round-4 (logo mask-Y, backwards)
+SE - error
+
+flags (conditions)
+FF - target shape found
+** - default (else)
+
+    FF  **
+S0  --  -- 
+SH  --  --
+SI  --  SA
+SA  SH  SB
+SB  SH  SC
+SC  SH  SD
+SD  SH  SE

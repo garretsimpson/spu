@@ -23,12 +23,14 @@ export class MyTmam {
     const keyShapes = possibleShapes.filter(
       (code) => Shape.keyCode(code) == code
     );
-    const complexShapes = keyShapes.filter((code) => !Shape.canStackAll(code));
+    // const complexShapes = keyShapes.filter((code) => !Shape.canStackAll(code));
+    // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
 
-    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    const testShapes = [0x1, 0x21, 0x31, 0xa5];
+    testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
-    // const testShapes = [0x1, 0x21, 0x31, 0xa5];
-    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
+    console.log("Knowns:", knownShapes.size);
+    console.log("Unknowns:", unknownShapes.size);
 
     let result;
     for (let code of Array.from(unknownShapes.keys())) {
@@ -36,8 +38,13 @@ export class MyTmam {
       if (!result) {
         console.log("NOT FOUND", Shape.pp(code));
       } else {
-        console.log("FOUND", Shape.pp(code), Shape.pp(result));
-        knownShapes.set(code, { code, build: result });
+        console.log(
+          "FOUND",
+          Shape.pp(code),
+          Shape.pp(result.build),
+          result.order
+        );
+        knownShapes.set(code, result);
         unknownShapes.delete(code);
       }
       console.log("");
@@ -83,35 +90,70 @@ export class MyTmam {
   }
 
   /**
-   * @param {Array<number>} layers
+   * @param {number} shape
    * @returns {boolean}
    */
-  static isEmpty(layers) {
-    return layers.length == 0;
+  static isEmpty(shape) {
+    return shape == 0;
   }
 
   /**
-   * @param {Array<number>} layers
+   * @param {number} shape
    * @returns {boolean}
    */
-  static isOneLayer(layers) {
-    return layers.length == 1;
+  static isOneLayer(shape) {
+    return MyTmam.toLayers(shape).length == 1;
   }
 
   /**
-   * @param {Array<number>} layers
+   * @param {number} shape
    * @returns {boolean}
    */
-  static noBottom(layers) {
-    return layers[0] == 0;
+  static noBottom(shape) {
+    return (shape & 0xf) == 0;
   }
 
   /**
-   * @param {Array<number>} layers
+   * @param {number} shape
    * @returns {boolean}
    */
-  static canStackBottom(layers) {
+  static canStackBottom(shape) {
+    const layers = MyTmam.toLayers(shape);
     return (layers[0] & layers[1]) != 0;
+  }
+
+  /**
+   * @param {number} shape
+   * @returns {number}
+   */
+  static add5th(shape) {
+    if (shape > 0x0fff) shape |= 0xf0000;
+    return shape;
+  }
+
+  /**
+   * @param {number} shape
+   * @returns {number}
+   */
+  static dropBottom(shape) {
+    return shape >>> 4;
+  }
+
+  /**
+   * @param {number} shape
+   * @returns {number}
+   */
+  static getBottom(shape) {
+    return shape & 0xf;
+  }
+
+  /**
+   * @param {number} code
+   * @param {number} value
+   * @returns {number}
+   */
+  static removeCode(code, value) {
+    return code & ~value;
   }
 
   static hasLogo(layers) {
@@ -136,50 +178,66 @@ export class MyTmam {
     console.log(">LOGO", result);
   }
 
+  static findLogoX(shape, config) {
+    const result = [];
+    return result;
+  }
+
+  static findLogoY(shape, config) {
+    const result = [];
+    return result;
+  }
+
   /**
    * @param {number} shape
    * @returns {Array<number>}
    */
-  static deconstruct(shape) {
+  static deconstruct(targetShape) {
     console.log("Deconstruct");
-    console.log(Shape.pp(shape));
-    console.log(Shape.graph(shape));
+    console.log(Shape.toShape(targetShape));
+    console.log(Shape.pp(targetShape));
+    console.log(Shape.graph(targetShape));
 
-    const STATES = { off: "off", init: "init", find: "find", done: "done" };
+    const configs = [
+      { logoFunc: MyTmam.findLogoX, reverse: false },
+      { logoFunc: MyTmam.findLogoY, reverse: false },
+      { logoFunc: MyTmam.findLogoX, reverse: true },
+      { logoFunc: MyTmam.findLogoY, reverse: true },
+    ];
 
-    // init
-    const result = [];
-    let layers = MyTmam.toLayers(shape);
-    let part;
-
-    let state = STATES.find;
-    while (state != STATES.done) {
-      // analyze
-      if (MyTmam.isEmpty(layers)) {
-        state = STATES.done;
-        continue;
+    let num = 0;
+    let shape, part, logos, result;
+    const partList = [];
+    let found = false;
+    for (const config of configs) {
+      console.log("ROUND", ++num);
+      shape = MyTmam.add5th(targetShape);
+      partList.length = 0;
+      while (!MyTmam.isEmpty(shape)) {
+        if (MyTmam.noBottom(shape)) {
+          shape = MyTmam.dropBottom(shape);
+          continue;
+        }
+        if (MyTmam.isOneLayer(shape) || MyTmam.canStackBottom(shape)) {
+          part = MyTmam.getBottom(shape);
+          console.log("LAYER", Shape.pp(shape), Shape.pp([part]));
+        } else if ((logos = config.logoFunc(shape, config)).length > 0) {
+          if (config.reverse) logos.reverse();
+          part = logos[0];
+          console.log("LOGO ", Shape.pp(shape), Shape.pp([part]));
+        } else {
+          part = MyTmam.getBottom(shape);
+          console.log("EXTRA", Shape.pp(shape), Shape.pp([part]));
+        }
+        partList.push(part);
+        result = { code: targetShape, build: partList };
+        found = MyTmam.tryBuild(result);
+        if (found) break;
+        shape = MyTmam.removeCode(shape, part);
       }
-      if (MyTmam.noBottom(layers)) {
-        layers.shift();
-        continue;
-      }
-      if (MyTmam.isOneLayer(layers) || MyTmam.canStackBottom(layers)) {
-        part = layers[0];
-        console.log("LAYER", Shape.pp(part), Shape.pp(layers));
-        layers.shift();
-        continue;
-      }
-      if (MyTmam.hasLogo(layers)) {
-        // extract logo
-        console.log("LOGO ", Shape.pp(part), Shape.pp(layers));
-        continue;
-      }
-      part = layers[0];
-      console.log("EXTRA", Shape.pp(part), Shape.pp(layers));
-      layers.shift();
-
-      result.push(part);
+      if (found) break;
     }
+    if (!found) result = null;
 
     return result;
   }
@@ -189,7 +247,7 @@ export class MyTmam {
    * @param {object} data {code: number, build: Array<number>}
    * @returns {boolean}
    */
-  static verifyBuild(data) {
+  static tryBuild(data) {
     const ORDERS = [
       [],
       ["0"],

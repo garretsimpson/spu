@@ -250,7 +250,7 @@ export class MyTmam {
         } else if ((logos = MyTmam.findLogo(shape, config)).length > 0) {
           console.log(">LOGO", Shape.pp(logos));
           if (config.reverse) {
-            part = logos.pop();
+            part = logos[logos.length - 1];
           } else {
             part = logos[0];
           }

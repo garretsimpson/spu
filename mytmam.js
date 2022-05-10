@@ -248,9 +248,12 @@ export class MyTmam {
           part = MyTmam.getBottom(shape);
           console.log("LAYER", Shape.pp(shape), Shape.pp([part]));
         } else if ((logos = MyTmam.findLogo(shape, config)).length > 0) {
-          if (config.reverse) logos.reverse();
           console.log(">LOGO", Shape.pp(logos));
-          part = logos[0];
+          if (config.reverse) {
+            part = logos.pop();
+          } else {
+            part = logos[0];
+          }
           console.log("LOGO ", Shape.pp(shape), Shape.pp([part]));
         } else {
           part = MyTmam.getBottom(shape);

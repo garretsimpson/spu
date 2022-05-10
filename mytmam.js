@@ -20,17 +20,22 @@ export class MyTmam {
     for (let code = 0; code <= 0xffff; ++code) {
       if (Shape.isPossible(code)) possibleShapes.push(code);
     }
+    // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
+
     const keyShapes = possibleShapes.filter(
       (code) => Shape.keyCode(code) == code
     );
-    // const complexShapes = keyShapes.filter((code) => !Shape.canStackAll(code));
-    // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    const complexShapes = keyShapes.filter((code) => !Shape.canStackAll(code));
+    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
 
-    const testShapes = [0x1, 0x21, 0x31, 0xa5];
-    testShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // const testShapes = [0x1, 0x21, 0x31, 0xa5];  // basic test shapes
+    // const testShapes = [0x0361, 0x1361, 0x1634, 0x17a4, 0x1b61, 0x36c2, 0x37a4]; // must use seat joint
+    // const testShapes = [0x1634, 0x3422]; // 3-logo and fifth layer
+    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     console.log("Knowns:", knownShapes.size);
     console.log("Unknowns:", unknownShapes.size);
+    console.log("");
 
     let result;
     for (let code of Array.from(unknownShapes.keys())) {
@@ -53,6 +58,7 @@ export class MyTmam {
     console.log("Knowns:", knownShapes.size);
     console.log("Unknowns:", unknownShapes.size);
     console.log(Shape.pp(Array.from(unknownShapes.keys())));
+    console.log("");
 
     // Log known builds
     console.log("Saving known builds");
@@ -156,35 +162,55 @@ export class MyTmam {
     return code & ~value;
   }
 
-  static hasLogo(layers) {
-    let found;
-    let result = "";
-    for (let pos of ["E", "N", "W", "S"]) {
-      let code = [];
-      for (let i = 0; i < layers.length; ++i) {
-        code[i] = layers[i].toString(2).padStart(4, "0"); // convert to binary string
-        code[i] = Array.from(code[i])
-          .reverse()
-          .map((v) => +v);
-        layers[i] = Shape.rightCode(layers[i]);
+  /**
+   * Find half-logo parts
+   * - There are four positions (ENWS), three sizes (2..4), and two directions (forward, backwards).
+   * - First find the largest part in each position, and then return the first one found in the given direction.
+   * @param {number} shape
+   * @param {object} config
+   * @returns {Array<number>}
+   */
+  static findLogo(shape, config) {
+    const LOGO = [[], [], [0x21, 0x12], [0x121, 0x212], [0x2121, 0x1212]];
+    const MASK_X = [[], [], [0x33, 0x33], [0x333, 0x333], [0x3333, 0x3333]];
+    const MASK_Y = [[], [], [0x33, 0x33], [0x133, 0x233], [0x2333, 0x1333]];
+    const MASK = config.seat ? MASK_Y : MASK_X;
+    const MAX = config.seat ? 3 : 4;
+    // TODO: Smarter 5th layer so that MAX can be always 4.
+
+    // TODO: Refactor this to a constant, initialized once
+    const codes = []; // codes[pos][size][num]
+    let sizes, values;
+    for (let pos = 0; pos < 4; ++pos) {
+      sizes = [];
+      for (let size = 2; size <= MAX; ++size) {
+        values = [];
+        for (let num = 0; num < 2; ++num) {
+          values.push({
+            logo: Shape.rotateCode(LOGO[size][num], pos),
+            mask: Shape.rotateCode(MASK[size][num], pos),
+          });
+        }
+        sizes[size] = values;
       }
-      found =
-        code[0][0] ^ code[0][1] &&
-        code[0][0] ^ code[1][0] &&
-        code[0][1] ^ code[1][1];
-      result += found ? pos : "-";
-      //   console.log(">>", code[0], code[1], found, `'${result}'`);
+      codes[pos] = sizes;
     }
-    console.log(">LOGO", result);
-  }
 
-  static findLogoX(shape, config) {
     const result = [];
-    return result;
-  }
+    const found = [];
+    for (let pos = 0; pos < 4; ++pos) {
+      found.length = 0;
+      for (let size = MAX; size >= 2; --size) {
+        for (const { logo, mask } of codes[pos][size]) {
+          if ((shape & mask) == logo) found.push(logo);
+        }
+        if (found.length > 0) {
+          result.push(found[0]);
+          break;
+        }
+      }
+    }
 
-  static findLogoY(shape, config) {
-    const result = [];
     return result;
   }
 
@@ -199,10 +225,10 @@ export class MyTmam {
     console.log(Shape.graph(targetShape));
 
     const configs = [
-      { logoFunc: MyTmam.findLogoX, reverse: false },
-      { logoFunc: MyTmam.findLogoY, reverse: false },
-      { logoFunc: MyTmam.findLogoX, reverse: true },
-      { logoFunc: MyTmam.findLogoY, reverse: true },
+      { seat: false, reverse: false },
+      { seat: true, reverse: false },
+      { seat: false, reverse: true },
+      { seat: true, reverse: true },
     ];
 
     let num = 0;
@@ -221,8 +247,9 @@ export class MyTmam {
         if (MyTmam.isOneLayer(shape) || MyTmam.canStackBottom(shape)) {
           part = MyTmam.getBottom(shape);
           console.log("LAYER", Shape.pp(shape), Shape.pp([part]));
-        } else if ((logos = config.logoFunc(shape, config)).length > 0) {
+        } else if ((logos = MyTmam.findLogo(shape, config)).length > 0) {
           if (config.reverse) logos.reverse();
+          console.log(">LOGO", Shape.pp(logos));
           part = logos[0];
           console.log("LOGO ", Shape.pp(shape), Shape.pp([part]));
         } else {

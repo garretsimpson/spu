@@ -79,7 +79,7 @@ deconstruct(targetShape) {
 
 findLogos(config) {
   foreach (pos of positions) { // rotations
-    max = Math.max(config.max, numLayers(shape));
+    max = Math.min(config.max, numLayers(shape));
     for (size = max..2) {
       logo = getLogo(pos, size);
       mask = getMask(pos, size);
@@ -87,3 +87,87 @@ findLogos(config) {
     }
   }
 }
+
+-----
+
+Deconstruct
+----Rr--:--Rg--Rg:RbRbRb--:RyRy----
+37a4
+- - - -
+X X - -
+X X X -
+- X - X
+- - X -
+
+ROUND 1
+>LOGO [0484,0084,0024]
+LOGO  f37a4 [0484]
+LAYER f332 [0002]
+LAYER 0f33 [0003]
+LAYER 00f3 [0003]
+LAYER 000f [000f]
+ROUND 2
+>LOGO [0484,0084,0424,0024]
+LOGO  f37a4 [0484]
+LAYER f332 [0002]
+LAYER 0f33 [0003]
+LAYER 00f3 [0003]
+LAYER 000f [000f]
+ROUND 3
+>LOGO [0024,0484,0084]
+LOGO  f37a4 [0024]
+>LOGO [0048,0018]
+LOGO  f378 [0048]
+LAYER 0f33 [0003]
+LAYER 00f3 [0003]
+LAYER 000f [000f]
+ROUND 4
+>LOGO [0424,0024,0484,0084]
+LOGO  f37a4 [0424]
+>LOGO [0018]
+LOGO  f338 [0018]
+LAYER 0f32 [0002]
+LAYER 00f3 [0003]
+FOUND 37a4 [0424,0018,0002,0003] 4 0123+++
+
+Deconstruct
+----Rr--:--Rg--Rg:RbRbRb--:RyRy----
+37a4
+- - - -
+X X - -
+X X X -
+- X - X
+- - X -
+
+ROUND 1
+>LOGO [0024,0484,0084]
+LOGO  f37a4 [0024]
+>LOGO [0048,0018]
+LOGO  f378 [0048]
+LAYER 0f33 [0003]
+LAYER 00f3 [0003]
+LAYER 000f [000f]
+ROUND 2
+>LOGO [0024,0424,0484,0084]
+LOGO  f37a4 [0024]
+>LOGO [0048,0018]
+LOGO  f378 [0048]
+LAYER 0f33 [0003]
+LAYER 00f3 [0003]
+LAYER 000f [000f]
+ROUND 3
+>LOGO [0084,0484,0024]
+LOGO  f37a4 [0084]
+LAYER f372 [0002]
+LAYER 0f37 [0007]
+LAYER 00f3 [0003]
+LAYER 000f [000f]
+ROUND 4
+>LOGO [0084,0484,0424,0024]
+LOGO  f37a4 [0084]
+LAYER f372 [0002]
+LAYER 0f37 [0007]
+LAYER 00f3 [0003]
+LAYER 000f [000f]
+NOT FOUND 37a4
+

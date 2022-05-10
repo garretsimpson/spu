@@ -980,16 +980,6 @@ export class Shape {
     const knownShapes = Shape.knownShapes;
     const unknownShapes = Shape.unknownShapes;
 
-    const reverse = false;
-    // const reverse = true;
-
-    // Reverse the logo patterns
-    if (reverse) {
-      for (let layer = 0; layer <= 4; ++layer) {
-        Shape.LOGOS[layer].reverse();
-      }
-    }
-
     // const testShapes = [];
     // for (let code = 0; code <= 0xffff; ++code) {
     //   testShapes.push(code);
@@ -1009,12 +999,10 @@ export class Shape {
     // const testShapes = [0x0178, 0x0378, 0x03d2, 0x07b4]; // 3-layer unknowns
     // const testShapes = [0x13a1, 0x1642, 0x1643, 0x164a]; // first 4 4-layer unknowns
     // const testShapes = [0x1361, 0x13d2, 0x1634, 0x16b4]; // next 4 4-layer unknowns
-
     // const testShapes = [0x0361, 0x1361, 0x1634, 0x17a4, 0x1b61, 0x36c2, 0x37a4]; // must use seat joint
     // const testShapes = [0x7187];
     // const testShapes = [0x3612, 0x3616, 0x361a, 0x361e, 0x3652]; // some extra 5th layer found by TMAM
     // const testShapes = [0x16d2]; // can't make if position and size are reversed in search.
-
     // testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     complexShapes.forEach((code) => unknownShapes.set(code, { code }));
@@ -1282,6 +1270,7 @@ export class Shape {
           }
         }
         if (logo.length > 0) {
+          console.log(">LOGO", Shape.pp(logo));
           foundCode = logo[0];
           console.log("LOGO ", Shape.pp(code), Shape.pp([foundCode]));
           break;

@@ -9,7 +9,7 @@
 import { Shape } from "./shape.js";
 import { Spu } from "./spu.js";
 import { Ops } from "./ops.js";
-import { MyTmam } from "./mytmam0.js";
+import { MyTmam } from "./mytmam.js";
 
 const APP_NAME = "Shape Processing Tools";
 

@@ -108,7 +108,7 @@ export class MyTmam {
    * @returns {boolean}
    */
   static isOneLayer(shape) {
-    return MyTmam.toLayers(shape).length == 1;
+    return shape > 0 && shape < 0x0010;
   }
 
   /**
@@ -124,8 +124,9 @@ export class MyTmam {
    * @returns {boolean}
    */
   static canStackBottom(shape) {
-    const layers = MyTmam.toLayers(shape);
-    return (layers[0] & layers[1]) != 0;
+    const above = (shape & 0x00f0) >> 4;
+    const below = shape & 0x000f;
+    return (above & below) != 0;
   }
 
   /**
@@ -154,12 +155,12 @@ export class MyTmam {
   }
 
   /**
-   * @param {number} code
-   * @param {number} value
+   * @param {number} shape
+   * @param {number} part
    * @returns {number}
    */
-  static removeCode(code, value) {
-    return code & ~value;
+  static removePart(shape, part) {
+    return shape & ~part;
   }
 
   /**
@@ -216,7 +217,7 @@ export class MyTmam {
 
   /**
    * @param {number} shape
-   * @returns {Array<number>}
+   * @returns {object}
    */
   static deconstruct(targetShape) {
     console.log("Deconstruct");
@@ -263,7 +264,7 @@ export class MyTmam {
         result = { code: targetShape, build: partList };
         found = MyTmam.tryBuild(result);
         if (found) break;
-        shape = MyTmam.removeCode(shape, part);
+        shape = MyTmam.removePart(shape, part);
       }
       if (found) break;
     }

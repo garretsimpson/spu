@@ -187,3 +187,48 @@ Knowns: 2519
 Unknowns: 287
 [0178,0361,0378,03d2,07b4,1178,1361,1378,13d2,1622,1623,1625,1626,1627,1629,162a,162b,162c,162d,162e,162f,1631,1632,1633,1634,1635,1636,1637,1639,163a,163b,163c,163d,163e,163f,1643,1644,1645,1646,1647,1649,164a,164b,164c,164d,164e,164f,1651,1653,1654,1655,1656,1657,1659,165b,165c,165d,165e,165f,1661,1668,1678,16a2,16a3,16a6,16a7,16a8,16a9,16aa,16ab,16ac,16ad,16ae,16af,16b1,16b2,16b3,16b4,16b5,16b6,16b7,16b8,16b9,16ba,16bb,16bc,16bd,16be,16bf,16c3,16c4,16c5,16c6,16c7,16c8,16c9,16ca,16cb,16cc,16cd,16ce,16cf,16d1,16d2,16d3,16d4,16d5,16d6,16d7,16d8,16d9,16da,16db,16dc,16dd,16de,16df,16e1,1783,1785,1787,1788,1789,178a,178b,178c,178d,178e,178f,1792,17a1,17a4,17b4,17c1,17c2,17e1,1a22,1a23,1a25,1a26,1a27,1a29,1a2a,1a2b,1a2c,1a2d,1a2e,1a2f,1a31,1a32,1a33,1a35,1a36,1a37,1a39,1a3a,1a3b,1a3d,1a3e,1a3f,1a62,1a63,1a64,1a65,1a66,1a67,1a6a,1a6b,1a6c,1a6d,1a6e,1a6f,1a71,1a72,1a73,1a74,1a75,1a76,1a77,1a79,1a7a,1a7b,1a7c,1a7d,1a7e,1a7f,1aa1,1aa4,1ab4,1ae1,1b61,1b78,1e22,1e23,1e25,1e26,1e27,1e29,1e2a,1e2b,1e2c,1e2d,1e2e,1e2f,1e31,1e32,1e33,1e35,1e36,1e37,1e39,1e3a,1e3b,1e3d,1e3e,1e3f,1e43,1e44,1e45,1e46,1e47,1e4a,1e4b,1e4e,1e4f,1e51,1e53,1e54,1e55,1e56,1e57,1e5b,1e5e,1e5f,1e61,1e68,1e78,1ea1,1ea4,1eb4,1ee1,3178,3358,3378,3585,3587,3588,3589,358a,358b,358c,358d,358e,358f,3592,35a1,35c2,36b4,36c2,3785,3787,3788,3789,378a,378b,378c,378d,378e,378f,3792,37a4,37b4,37c2,3c52,3cd2,5178,5358,5378,7178,7358,7378,78b4,79a4,79b4,f178,f358,f378]
 
+After fixing stacking order
+- hat implemented
+- special case not implemented
+
+Knowns: 2800
+Unknowns: 6
+[0361,1361,1634,1b61,35a1,36c2]
+
+These are all seat joints, except for 35a1, which is a problem because the TMAM fails to solve it.
+
+The 35a1 shape has two 3-layer half-logos (with hat).  The TMAM picks the wrong one.
+The TMAM picks in this order: ESWN
+- 0121 is East
+- 0181 is North
+
+Rotating right once puts the good half-logo on the East, and that shape works.
+
+Deconstruct
+Rr------:--Rg--Rg:Rb--Rb--:RyRy----
+35a1
+- - - - 
+X X - - 
+X - X - 
+- X - X 
+X - - -
+>LOGO f35a1 [] (2,hat)
+>LOGO f35a1 [0121,0181] (3,hat)
+LOGO  f35a1 [0121]
+>LOGO f348 [] (2,hat)
+>LOGO f348 [] (3,hat)
+>LOGO f348 [] (4)
+>LOGO f348 [] (3)
+>LOGO f348 [0048] (2)
+LOGO  f348 [0048]
+LAYER 00f3 [0003]
+LAYER 000f [000f]
+NOT FOUND 35a1
+
+Knowns: 5
+Unknowns: 1
+[35a1]
+
+Saving known builds
+Saving chart of unknowns
+

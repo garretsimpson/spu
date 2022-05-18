@@ -69,13 +69,18 @@ export class MyTmam {
       (code) => Shape.keyCode(code) == code
     );
     const complexShapes = keyShapes.filter((code) => !Shape.canStackAll(code));
-    // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     // const testShapes = [0x1, 0x21, 0x31, 0xa5]; // basic test shapes
     // const testShapes = [0x0361, 0x1361, 0x1634, 0x17a4, 0x1b61, 0x36c2, 0x37a4]; // must use seat joint
     // const testShapes = [0x1634, 0x3422]; // 3-logo and fifth layer
-    const testShapes = [0x0178, 0x0361, 0x1622]; // hat and seat
-    testShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // const testShapes = [0x0178, 0x0361]; // hat and seat
+    // const testShapes = [0x3343, 0x334a, 0x334b]; // stack order "10234++++"
+    // const testShapes = [0x1625, 0x1629, 0x162c, 0x162d]; // stack order "10324++++"
+    // const testShapes = [0x3425, 0x342c, 0x342d, 0x343c, 0x34a5, 0x35a1]; // stack order?
+    // const testShapes = [0x0361, 0x1361, 0x1634, 0x1b61, 0x36c2]; // seat joint?
+    // const testShapes = [0x035a1]; // problem shape
+    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     console.log("Knowns:", knownShapes.size);
     console.log("Unknowns:", unknownShapes.size);
@@ -203,7 +208,7 @@ export class MyTmam {
    * @param {number} part
    * @returns {boolean}
    */
-  static hasHat(shape, part) {
+  static hasHatOld(shape, part) {
     // find top of part
     let top = 0;
     let mask = 0xf000;
@@ -214,6 +219,34 @@ export class MyTmam {
     // look for top on top of top
     top <<= 4;
     return (shape & top) != 0;
+  }
+
+  /**
+   * @param {number} shape
+   * @param {number} part
+   * @param {number} size
+   * @returns {boolean}
+   */
+  static hasHat(shape, part, size) {
+    // find top of part
+    const mask = 0xf << (4 * (size - 1));
+    const top = part & mask;
+    // look for a piece on top of top
+    return (shape & (top << 4)) != 0;
+  }
+
+  /**
+   * @param {number} shape
+   * @param {number} part
+   * @param {number} size
+   * @returns {boolean}
+   */
+  static hasPad(shape, part, size) {
+    // find seat of part
+    const mask = 0xf << (4 * (size - 2));
+    const seat = part & mask;
+    // look for a piece on top of seat
+    return (shape & (seat << 4)) != 0;
   }
 
   /**
@@ -232,15 +265,18 @@ export class MyTmam {
    * @returns {Array<number>}
    */
   static findLogos(shape, config) {
-    const LOGOS = MyTmam.LOGOS_X;
+    const LOGOS = config.pad ? MyTmam.LOGOS_Y : MyTmam.LOGOS_X;
+    const size = config.size;
     let result = [];
     for (let pos = 0; pos < 4; ++pos) {
-      for (const { logo, mask } of LOGOS[pos][config.size]) {
+      for (const { logo, mask } of LOGOS[pos][size]) {
         if ((shape & mask) == logo) result.push(logo);
       }
     }
+    if (config.pad === true)
+      result = result.filter((part) => MyTmam.hasPad(shape, part, size));
     if (config.hat === true)
-      result = result.filter((part) => MyTmam.hasHat(shape, part));
+      result = result.filter((part) => MyTmam.hasHat(shape, part, size));
     return result;
   }
 
@@ -285,6 +321,7 @@ export class MyTmam {
     console.log(Shape.graph(targetShape));
 
     const configs = [
+      // { size: 3, pad: true },
       { size: 2, hat: true },
       { size: 3, hat: true },
       { size: 4 },
@@ -396,6 +433,18 @@ export class MyTmam {
     return result;
   }
 
+  static deconstruct2(shape) {
+    console.log("Deconstruct");
+    console.log(Shape.pp(shape));
+
+    let part;
+    while (!MyTmam.isEmpty(shape)) {
+      part = MyTmam.doNabbyMagic(shape);
+      MyTmam.outputPart(part);
+      shape = MyTmam.removePart(shape, part);
+    }
+  }
+
   /**
    * Verify build - try stacking the results
    * @param {object} data {code: number, build: Array<number>}
@@ -407,13 +456,23 @@ export class MyTmam {
       ["0"],
       ["01+"],
       ["01+2+", "012++"],
+      ["01+2+3+", "0123+++", "0213+++", "1023+++", "1032+++"],
+      [
+        "01+2+3+4+",
+        "01234++++",
+        "01324++++",
+        "02134++++",
+        "10234++++",
+        "10324++++",
+      ],
+    ];
+    const ORDERS1 = [
+      [],
+      ["0"],
+      ["01+"],
+      ["01+2+", "012++"],
       ["01+2+3+", "0123+++", "01+23++", "012++3+"],
       ["01+2+3+4+", "01234++++", "01+234+++", "012++34++"], // not used: 01+2+3+4+
-      [],
-      [],
-      [],
-      [],
-      [],
     ];
     const num = data.build.length;
     let code;

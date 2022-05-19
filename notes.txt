@@ -204,6 +204,16 @@ The TMAM picks in this order: ESWN
 
 Rotating right once puts the good half-logo on the East, and that shape works.
 
+Also need a way to fix the problem shape.
+
+Picking last logo
+Knowns: 2801
+Unknowns: 5
+[0361,1361,1634,1b61,36c2]
+
+Only seat joints left.  I think that means there are no other ambiguous shapes.
+But need to try all shapes to be sure.
+
 Deconstruct
 Rr------:--Rg--Rg:Rb--Rb--:RyRy----
 35a1
@@ -225,10 +235,70 @@ LAYER 00f3 [0003]
 LAYER 000f [000f]
 NOT FOUND 35a1
 
-Knowns: 5
-Unknowns: 1
-[35a1]
+The "special case" must be seat joints.
+But adding support for pad, and looking for them first, causes other shapes to fail.
 
-Saving known builds
-Saving chart of unknowns
+Need a "smart" way to find seat joints.
 
+From nabby
+{----RyRg:RgRg----:Rg--RyRg:--RyRbRc}
+ed3c (7bc3)
+- X X X
+X - X X
+X X - -
+- - X X
+
+- O B A
+X - O X
+X X - -
+- - O X
+
+where 
+- green quads must exist
+- missing quads, must not exist
+- yellow quads could exist
+- blue and cyan are a special case, both could exist but blue can't exist without cyan
+
+0361 --    1361 --    1634 --    1b61 --    36c2 -- 
+- - - -    - - - -    - - - -    - - - -    - - - - 
+- - - -    X - - -    X - - -    X - - -    X X - - 
+X X - -    X X - -    - X X -    X X - X    - X X - 
+- X X -    - X X -    X X - -    - X X -    - - X X 
+X - - -    X - - -    - - X -    X - - -    - X - - 
+
+0361 --    1361 --    4361 --    1b61 --    9361 -- 
+- - - -    - - - -    - - - -    - - - -    - - - - 
+- - - -    X - - -    - - X -    X - - -    X - - X 
+X X - -    X X - -    X X - -    X X - X    X X - - 
+- X X -    - X X -    - X X -    - X X -    - X X - 
+X - - -    X - - -    X - - -    X - - -    X - - - 
+
+db61
+- - - -
+A - B C
+X X - D
+- X X -
+X - - -
+
+- never present
+X always present
+A,B,C,D optional
+C or D only if A is present
+
+Added a seat check, with a mask 0x07ff.
+
+Knowns: 2803
+Unknowns: 3
+[1792,17c2,35a1]
+
+Found all the seats, but now two fail (plus the problem shape).
+
+1792 --    17c2 --    35a1 -- 
+- - - -    - - - -    - - - - 
+X - - -    X - - -    X X - - 
+X X X -    X X X -    X - X - 
+X - - X    - - X X    - X - X 
+- X - -    - X - -    X - - - 
+
+1793 - has 1000 set (which is 2000 and not in the mask) and D set (without A)
+17c2 - has C and D set (without A)

@@ -23,14 +23,17 @@ export class MyTmam {
     const LOGO = [[], [], [0x21, 0x12], [0x121, 0x212], [0x2121, 0x1212]];
     const MASK_X = [[], [], [0x33, 0x33], [0x333, 0x333], [0x3333, 0x3333]];
     const MASK_Y = [[], [], [0x33, 0x33], [0x133, 0x233], [0x2333, 0x1333]];
+    const SEAT = [0x0361, 0x0392];
+    const MASK_Z = [0x07ff, 0x0bff];
 
     MyTmam.LOGOS_X = MyTmam.makeLogoCodes(LOGO, MASK_X);
     MyTmam.LOGOS_Y = MyTmam.makeLogoCodes(LOGO, MASK_Y);
+    MyTmam.SEATS = MyTmam.makeSeatCodes(SEAT, MASK_Z);
   }
 
   /**
-   * @param {number} shape
-   * @param {number} part
+   * @param {number[][]} logos
+   * @param {number[][]} masks
    * @returns {number[][][]}
    */
   static makeLogoCodes(logos, masks) {
@@ -49,6 +52,27 @@ export class MyTmam {
         sizes[size] = values;
       }
       codes[pos] = sizes;
+    }
+    return codes;
+  }
+
+  /**
+   * @param {number[]} seats
+   * @param {number[]} masks
+   * @returns {number[][]}
+   */
+  static makeSeatCodes(seats, masks) {
+    const codes = [];
+    let values;
+    for (let pos = 0; pos < 4; ++pos) {
+      values = [];
+      for (let num = 0; num < 2; ++num) {
+        values.push({
+          seat: Shape.rotateCode(seats[num], pos),
+          mask: Shape.rotateCode(masks[num], pos),
+        });
+      }
+      codes[pos] = values;
     }
     return codes;
   }
@@ -72,13 +96,12 @@ export class MyTmam {
     complexShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     // const testShapes = [0x1, 0x21, 0x31, 0xa5]; // basic test shapes
-    // const testShapes = [0x0361, 0x1361, 0x1634, 0x17a4, 0x1b61, 0x36c2, 0x37a4]; // must use seat joint
     // const testShapes = [0x1634, 0x3422]; // 3-logo and fifth layer
     // const testShapes = [0x0178, 0x0361]; // hat and seat
     // const testShapes = [0x3343, 0x334a, 0x334b]; // stack order "10234++++"
     // const testShapes = [0x1625, 0x1629, 0x162c, 0x162d]; // stack order "10324++++"
     // const testShapes = [0x3425, 0x342c, 0x342d, 0x343c, 0x34a5, 0x35a1]; // stack order?
-    // const testShapes = [0x0361, 0x1361, 0x1634, 0x1b61, 0x36c2]; // seat joint?
+    // const testShapes = [0x0361, 0x1361, 0x1634, 0x1b61, 0x36c2]; // seat joint
     // const testShapes = [0x035a1]; // problem shape
     // testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
@@ -259,6 +282,29 @@ export class MyTmam {
   }
 
   /**
+   * Find parts that require a seat
+   * @param {number} shape
+   * @returns {number?}
+   */
+  static findSeats(shape) {
+    const SEATS = MyTmam.SEATS;
+    const LOGOS = MyTmam.LOGOS_X;
+    const size = 3;
+    let result = [];
+    let seat, mask, logo;
+    for (let pos = 0; pos < 4; ++pos) {
+      for (let num = 0; num < 2; ++num) {
+        seat = SEATS[pos][num].seat;
+        mask = SEATS[pos][num].mask;
+        logo = LOGOS[pos][size][num].logo;
+        if ((shape & mask) == seat) result.push(logo);
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Find half-logo parts
    * @param {number} shape
    * @param {object} config
@@ -312,7 +358,7 @@ export class MyTmam {
   /**
    * Deconstructor - "original" TMAM method
    * @param {number} shape
-   * @returns {object}
+   * @returns {object?}
    */
   static deconstruct0(targetShape) {
     console.log("Deconstruct");
@@ -320,6 +366,8 @@ export class MyTmam {
     console.log(Shape.pp(targetShape));
     console.log(Shape.graph(targetShape));
 
+    const BAD_TWOS = [0x0361, 0xf1361, 0xf1634, 0xf1b61, 0xf36c2];
+    const BAD_THREES = [0xf35a1];
     const configs = [
       // { size: 3, pad: true },
       { size: 2, hat: true },
@@ -329,7 +377,7 @@ export class MyTmam {
       { size: 2 },
     ];
 
-    let shape, part, logos;
+    let shape, part, seats, logos;
     const partList = [];
     shape = MyTmam.add5th(targetShape);
     while (!MyTmam.isEmpty(shape)) {
@@ -341,17 +389,32 @@ export class MyTmam {
       if (MyTmam.isOneLayer(shape) || MyTmam.canStackBottom(shape)) {
         part = MyTmam.getBottom(shape);
         console.log("LAYER", Shape.pp(shape), Shape.pp([part]));
-      } else {
-        for (const config of configs) {
+      }
+      // if (part == null) {
+      //   seats = MyTmam.findSeats(shape);
+      //   console.log(">SEAT", Shape.pp(shape), Shape.pp(seats));
+      //   if (seats.length > 0) {
+      //     part = seats[0];
+      //     console.log("SEAT ", Shape.pp(shape), Shape.pp([part]));
+      //   }
+      // }
+      if (part == null) {
+        for (let config of configs) {
+          if (config.size == 2 && BAD_TWOS.indexOf(shape) !== -1)
+            config = { size: 3, pad: true };
           logos = MyTmam.findLogos(shape, config);
           console.log(
             ">LOGO",
             Shape.pp(shape),
             Shape.pp(logos),
-            `(${config.size}${config.hat == true ? ",hat" : ""})`
+            `(${config.size}${config.pad == true ? ",pad" : ""}${
+              config.hat == true ? ",hat" : ""
+            })`
           );
           if (logos.length > 0) {
+            if (BAD_THREES.indexOf(shape) !== -1) logos.shift();
             part = logos[0];
+            // part = logos[logos.length - 1];
             console.log("LOGO ", Shape.pp(shape), Shape.pp([part]));
             break;
           }
@@ -377,9 +440,9 @@ export class MyTmam {
   /**
    * Deconstructor - kipy method
    * @param {number} shape
-   * @returns {object}
+   * @returns {object?}
    */
-  static deconstruct(targetShape) {
+  static deconstruct1(targetShape) {
     console.log("Deconstruct");
     console.log(Shape.toShape(targetShape));
     console.log(Shape.pp(targetShape));

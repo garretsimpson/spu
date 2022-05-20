@@ -302,3 +302,78 @@ X - - X    - - X X    - X - X
 
 1793 - has 1000 set (which is 2000 and not in the mask) and D set (without A)
 17c2 - has C and D set (without A)
+
+Added support for seats (pads).
+Ran all possible shapes.
+
+Knowns: 48424
+Unknowns: 8
+[1bc1,2792,35a1,3a52,4e94,65a4,8d68,ca58]
+
+1b61 1b61,1bc1,2792,27c2,4e34,4e94,8d38,8d68
+35a1 35a1,3a52,65a4,6a52,95a1,9a58,c5a4,ca58
+
+Test with (3-pad, 2-logo) for seat and (4,3,2-logo) for other. 
+
+Knowns: 2735
+Unknowns: 71
+[0178,0378,03d2,07b4,1178,1378,13d2,1634,16b4,16d2,1785,1787,1788,1789,178a,178b,178c,178d,178e,178f,1792,17a4,17b4,17c2,1b78,1e78,3178,3358,3378,3585,3587,3588,3589,358a,358b,358c,358d,358e,358f,3592,35a1,35c2,36b4,3785,3787,3788,3789,378a,378b,378c,378d,378e,378f,3792,37a4,37b4,37c2,3c52,3cd2,5178,5358,5378,7178,7358,7378,78b4,79a4,79b4,f178,f358,f378]
+
+0178 - two 2-logo, picks the wrong one.  Looking for a hat would fix.
+
+Test with (3-pad, 2-logo) for seat and (2-hat, 3-hat, 4,3,2-logo) for other. 
+
+Knowns: 2804
+Unknowns: 2
+[1634,35a1]
+
+Much better.
+1634 - one 3-pad, one 3-logo.  The first has a pad, but then fails because the second has no pad.
+1bc1 - one 3-pad, then two 2-logo, picks the wrong one.
+35a1 - problem shape - two 3-hat, picks the wrong one.
+
+Test having a pad optional.
+
+1634 works now.
+
+1bc1 --    35a1 -- 
+- - - -    - - - - 
+X - - -    X X - - 
+X X - X    X - X - 
+- - X X    - X - X 
+X - - -    X - - - 
+
+1b61
+X - - -
+O X - X
+- O X -
+O - - -
+
+const SEAT_CONFIG = [{ size: 3, pad: true }, { size: 2 }];
+ 
+Knowns: 2638
+Unknowns: 168
+[0178,0378,1178,1212,1216,121a,121e,125a,1296,1378,13a1,13e1,1642,1643,164a,164b,165a,1696,16c3,16d2,1785,1787,1788,1789,178a,178b,178c,178d,178e,178f,1792,17a1,17c2,1a5a,1b78,1e5a,3178,3352,3358,3378,3424,3425,342c,342d,343c,34a5,3522,3523,3524,3526,3527,352a,352b,352c,352e,352f,3534,3538,3568,3585,3587,3588,3589,358a,358b,358c,358d,358e,358f,3592,35a1,35a4,35b4,35c2,3785,3787,3788,3789,378a,378b,378c,378d,378e,378f,3792,37a1,37c2,3c18,3c1a,3c1c,3c1e,3c34,3c3c,3c52,3c58,3cd2,3d24,3d2c,3d34,3d38,3d68,3da4,3db4,5178,5212,5216,521a,521e,525a,5296,5342,5343,534a,534b,5352,5358,5378,53a1,53c2,5a12,5a16,5a1a,5a1e,5a38,5a52,5a5a,5a78,5b42,5b43,5b4a,5b4b,5b68,5b78,7178,7352,7358,7378,73a1,7818,781a,781c,781e,783c,785a,78b4,7948,7949,794a,794b,7958,7968,7978,79a4,79b4,7a18,7a1c,7a38,7a58,7a78,7b48,7b49,7b58,7b68,7b78,f178,f352,f358,f378]
+
+    const LOGO_CONFIG = [
+      { size: 2, hat: true },
+      { size: 3, hat: true },
+      { size: 4 },
+      { size: 3 },
+      { size: 2 },
+    ];
+    
+Knowns: 2800
+Unknowns: 6
+[0361,1361,1634,1b61,35a1,36c2]
+
+    const LOGO_CONFIG = [
+      { size: 4 },
+      { size: 3 },
+      { size: 2 },
+    ];
+    
+Knowns: 2731
+Unknowns: 75
+[0178,0361,0378,03d2,07b4,1178,1361,1378,13d2,1634,16b4,16d2,1785,1787,1788,1789,178a,178b,178c,178d,178e,178f,1792,17a4,17b4,17c2,1b61,1b78,1e78,3178,3358,3378,3585,3587,3588,3589,358a,358b,358c,358d,358e,358f,3592,35a1,35c2,36b4,36c2,3785,3787,3788,3789,378a,378b,378c,378d,378e,378f,3792,37a4,37b4,37c2,3c52,3cd2,5178,5358,5378,7178,7358,7378,78b4,79a4,79b4,f178,f358,f378]
+

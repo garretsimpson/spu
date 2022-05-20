@@ -102,7 +102,7 @@ export class MyTmam {
     // const testShapes = [0x1625, 0x1629, 0x162c, 0x162d]; // stack order "10324++++"
     // const testShapes = [0x3425, 0x342c, 0x342d, 0x343c, 0x34a5, 0x35a1]; // stack order?
     // const testShapes = [0x0361, 0x1361, 0x1634, 0x1b61, 0x36c2]; // seat joint
-    // const testShapes = [0x035a1]; // problem shape
+    // const testShapes = [0x1bc1, 0x035a1]; // problem shapes
     // testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     console.log("Knowns:", knownShapes.size);
@@ -319,8 +319,8 @@ export class MyTmam {
         if ((shape & mask) == logo) result.push(logo);
       }
     }
-    if (config.pad === true)
-      result = result.filter((part) => MyTmam.hasPad(shape, part, size));
+    // if (config.pad === true)
+    //   result = result.filter((part) => MyTmam.hasPad(shape, part, size));
     if (config.hat === true)
       result = result.filter((part) => MyTmam.hasHat(shape, part, size));
     return result;
@@ -366,16 +366,22 @@ export class MyTmam {
     console.log(Shape.pp(targetShape));
     console.log(Shape.graph(targetShape));
 
-    const BAD_TWOS = [0x0361, 0xf1361, 0xf1634, 0xf1b61, 0xf36c2];
-    const BAD_THREES = [0xf35a1];
-    const configs = [
-      // { size: 3, pad: true },
+    const SEAT_KEYS = [0x0361, 0x1361, 0x1634, 0x1b61, 0x36c2];
+    const P1_KEYS = [0x1bc1, 0x2792, 0x4e94, 0x8d68]; // one 3-pad, then two 2-logo, picks the wrong one.
+    const P2_KEYS = [0x35a1, 0x3a52, 0x65a4, 0xca58]; // two 3-hat, picks the wrong one
+
+    const LOGO_CONFIG = [
       { size: 2, hat: true },
       { size: 3, hat: true },
       { size: 4 },
       { size: 3 },
       { size: 2 },
     ];
+    const SEAT_CONFIG = [{ size: 3, pad: true }, { size: 2 }];
+
+    const hasSeat =
+      SEAT_KEYS.indexOf(Shape.keyCode(targetShape)) == -1 ? false : true;
+    const CONFIGS = hasSeat ? SEAT_CONFIG : LOGO_CONFIG;
 
     let shape, part, seats, logos;
     const partList = [];
@@ -399,9 +405,7 @@ export class MyTmam {
       //   }
       // }
       if (part == null) {
-        for (let config of configs) {
-          if (config.size == 2 && BAD_TWOS.indexOf(shape) !== -1)
-            config = { size: 3, pad: true };
+        for (let config of CONFIGS) {
           logos = MyTmam.findLogos(shape, config);
           console.log(
             ">LOGO",
@@ -412,7 +416,6 @@ export class MyTmam {
             })`
           );
           if (logos.length > 0) {
-            if (BAD_THREES.indexOf(shape) !== -1) logos.shift();
             part = logos[0];
             // part = logos[logos.length - 1];
             console.log("LOGO ", Shape.pp(shape), Shape.pp([part]));

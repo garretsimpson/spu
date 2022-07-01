@@ -238,7 +238,6 @@ export class Ops {
   }
 
   static runMultiOps() {
-    const stats = {};
     const CONFIGS = [
       {
         name: "1-layer",
@@ -264,6 +263,7 @@ export class Ops {
       },
     ];
 
+    const results = {};
     let shapes;
     for (let config of CONFIGS) {
       shapes = config.shapes.map((code) => {
@@ -275,22 +275,24 @@ export class Ops {
       });
       Ops.runOps(shapes, config.maxIter);
 
-      const codes = Object.keys(allShapes);
-      const keys = codes
+      shapes = Object.keys(allShapes);
+      const keys = shapes
         .map((v) => Shape.keyCode(v))
         .filter((v, i, a) => a.indexOf(v) === i);
-      const stat = {};
-      stat.numShapes = codes.length;
-      stat.numKeys = keys.length;
-      stats[config.name] = stat;
+      results[config.name] = { shapes, keys };
     }
 
     Ops.logTable("Name", "Shapes", "Keys");
-    for (const name in stats) {
-      const stat = stats[name];
-      Ops.logTable(name, stat.numShapes, stat.numKeys);
+    for (const name in results) {
+      const data = results[name];
+      Ops.logTable(name, data.shapes.length, data.keys.length);
     }
     console.log("");
+
+    const all3 = results["3-logo "].keys;
+    const all4 = results["4-logo "].keys;
+    const only4 = all4.filter((v) => !all3.includes(v));
+    Ops.saveChart(only4);
 
     Ops.processShapes();
   }
@@ -466,6 +468,16 @@ export class Ops {
       }
       console.log(Shape.pp(key), result);
     }
+  }
+
+  /**
+   * @param {Array} shapes
+   */
+  static saveChart(shapes) {
+    const codes = new Map();
+    shapes.forEach((code) => codes.set(code, { code }));
+    console.log("Saving shape chart");
+    Fileops.writeFile("data/chart.txt", Shape.chart(codes));
   }
 
   static saveAllShapes() {

@@ -24,9 +24,9 @@ function main() {
   // Shape.testLogo();
   // Spu.runTests();
   // Spu.runSearch();
-  // Ops.runMultiOps();
+  Ops.runMultiOps();
   // Ops.dbToText("data/db_no5.bin");
-  MyTmam.test();
+  // MyTmam.test();
 }
 
 main();

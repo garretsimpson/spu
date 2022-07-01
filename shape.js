@@ -1320,13 +1320,6 @@ export class Shape {
     let result = "";
     const codes = Array.from(shapes.keys()).sort((a, b) => a - b);
     const numLines = Math.floor(codes.length / MAX_NUM) + 1;
-    // for (let i = 0; i < numLines; i++) {
-    //   const pos = MAX_NUM * i;
-    //   const shapes = shapes.slice(pos, pos + MAX_NUM);
-    //   const line = shapes.map((v) => Shape.pp(v)).join(" ");
-    //   result += line;
-    //   result += EOL;
-    // }
 
     for (let i = 0; i < numLines; i++) {
       const pos = MAX_NUM * i;

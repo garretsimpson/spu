@@ -92,8 +92,9 @@ export class MyTmam {
     const keyShapes = possibleShapes.filter(
       (code) => Shape.keyCode(code) == code
     );
-    const complexShapes = keyShapes.filter((code) => !Shape.canStackAll(code));
-    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    keyShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // const complexShapes = keyShapes.filter((code) => !Shape.canStackAll(code));
+    // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     // const testShapes = [0x1, 0x21, 0x31, 0xa5]; // basic test shapes
     // const testShapes = [0x1634, 0x3422]; // 3-logo and fifth layer
@@ -111,7 +112,7 @@ export class MyTmam {
 
     let result;
     for (let code of Array.from(unknownShapes.keys())) {
-      result = MyTmam.deconstruct0(code);
+      result = MyTmam.deconstruct1(code);
       if (!result) {
         console.log("NOT FOUND", Shape.pp(code));
       } else {
@@ -517,7 +518,7 @@ export class MyTmam {
    * @returns {boolean}
    */
   static tryBuild(data) {
-    const ORDERS = [
+    const ORDERS0 = [
       [],
       ["0"],
       ["01+"],
@@ -542,7 +543,7 @@ export class MyTmam {
     ];
     const num = data.build.length;
     let code;
-    for (const order of ORDERS[num]) {
+    for (const order of ORDERS1[num]) {
       code = Shape.stackOrder(data.build, order);
       if (code == data.code) {
         data.order = order;

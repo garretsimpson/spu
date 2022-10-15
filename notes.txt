@@ -52,7 +52,8 @@ keys [0361,1361,1634,17a4,1b61,36c2,37a4]
 
 Knowns: 48384
 Unknowns: 48
-[0361,0392,0634,06c2,0938,09c1,0c68,0c94,1361,1634,17a4,19c1,1b61,1bc1,1c94,1da4,2392,26c2,2792,27c2,2938,2b58,2c68,36c2,37a4,39c1,3b58,4361,4634,49c1,4c94,4e34,4e94,6392,6c94,8392,86c2,8938,8b52,8c68,8d38,8d68,9361,9b52,9c68,9da4,c634,c938]
+[0361,0392,0634,06c2,0938,09c1,0c68,0c94,1361,1634,17a4,19c1,1b61,1bc1,1c94,1da4,2392,26c2,2792,27c2,2938,2b58,2c68,36c2,37a4,39c1,3b58,4361,4634,49c1,4c94,     4e34,4e94,6392,6c94,8392,86c2,8938,8b52,8c68,8d38,8d68,     9361,9b52,9c68,9da4,c634,c938]
+[0361,0392,0634,06c2,0938,09c1,0c68,0c94,1361,1634,     19c1,1b61,1bc1,1c94,1da4,2392,26c2,2792,27c2,2938,     2c68,36c2,     39c1,     4361,4634,49c1,4c94,4da1,4e34,4e94,6392,6c94,8392,86c2,8938,8b52,8c68,8d38,8d68,8e52,9361,9b52,9c68,9da4,c634,c938,cda1,ce52]
 
 Can't make if using only Y mask (seat joints)...
 Unknowns: 9
@@ -719,3 +720,28 @@ TODO: Modify decompose to check after finding all parts.  Maybe need different s
 OR... Modify game TMAM to flag which stacking is correct and remove 5th layer if not needed.
 
 Note: There are some solutions that the 5th layer can cause the stacking to fail.
+
+Only use X (no seat config)
+The list of unknowns has changed. Why???
+Unknowns: 48
+[0361,0392,0634,06c2,0938,09c1,0c68,0c94,1361,1634,17a4,19c1,1b61,1bc1,1c94,1da4,2392,26c2,2792,27c2,2938,2b58,2c68,36c2,37a4,39c1,3b58,4361,4634,49c1,4c94,     4e34,4e94,6392,6c94,8392,86c2,8938,8b52,8c68,8d38,8d68,     9361,9b52,9c68,9da4,c634,c938]
+[0361,0392,0634,06c2,0938,09c1,0c68,0c94,1361,1634,     19c1,1b61,1bc1,1c94,1da4,2392,26c2,2792,27c2,2938,     2c68,36c2,     39c1,     4361,4634,49c1,4c94,4da1,4e34,4e94,6392,6c94,8392,86c2,8938,8b52,8c68,8d38,8d68,8e52,9361,9b52,9c68,9da4,c634,c938,cda1,ce52]
+
+Same number but 8 differences, including 17a4 and 37a4, which I found previously.
+Maybe logo search order?  Yes, that was it.
+
+So what does this mean?
+- Changing logo search order changes which shapes are found with the X mask.
+- Some shapes can be solved with either X mask (strict logo) or Y mask (seat joint).  Like 17a4, and the 8 differences above.
+- X mask might miss some (8?) when looking in a particualar order both forward and reverse.
+- But Y mask does find them.
+- Maybe this is why I had previously found that there were only 5 key shapes that required seat joints
+- But to find all solutions, MyTMAM needs to find more than that when looking for them in order to find the ones X mask misses.
+
+Note: using key shapes is misleading, as some shapes are both.
+
+I think there are 5 key shapes that require seat joints.
+Including rotations and mirrors: 5 * 8 = 40 shapes
+Then there are 8 that X mask (strict logo) misses: 40 + 8 = 48 shapes.
+(which change depending on logo search order)
+

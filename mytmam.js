@@ -102,10 +102,8 @@ export class MyTmam {
     // const testShapes = [0x3343, 0x334a, 0x334b]; // stack order "10234++++"
     // const testShapes = [0x1625, 0x1629, 0x162c, 0x162d]; // stack order "10324++++"
     // const testShapes = [0x3425, 0x342c, 0x342d, 0x343c, 0x34a5, 0x35a1]; // stack order?
-    // const testShapes = [0x0361, 0x1361, 0x1634, 0x17a4, 0x1b61, 0x36c2, 0x37a4]; // seat joint
-    // const testShapes = [0x17a4, 0x1b61]; // problem shapes
-    // const testShapes = [0x1bc1, 0x035a1]; // problem shapes
-    // const testShapes = [0xb7a4]; // problem shapes
+    // const testShapes = [0x0361, 0x1361, 0x1634, 0x1b61, 0x36c2]; // seat joint
+    // const testShapes = [0x17a4, 0x37a4]; // multiple solutions: strict logo (depending on search order) and seat joint
     // testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     console.log("Knowns:", knownShapes.size);
@@ -342,7 +340,7 @@ export class MyTmam {
     const MAX = config.seat ? 3 : 4;
     const result = [];
     const found = [];
-    // Use WSEN to match my game
+    // Use WSEN [2, 1, 0, 3] to match my game
     for (const pos of [2, 1, 0, 3]) {
       found.length = 0;
       for (let size = MAX; size >= 2; --size) {
@@ -468,7 +466,10 @@ export class MyTmam {
     let found = false;
     for (const config of configs) {
       console.log("ROUND", ++num);
-      shape = MyTmam.add5th(targetShape);
+      shape = targetShape;
+      if (!config.seat) {
+        shape = MyTmam.add5th(shape);
+      }
       partList.length = 0;
       while (!MyTmam.isEmpty(shape)) {
         if (MyTmam.noBottom(shape)) {

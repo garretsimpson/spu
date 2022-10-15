@@ -47,10 +47,21 @@ Can't make if layer and size are reversed in search...
 [16d2]
 
 Can't make if using only X mask...
-[0361,1361,1634,17a4,1b61,36c2,37a4]
+Unknowns: 7
+keys [0361,1361,1634,17a4,1b61,36c2,37a4]
+
+Knowns: 48384
+Unknowns: 48
+[0361,0392,0634,06c2,0938,09c1,0c68,0c94,1361,1634,17a4,19c1,1b61,1bc1,1c94,1da4,2392,26c2,2792,27c2,2938,2b58,2c68,36c2,37a4,39c1,3b58,4361,4634,49c1,4c94,4e34,4e94,6392,6c94,8392,86c2,8938,8b52,8c68,8d38,8d68,9361,9b52,9c68,9da4,c634,c938]
 
 Can't make if using only Y mask (seat joints)...
-[1642,1643,16c3,16d2,1792,17c2,3521,3529,3561]
+Unknowns: 9
+keys [1642,1643,16c3,16d2,1792,17c2,3521,3529,3561]
+Unknowns: 82
+keys [1212,1216,121a,121e,125a,1296,1642,1643,165a,1696,16c3,16d2,1792,17c2,1a5a,1e5a,3424,3425,342c,342d,343c,34a5,3524,352c,3534,35a4,35b4,3c18,3c1a,3c1c,3c1e,3c34,3c3c,3c58,3d24,3d2c,3d34,5212,5216,521a,521e,525a,5296,5342,5343,534a,534b,5352,53c2,5a12,5a16,5a1a,5a1e,5a38,5a52,5a5a,5a78,5b42,5b43,5b4a,5b4b,5b68,7818,781a,781c,781e,783c,785a,7948,7949,794a,794b,7958,7968,7a18,7a1c,7a38,7a58,7a78,7b48,7b49,7b68]
+
+- Not sure why these are different
+- Maybe size of Y mask?
 
 02-May-2022
 
@@ -537,3 +548,174 @@ X X - X
 - - X -
 X - - X
 
+C:\Program Files\nodejs\node.exe --max-old-space-size=25000 .\main.js
+Shape Processing Tools
+Wed Oct 12 2022 18:06:22 GMT-0700 (Pacific Daylight Time)
+
+Reading shape file: data/allShapes.txt
+lines: 9316
+good: 48432
+bad: 2625
+
+ 1      4
+ 2     18
+ 3     68
+ 4    289
+ 5   1112
+ 6   3408
+ 7   7524
+ 8  10729
+ 9  10636
+10   7798
+11   4332
+12   1817
+13    560
+14    120
+15     16
+16      1
+total: 48432
+
+C:\Program Files\nodejs\node.exe --max-old-space-size=25000 .\main.js
+Shape Processing Tools
+Wed Oct 12 2022 18:12:59 GMT-0700 (Pacific Daylight Time)
+
+Reading shape file: data/allShapes.txt
+lines: 9316
+good: 48432
+bad: 2625
+
+ 1      1
+ 2      4
+ 3     11
+ 4     44
+ 5    153
+ 6    463
+ 7   1004
+ 8   1449
+ 9   1443
+10   1094
+11    619
+12    283
+13     92
+14     26
+15      4
+16      1
+total: 6691
+
+key shapes
+
+6691 possible
+ 835 impossible
+7526 total
+
+3885 standard / stackable
+2806 floating
+
+13-Oct-2022
+
+Working on MyTMAM
+Level 123 does not work
+----Su--:--Wc--Rg:WyCuSg--:WgRy--Cg
+code: b7a4
+b7a4 [8484,0002,0003,0003,000f] 01234++++
+
+Deconstruct
+----Rr--:--Rg--Rg:RbRbRb--:RyRy--Ry
+b7a4
+- - - - 
+X X - X 
+X X X - 
+- X - X 
+- - X -
+ROUND 1
+>LOGO [8484,0024]
+LOGO  fb7a4 [8484]
+LAYER f332 [0002]
+LAYER 0f33 [0003]
+LAYER 00f3 [0003]
+LAYER 000f [000f]
+FOUND b7a4 [8484,0002,0003,0003,000f] 01234++++
+
+5th layer on top of 4-logo
+reverse stacking
+
+FIX: add reverse stacking to game
+TODO: simplify stacking methods, and then implement in-game
+
+Problem
+Level 211: ----Wc--:Sc--Rb--:--Wc----
+code: 0254
+
+0254 [0004,0024,0001] 012++
+
+The solution has only 3 parts.
+The stacking test component uses 4 non "smart" stackers, which returns null when any of the 5 inputs is null.
+
+could add smart stackers, or use intermediate results.
+But first, simplify / reduce the needed stacking orders.  Should only need 3 or 4.
+
+level 223: Ry--Sw--:--Cy--Wg:Rr----Wr:----Rg--
+code: 49a5
+
+49a5 [0084,0121,0048] 01+2+
+
+--WbSw--:Sw----Cb:----SbWw:RbWw----
+3c96 [0084,0012,0024,0018] 01+23++
+Missing test stacker
+
+Sr------:--CrSrCr:RuCw--Cw:----Ru--
+4be1 [0021,000c,0048,0003] 0123+++
+A fifth layer prevents the reverse stacking from working.  But that's okay if the stacking checks early (only 4 layers).
+
+Wy------:--CwCw--:WrCr----:----Cr--
+4361 [0121,0424] 01+
+That's a seat joint
+
+Need some reverse search codes...
+Knowns: 48348
+Unknowns: 84
+[1792,17c2,181a,181e,185a,1d38,1d68,2125,212d,24a5,29e1,2b61,2bc1,34a5,35a4,35b4,381a,381e,385a,3a58,3a78,3c1a,3c1e,424a,424b,425a,43d2,4978,524a,524b,534a,534b,581a,581e,5c1a,5c1e,6125,612d,6925,692d,781a,781e,7c1a,7c1e,8185,8187,81a5,86b4,8e34,8e94,9a52,9ad2,a125,a12d,a185,a187,a385,a387,a925,a92d,c185,c187,c1a5,c24a,c24b,c25a,c34a,c34b,c385,c387,c5a1,c5e1,d24a,d24b,d34a,d34b,e125,e12d,e185,e187,e385,e387,e925,e92d]
+
+1792 --    17c2 --    181a --    181e --    185a --    1d38 --    1d68 --    2125 -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    X - - -    - X - - 
+X X X -    X X X -    - - - X    - - - X    - - - X    X - X X    X - X X    X - - - 
+X - - X    - - X X    X - - -    X - - -    X - X -    X X - -    - X X -    - X - - 
+- X - -    - X - -    - X - X    - X X X    - X - X    - - - X    - - - X    X - X - 
+
+212d --    24a5 --    29e1 --    2b61 --    2bc1 --    34a5 --    35a4 --    35b4 -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+- X - -    - X - -    - X - -    - X - -    - X - -    X X - -    X X - -    X X - - 
+X - - -    - - X -    X - - X    X X - X    X X - X    - - X -    X - X -    X - X - 
+- X - -    - X - X    - X X X    - X X -    - - X X    - X - X    - X - X    X X - X 
+X - X X    X - X -    X - - -    X - - -    X - - -    X - X -    - - X -    - - X - 
+
+381a --    381e --    385a --    3a58 --    3a78 --    3c1a --    3c1e --    424a -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    X X - -    - - X - 
+- - - X    - - - X    - - - X    - X - X    - X - X    - - X X    - - X X    - X - - 
+X - - -    X - - -    X - X -    X - X -    X X X -    X - - -    X - - -    - - X - 
+- X - X    - X X X    - X - X    - - - X    - - - X    - X - X    - X X X    - X - X 
+
+424b --    425a --    43d2 --    4978 --    524a --    524b --    534a --    534b -- 
+- - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - -    - - - - 
+- - X -    - - X -    - - X -    - - X -    X - X -    X - X -    X - X -    X - X - 
+- X - -    - X - -    X X - -    X - - X    - X - -    - X - -    X X - -    X X - - 
+- - X -    X - X -    X - X X    X X X -    - - X -    - - X -    - - X -    - - X - 
+X X - X    - X - X    - X - -    - - - X    - X - X    X X - X    - X - X    X X - X 
+...
+
+--Rr----:Rg----Rg:RbRbRb--:Ry------
+1792 [0012,0018,0012,0004] 0123+++
+
+WgSg--Ru:----Rg--:Ry----Wg:Cc--Ru--
+594b [4848,0003,0001,0001,000f] 01+234+++
+ 
+--RrRr--:Rg------:Rb------:Ry------
+1116 [0012,0004,0001,0001] 01+23++
+
+Problem: Sofware TMAM did not use fifth layer, but game TMAM did.  Not clear if stacking solutions are correct.
+TODO: Modify decompose to check after finding all parts.  Maybe need different set of stacking solutions.
+OR... Modify game TMAM to flag which stacking is correct and remove 5th layer if not needed.
+
+Note: There are some solutions that the 5th layer can cause the stacking to fail.

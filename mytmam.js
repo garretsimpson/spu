@@ -17,18 +17,18 @@ export class MyTmam {
 
   /**
    * Make logo and mask constants.
-   * There are four positions (ENWS), three sizes (2..4), and two types of masks.
+   * There are four positions 0..3 (ESWN), three sizes 2..4, and two orientations (left/right handed)
    */
   static makeLogos() {
     const LOGO = [[], [], [0x21, 0x12], [0x121, 0x212], [0x2121, 0x1212]];
     const MASK_X = [[], [], [0x33, 0x33], [0x333, 0x333], [0x3333, 0x3333]];
     const MASK_Y = [[], [], [0x33, 0x33], [0x133, 0x233], [0x2333, 0x1333]];
-    const SEAT = [0x0361, 0x0392];
-    const MASK_Z = [0x07ff, 0x0bff];
+    // const SEAT = [0x0361, 0x0392];
+    // const MASK_Z = [0x07ff, 0x0bff];
 
     MyTmam.LOGOS_X = MyTmam.makeLogoCodes(LOGO, MASK_X);
     MyTmam.LOGOS_Y = MyTmam.makeLogoCodes(LOGO, MASK_Y);
-    MyTmam.SEATS = MyTmam.makeSeatCodes(SEAT, MASK_Z);
+    // MyTmam.SEATS = MyTmam.makeSeatCodes(SEAT, MASK_Z);
   }
 
   /**
@@ -39,11 +39,11 @@ export class MyTmam {
   static makeLogoCodes(logos, masks) {
     const codes = [];
     let sizes, values;
-    for (let pos = 0; pos < 4; ++pos) {
+    for (const pos of [0, 1, 2, 3]) {
       sizes = [];
-      for (let size = 2; size <= 4; ++size) {
+      for (const size of [2, 3, 4]) {
         values = [];
-        for (let num = 0; num < 2; ++num) {
+        for (const num of [0, 1]) {
           values.push({
             logo: Shape.rotateCode(logos[size][num], pos),
             mask: Shape.rotateCode(masks[size][num], pos),
@@ -87,12 +87,12 @@ export class MyTmam {
     for (let code = 0; code <= 0xffff; ++code) {
       if (Shape.isPossible(code)) possibleShapes.push(code);
     }
-    // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
+    possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
 
-    const keyShapes = possibleShapes.filter(
-      (code) => Shape.keyCode(code) == code
-    );
-    keyShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // const keyShapes = possibleShapes.filter(
+    //   (code) => Shape.keyCode(code) == code
+    // );
+    // keyShapes.forEach((code) => unknownShapes.set(code, { code }));
     // const complexShapes = keyShapes.filter((code) => !Shape.canStackAll(code));
     // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
 
@@ -102,8 +102,10 @@ export class MyTmam {
     // const testShapes = [0x3343, 0x334a, 0x334b]; // stack order "10234++++"
     // const testShapes = [0x1625, 0x1629, 0x162c, 0x162d]; // stack order "10324++++"
     // const testShapes = [0x3425, 0x342c, 0x342d, 0x343c, 0x34a5, 0x35a1]; // stack order?
-    // const testShapes = [0x0361, 0x1361, 0x1634, 0x1b61, 0x36c2]; // seat joint
+    // const testShapes = [0x0361, 0x1361, 0x1634, 0x17a4, 0x1b61, 0x36c2, 0x37a4]; // seat joint
+    // const testShapes = [0x17a4, 0x1b61]; // problem shapes
     // const testShapes = [0x1bc1, 0x035a1]; // problem shapes
+    // const testShapes = [0xb7a4]; // problem shapes
     // testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     console.log("Knowns:", knownShapes.size);
@@ -340,7 +342,8 @@ export class MyTmam {
     const MAX = config.seat ? 3 : 4;
     const result = [];
     const found = [];
-    for (let pos = 0; pos < 4; ++pos) {
+    // Use WSEN to match my game
+    for (const pos of [2, 1, 0, 3]) {
       found.length = 0;
       for (let size = MAX; size >= 2; --size) {
         for (const { logo, mask } of LOGOS[pos][size]) {
@@ -537,9 +540,9 @@ export class MyTmam {
       [],
       ["0"],
       ["01+"],
-      ["01+2+", "012++"],
-      ["01+2+3+", "0123+++", "01+23++", "012++3+"],
-      ["01+2+3+4+", "01234++++", "01+234+++", "012++34++"], // not used: 01+2+3+4+
+      ["012++", "01+2+"], // both are needed
+      ["0123+++", "012++3+", "01+23++"], // not used: 01+2+3+
+      ["01234++++", "012++34++", "01+234+++"], // not used: 01+2+3+4+
     ];
     const num = data.build.length;
     let code;

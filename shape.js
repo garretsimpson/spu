@@ -1410,4 +1410,30 @@ export class Shape {
       console.log(Shape.toShape(y).substring(0, 8) + " : " + row);
     }
   }
+
+  static countParts() {
+    Shape.init();
+
+    let counts = {};
+    let num, val;
+    for (const shape of Shape.allShapes) {
+      if (shape !== Shape.keyCode(shape)) continue;
+      num = Shape.countPieces(shape);
+      val = counts[num] | 0;
+      counts[num] = val + 1;
+    }
+
+    // console.log(counts);
+
+    let total = 0;
+    for (const num of Object.keys(counts).sort((a, b) => a - b)) {
+      val = counts[num];
+      console.log(
+        num.toString().padStart(2, " "),
+        val.toString().padStart(6, " ")
+      );
+      total += val;
+    }
+    console.log("total:", total);
+  }
 }

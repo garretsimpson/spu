@@ -22,6 +22,7 @@ function main() {
   // Shape.testAllShapes();
   // Shape.testPerf();
   // Shape.testLogo();
+  // Shape.countParts();
   // Spu.runTests();
   // Spu.runSearch();
   // Ops.runMultiOps();

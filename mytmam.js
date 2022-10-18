@@ -87,14 +87,16 @@ export class MyTmam {
     for (let code = 0; code <= 0xffff; ++code) {
       if (Shape.isPossible(code)) possibleShapes.push(code);
     }
-    possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     // const keyShapes = possibleShapes.filter(
     //   (code) => Shape.keyCode(code) == code
     // );
     // keyShapes.forEach((code) => unknownShapes.set(code, { code }));
-    // const complexShapes = keyShapes.filter((code) => !Shape.canStackAll(code));
-    // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    const complexShapes = possibleShapes.filter(
+      (code) => !Shape.canStackAll(code)
+    );
+    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     // const testShapes = [0x1, 0x21, 0x31, 0xa5]; // basic test shapes
     // const testShapes = [0x1634, 0x3422]; // 3-logo and fifth layer
@@ -336,14 +338,12 @@ export class MyTmam {
    */
   static findBigLogos(shape, config) {
     const LOGOS = config.seat ? MyTmam.LOGOS_Y : MyTmam.LOGOS_X;
-    // TODO: Smarter 5th layer so that MAX can be always 4.
-    const MAX = config.seat ? 3 : 4;
     const result = [];
     const found = [];
     // Use WSEN [2, 1, 0, 3] to match my game
     for (const pos of [2, 1, 0, 3]) {
       found.length = 0;
-      for (let size = MAX; size >= 2; --size) {
+      for (const size of [4, 3, 2]) {
         for (const { logo, mask } of LOGOS[pos][size]) {
           if ((shape & mask) == logo) found.push(logo);
         }
@@ -526,16 +526,9 @@ export class MyTmam {
       [],
       ["0"],
       ["01+"],
-      ["01+2+", "012++"],
-      ["01+2+3+", "0123+++", "0213+++", "1023+++", "1032+++"],
-      [
-        "01+2+3+4+",
-        "01234++++",
-        "01324++++",
-        "02134++++",
-        "10234++++",
-        "10324++++",
-      ],
+      ["012++", "102++"],
+      ["0123+++", "0213+++", "1023+++", "1032+++"],
+      ["01234++++", "01324++++", "02134++++", "10234++++", "10324++++"],
     ];
     const ORDERS1 = [
       [],

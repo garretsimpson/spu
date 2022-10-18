@@ -745,3 +745,5 @@ Including rotations and mirrors: 5 * 8 = 40 shapes
 Then there are 8 that X mask (strict logo) misses: 40 + 8 = 48 shapes.
 (which change depending on logo search order)
 
+Rr--Sy--:--Wr----:Cu------:Rg--Ry--
+5125 [0121,0004,0005] 01+2+

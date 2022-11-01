@@ -96,9 +96,9 @@ export class MyTmam {
     const complexShapes = possibleShapes.filter(
       (code) => !Shape.canStackAll(code)
     );
-    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
 
-    // const testShapes = [0x1, 0x21, 0x31, 0xa5]; // basic test shapes
+    const testShapes = [0x1, 0x21, 0x31, 0xa5]; // basic test shapes
     // const testShapes = [0x1634, 0x3422]; // 3-logo and fifth layer
     // const testShapes = [0x0178, 0x0361]; // hat and seat
     // const testShapes = [0x3343, 0x334a, 0x334b]; // stack order "10234++++"
@@ -107,7 +107,7 @@ export class MyTmam {
     // const testShapes = [0x0361, 0x1361, 0x1634, 0x1b61, 0x36c2]; // seat joint
     // const testShapes = [0x17a4, 0x37a4]; // multiple solutions: strict logo (depending on search order) and seat joint
     // const testShapes = [0x4da1, 0x8e52]; // multiple solutions: strict logo (depending on search order) and seat joint
-    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
+    testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     console.log("Knowns:", knownShapes.size);
     console.log("Unknowns:", unknownShapes.size);
@@ -115,7 +115,7 @@ export class MyTmam {
 
     let result;
     for (let code of Array.from(unknownShapes.keys())) {
-      result = MyTmam.deconstruct1(code);
+      result = MyTmam.deconstruct2(code);
       if (!result) {
         console.log("NOT FOUND", Shape.pp(code));
       } else {
@@ -153,22 +153,6 @@ export class MyTmam {
     console.log("Saving chart of unknowns");
     const chart = Shape.chart(unknownShapes);
     Fileops.writeFile("data/unknown.txt", chart);
-  }
-
-  /**
-   * @param {number} code
-   * @returns {Array<number>}
-   */
-  static toLayers(code) {
-    let result = [];
-    let value;
-    for (let i = 0; i < 4; ++i) {
-      value = code & 0xf;
-      if (value == 0) break;
-      result.push(value);
-      code >>>= 4;
-    }
-    return result;
   }
 
   /**
@@ -359,6 +343,27 @@ export class MyTmam {
   }
 
   /**
+   * Find half-logo parts from all positions
+   * @param {number} shape
+   * @returns {Array<number>}
+   */
+  static findAllLogos(shape) {
+    const LOGOS = MyTmam.LOGOS_X;
+    const result = [];
+    // TODO: Need logos from all positions, not just from bottom.
+    // Use SENW [1, 0, 3, 2] to match my game
+    for (const pos of [1, 0, 3, 2]) {
+      for (const size of [4, 3, 2]) {
+        for (const { logo, mask } of LOGOS[pos][size]) {
+          if ((shape & mask) == logo) result.push(logo);
+        }
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Deconstructor - "original" TMAM method
    * @param {number} shape
    * @returns {object?}
@@ -505,7 +510,49 @@ export class MyTmam {
     return result;
   }
 
-  static deconstruct2(shape) {
+  /**
+   * Deconstructor - binz method
+   * @param {number} shape
+   * @returns {object?}
+   */
+  static deconstruct2(targetShape) {
+    console.log("Deconstruct");
+    console.log(Shape.toShape(targetShape));
+    console.log(Shape.pp(targetShape));
+    console.log(Shape.graph(targetShape));
+
+    let logos, layers, result;
+    const partList = [];
+    let found = false;
+
+    // Find all logos
+    // TODO: include both strict and "seated" logos
+    logos = MyTmam.findAllLogos(targetShape);
+    console.log(">LOGO", Shape.pp(logos));
+    // Reduce set of logos
+    // for each combination of logos
+    for (const logoset of [[]]) {
+      layers = Shape.toLayers(targetShape);
+      // - delete logos from layers
+      // - arrange layers
+      partList.length = 0;
+      layers.forEach((part) => partList.push(part));
+      console.log("PARTS", Shape.pp(partList));
+      // - try stacking
+      result = { code: targetShape, build: partList };
+      found = MyTmam.tryBuild(result);
+      if (found) break;
+    }
+    if (!found) result = null;
+
+    return result;
+  }
+
+  /**
+   * Wizard deconstructor by Nabby
+   * @param {number} shape
+   */
+  static deconstruct3(shape) {
     console.log("Deconstruct");
     console.log(Shape.pp(shape));
 
@@ -542,7 +589,7 @@ export class MyTmam {
     const num = data.build.length;
     let code;
     for (const order of ORDERS1[num]) {
-      code = Shape.stackOrder(data.build, order);
+      code = MyTmam.stackOrder(data.build, order);
       if (code == data.code) {
         data.order = order;
         return true;

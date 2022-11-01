@@ -552,12 +552,28 @@ export class Shape {
    * @param {number} code
    * @returns {Array<number>}
    */
-  static toLayers(code) {
+  static toLayersOld(code) {
     const result = [];
     while (code > 0) {
       const [bottom, top] = Shape.unstackCode(code);
       result.push(top);
       code = bottom;
+    }
+    return result;
+  }
+
+  /**
+   * @param {number} code
+   * @returns {Array<number>}
+   */
+  static toLayers(code) {
+    let result = [];
+    let value;
+    for (let i = 0; i < 4; ++i) {
+      value = code & 0xf;
+      if (value == 0) break;
+      result.push(value);
+      code >>>= 4;
     }
     return result;
   }
@@ -573,8 +589,8 @@ export class Shape {
     let layers = Shape.toLayers(code);
     let result = layers[0];
     for (let i = 1; i < layers.length; i++) {
-      const bottom = layers[i];
-      result = Shape.stackCode(result, bottom);
+      const top = layers[i];
+      result = Shape.stackCode(top, result);
     }
     return result == code;
   }
@@ -647,24 +663,6 @@ export class Shape {
   }
 
   /**
-   * Remove the bottom layer
-   * @param {number} code
-   * @returns {number} new shape code
-   */
-  static dropBottomCode(code) {
-    return code >>> 4;
-  }
-
-  /**
-   * Get the bottom layer
-   * @param {number} code
-   * @returns {number}
-   */
-  static getBottomCode(code) {
-    return code & 0x000f;
-  }
-
-  /**
    * @param {number} code
    * @returns {boolean}
    */
@@ -734,39 +732,6 @@ export class Shape {
   }
 
   /**
-   * Strict logo mask - empty seat
-   * @param {number} code
-   * @returns {number}
-   */
-  static logoMaskX(code) {
-    const layers = Shape.toLayers(code);
-    if (layers.length < 2) return 0;
-    const mask = layers[0] | layers[1];
-    let result = 0;
-    for (const layer of layers) {
-      result = (result << 4) + mask;
-    }
-    return result;
-  }
-
-  /**
-   * Loose logo mask - unknown seat
-   * TODO: Only alter top layer of mask of num layers > 2.
-   * @param {number} code
-   * @returns {number}
-   */
-  static logoMaskY(code) {
-    const layers = Shape.toLayers(code);
-    if (layers.length < 2) return 0;
-    const mask = layers[0] | layers[1];
-    let result = layers.shift();
-    for (const layer of layers) {
-      result = (result << 4) + mask;
-    }
-    return result;
-  }
-
-  /**
    * pretty print
    * @param {*} value
    * @returns {String}
@@ -816,7 +781,7 @@ export class Shape {
       ["layerCount", [0x000f], 1],
       ["layerCount", [0xffff], 4],
       ["toLayers", [0x0001], [0x0001]],
-      ["toLayers", [0xabcd], [0x000a, 0x000b, 0x000c, 0x000d]],
+      ["toLayers", [0xabcd], [0x000d, 0x000c, 0x000b, 0x000a]],
       ["isInvalid", [0x0000], true],
       ["isInvalid", [0x0001], false],
       ["isInvalid", [0x0010], true],
@@ -841,8 +806,6 @@ export class Shape {
       ["supportBCode", [0x0521, 0x0021], false],
       ["supportBCode", [0x0f21, 0x0021], false],
       ["supportBCode", [0x0361, 0x0121], true],
-      ["logoMaskX", [0x121], 0x333],
-      ["logoMaskY", [0x121], 0x133],
     ];
 
     let testNum = 0;
@@ -976,337 +939,6 @@ export class Shape {
       console.log(row[1].toString().padStart(WIDTH, " "), row[0]);
     }
     console.log("");
-
-    const knownShapes = Shape.knownShapes;
-    const unknownShapes = Shape.unknownShapes;
-
-    // const testShapes = [];
-    // for (let code = 0; code <= 0xffff; ++code) {
-    //   testShapes.push(code);
-    // }
-    // const testShapes = [0xfa5a];
-    // const testShapes = [0xffff];
-    // const testShapes = [0xf, 0x5f, 0x12, 0xff5a];
-    // const testShapes = [0x0014, 0x0178, 0x1569, 0x3424, 0x7b4a];
-    // const testShapes = [0x0361, 0x0f3c, 0x1361, 0x13a1, 0x1642, 0x7b4a];
-    // const testShapes = [0x0178, 0x0361, 0x0378, 0x03d2, 0x07b4];
-    // const testShapes = [0x13a1, 0x1642, 0x1643, 0x164a];
-    // const testShapes = [
-    //   0x015a, 0x0178, 0x035a, 0x0378, 0x0361, 0x03d2, 0x13a1, 0x1569, 0x1642,
-    //   0x7b4a,
-    // ];
-
-    // const testShapes = [0x0178, 0x0378, 0x03d2, 0x07b4]; // 3-layer unknowns
-    // const testShapes = [0x13a1, 0x1642, 0x1643, 0x164a]; // first 4 4-layer unknowns
-    // const testShapes = [0x1361, 0x13d2, 0x1634, 0x16b4]; // next 4 4-layer unknowns
-    // const testShapes = [0x0361, 0x1361, 0x1634, 0x17a4, 0x1b61, 0x36c2, 0x37a4]; // must use seat joint
-    // const testShapes = [0x7187];
-    // const testShapes = [0x3612, 0x3616, 0x361a, 0x361e, 0x3652]; // some extra 5th layer found by TMAM
-    // const testShapes = [0x16d2]; // can't make if position and size are reversed in search.
-    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
-
-    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
-    // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
-    // complexShapes
-    //   .filter((code) => keyShapes.get(code).layers < 4)
-    //   .forEach((code) => unknownShapes.set(code, { code }));
-
-    // Remove known shapes
-    // const no5 = Ops.readDB("data/db_no5.bin");
-    // for (const shape of no5) {
-    //   unknownShapes.delete(shape.code);
-    // }
-
-    if (unknownShapes.size == 0) {
-      console.log("No unknown shapes");
-      return;
-    }
-
-    console.log("Knowns:", knownShapes.size);
-    console.log("Unknowns:", unknownShapes.size);
-    console.log("");
-    // const codes = Array.from(unknownShapes.keys()).sort((a, b) => a - b);
-    // const code = codes[0];
-    // console.log("First unknown:", Shape.pp(code));
-    // console.log(Shape.toShape(code));
-    // console.log(Shape.graph(code));
-    // Shape.deconstruct(unknownShapes.get(code));
-
-    // Attempt to deconstruct
-    const doDecon = true;
-    if (doDecon) {
-      for (const [key, value] of unknownShapes) {
-        if (Shape.isInvalid(key)) {
-          console.log(Shape.pp(key), "INVALID");
-          console.log("");
-          unknownShapes.delete(key);
-          continue;
-        }
-        // TODO: The deconstructor should be able to determine this.
-        // const keyCode = Shape.keyCode(key);
-        // if (!Shape.isPossible(key)) {
-        //   console.log(Shape.pp(key), "IMPOSSIBLE");
-        //   console.log("");
-        //   unknownShapes.delete(key);
-        //   continue;
-        // }
-
-        let result = null;
-        result = Shape.deconstruct(value);
-        if (result != null) {
-          console.log(
-            "FOUND",
-            Shape.pp(result.code),
-            Shape.pp(result.build),
-            result.round,
-            result.order
-          );
-          knownShapes.set(key, result);
-          unknownShapes.delete(key);
-        } else {
-          console.log(Shape.pp(key), "NOT FOUND");
-        }
-        console.log("");
-      }
-    }
-
-    console.log("Knowns:", knownShapes.size);
-    console.log("Unknowns:", unknownShapes.size);
-    console.log(Shape.pp(Array.from(unknownShapes.keys())));
-
-    // Log known builds
-    console.log("Saving known builds");
-    let data = "";
-    for (const [key, value] of knownShapes) {
-      data += Shape.pp(key);
-      data += " ";
-      data += Shape.pp(value.build);
-      // data += " ";
-      // data += value.round;
-      // data += value.order.length;
-      data += " ";
-      data += value.order;
-      data += "\n";
-    }
-    Fileops.writeFile("data/known.txt", data);
-
-    // Log remaining unknowns
-    console.log("Saving chart of unknowns");
-    // for (const value of unknownShapes.values()) {
-    //   value.sflag = Shape.canStackBottom(value.code);
-    // }
-    const chart = Shape.chart(unknownShapes);
-    Fileops.writeFile("data/unknown.txt", chart);
-  }
-
-  /**
-   * Verify build - try stacking the results
-   * @param {object} data
-   * @returns {boolean}
-   */
-  static verifyBuild(data) {
-    const ORDERS = [
-      [],
-      ["0"],
-      ["01+"],
-      ["01+2+", "012++"],
-      ["01+2+3+", "0123+++", "01+23++", "012++3+"],
-      ["01+2+3+4+", "01234++++", "01+234+++", "012++34++"], // not used: 01+2+3+4+
-      [],
-      [],
-      [],
-      [],
-      [],
-    ];
-    const num = data.build.length;
-    let code;
-    for (const order of ORDERS[num]) {
-      code = Shape.stackOrder(data.build, order);
-      if (code == data.code) {
-        data.order = order;
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Stack in the given order
-   * @param {Array<number>} codes
-   * @param {string} order
-   * @returns {number}
-   */
-  static stackOrder(codes, order) {
-    const stack = [];
-    let code;
-    for (const i of order) {
-      if (i == "+") {
-        code = Shape.stackCode(stack.pop(), stack.pop());
-      } else {
-        code = codes[i];
-      }
-      stack.push(code);
-    }
-    const result = stack.pop();
-    // console.log("ORDER", order, Shape.pp(codes), Shape.pp(result));
-    return result;
-  }
-
-  /**
-   * Deconstruct
-   *
-   * Procedure
-   * 0> Add 5th layer if needed (original shape has 4 layers).
-   * Do the following until the shape is empty...
-   * 1> Look for 1-layer shape on the bottom.  If found, goto #4.
-   * - Layer above is empty or is being supported by bottom layer.
-   * 2> Look for half logos from bottom.  If found, goto #4.
-   * - Find largest half logo that is supporting a piece above it.
-   * - If not supporting, then find largest half logo.
-   * 3> Pick bottom layer.
-   * 4> Remove found piece from shape and add it to the build list.
-   * 5> If bottom layer is empty, shift other layers down.  Repeat #5.
-   *
-   * Note: Do not extend logo search into 5th layer.
-   *
-   * TODO: Use shape class object.
-   * TODO: Should 2-layer shapes be removed (since the solution is known)?
-   * TODO: Does this avoid branching / backtracking?
-   * TODO: Maybe a previously deconstructed shape can be reused if it found again?
-   * TODO: Smarter 5th layer.
-   * - Maybe only add when 4th layer has more than 1 corner?
-   * - Not needed for 1-layer stacked shapes.
-   * - Add it conditionally, or later in the process?
-   * - Or remove it later if not needed?
-   * TODO: Keep track of 5th layer (as it moves down).
-   * - Might be useful for determing the stacking order of hanging parts.
-   * TODO: Can 1-layer check and logo check be combined?
-   * - Use masks for all checks?
-   * TODO: Auto-detect impossible shapes.
-   * - Such as when the first found is extra.
-   * TODO: Determine the build order based on the order of the types found.
-   *
-   * @param {object} shape
-   * @returns {object?} { code: shapeCode, build: [] };
-   */
-  static deconstruct(shape) {
-    const shapeCode = shape.code;
-    if (shapeCode == 0) return;
-    const knownShapes = Shape.knownShapes;
-    if (knownShapes.has(shapeCode)) return;
-
-    console.log("Deconstruct");
-    console.log(Shape.toShape(shapeCode));
-    console.log(Shape.pp(shapeCode));
-    console.log(Shape.graph(shapeCode));
-
-    // Build the needed configs
-    const configs = [
-      { logos: Shape.LOGO_A, maskFunc: Shape.logoMaskX, max: 4 },
-      { logos: Shape.LOGO_A, maskFunc: Shape.logoMaskY, max: 3 },
-      { logos: Shape.LOGO_B, maskFunc: Shape.logoMaskX, max: 4 },
-      { logos: Shape.LOGO_B, maskFunc: Shape.logoMaskY, max: 3 },
-    ];
-
-    // call deconRound with each config
-    let result;
-    let num = 1;
-    for (const config of configs) {
-      console.log("ROUND", num);
-      result = Shape.deconRound(shape, config);
-      if (result != null) {
-        result.round = num;
-        break;
-      }
-      num++;
-    }
-    return result;
-  }
-
-  /**
-   * @param {object} shape
-   * @param {object} config
-   * @returns {object?}
-   */
-  static deconRound(shape, config) {
-    let code = shape.code;
-    if (code == 0) return;
-
-    const result = { code, build: [] };
-    const layers = Shape.toLayers(code);
-
-    // Add a 5th layer, if needed
-    if (layers.length == 4) {
-      code = 0xf0000 | code;
-    }
-
-    let foundShape;
-    const MAX_LOOPS = 5;
-    for (let loop = 0; loop < MAX_LOOPS; loop++) {
-      // console.log("Loop:", loop);
-      let foundCode = 0;
-      do {
-        // Look for layers
-        // TODO: if layers[1] is empty, just take the bottom layer.
-        // TODO: that is, no need to check if layers[1] is empty in canStackBottom().
-        if (Shape.canStackBottom(code)) {
-          foundCode = Shape.getBottomCode(code);
-          console.log("LAYER", Shape.pp(code), Shape.pp([foundCode]));
-          break;
-        }
-
-        // Look for logos
-        // Try size, then rotation
-        const logo = [];
-        for (let i = 0; i < 8; ++i) {
-          const maxLayer = Math.min(layers.length, config.max);
-          for (let layer = maxLayer; layer > 1; --layer) {
-            const value = config.logos[layer][i];
-            // TODO: Refactor this as a constant
-            const mask = config.maskFunc(value);
-            if (Shape.containsCode(code, mask, value)) logo.push(value);
-
-            // if (found.length > 0) break;
-          }
-        }
-        if (logo.length > 0) {
-          console.log(">LOGO", Shape.pp(logo));
-          foundCode = logo[0];
-          console.log("LOGO ", Shape.pp(code), Shape.pp([foundCode]));
-          break;
-        }
-
-        // if no layer or logo, then extract bottom layer
-        foundCode = Shape.getBottomCode(code);
-        console.log("EXTRA", Shape.pp(code), Shape.pp([foundCode]));
-      } while (false);
-
-      if (foundCode == 0) {
-        console.log("ERROR", Shape.pp(code));
-        break;
-      }
-
-      // extract found shape
-      code = Shape.removeCode(code, foundCode);
-      result.build.push(foundCode);
-
-      // Validate build
-      foundShape = Shape.verifyBuild(result);
-      if (foundShape) break;
-
-      // Check for empty layers and move down.
-      if (code == 0) break;
-      for (let i = 0; i < MAX_LOOPS; i++) {
-        const bottom = Shape.getBottomCode(code);
-        if (bottom != 0) break;
-        code = Shape.dropBottomCode(code);
-      }
-
-      // TODO: Check if remaining shape is already known.
-    }
-
-    if (!foundShape) return null;
-    return result;
   }
 
   /**

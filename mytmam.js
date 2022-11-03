@@ -105,12 +105,12 @@ export class MyTmam {
     // );
     // keyShapes.forEach((code) => unknownShapes.set(code, { code }));
 
-    // const complexShapes = possibleShapes.filter(
-    //   (code) => !Shape.canStackAll(code)
-    // );
-    // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    const complexShapes = possibleShapes.filter(
+      (code) => !Shape.canStackAll(code)
+    );
+    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
 
-    const testShapes = [0x1, 0x21, 0x31, 0x5a5a]; // basic test shapes
+    // const testShapes = [0x1, 0x21, 0x31, 0x5a5a]; // basic test shapes
     // const testShapes = [0x1634, 0x3422]; // 3-logo and fifth layer
     // const testShapes = [0x0178, 0x0361]; // hat and seat
     // const testShapes = [0x3343, 0x334a, 0x334b]; // stack order "10234++++"
@@ -120,8 +120,8 @@ export class MyTmam {
     // const testShapes = [0x17a4, 0x37a4]; // multiple solutions: strict logo (depending on search order) and seat joint
     // const testShapes = [0x4da1, 0x8e52]; // multiple solutions: strict logo (depending on search order) and seat joint
     // const testShapes = [0x167a]; // has 2 2-layer logos, but only 1 is needed - 167a [000a,0007,0012,0004] 0123+++
-    // const testShapes = [0x3422, 0x3423]; // unknowns for binz
-    testShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // const testShapes = [0x34a5, 0x35a4, 0x525a, 0x785a]; // slow for binz
+    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     console.log("Knowns:", knownShapes.size);
     console.log("Unknowns:", unknownShapes.size);
@@ -168,6 +168,19 @@ export class MyTmam {
     const chart = Shape.chart(unknownShapes);
     Fileops.writeFile("data/unknown.txt", chart);
     console.log("");
+
+    console.log("Saving stats");
+    let statData = "";
+    for (let code = 0; code <= 0xffff; ++code) {
+      let logos = MyTmam.stats.logos[code];
+      let work = MyTmam.stats.counts[code];
+      if (!work) continue;
+      if (work <= 1024) continue;
+      let line = `${Shape.pp(code)} ${logos} ${work}`;
+      statData += line;
+      statData += "\n";
+    }
+    Fileops.writeFile("data/stats.txt", statData);
 
     console.log("Stats");
     const maxLogos = MyTmam.stats.logos.reduce((a, v) => Math.max(a, v));
@@ -592,6 +605,22 @@ export class MyTmam {
     return result;
   }
 
+  // Reduce set of logos (needs work)
+  // - need to skip no logo cases (execept first case)
+  // - need to skip more than 4 logos
+  // - need to skip overlappig logos
+
+  // const logosets = [
+  //   [],
+  //   allLogos[0],
+  //   allLogos[1],
+  //   allLogos[2],
+  //   allLogos[3],
+  //   [allLogos[0], allLogos[2]].flat(),
+  //   [allLogos[1], allLogos[3]].flat(),
+  // ];
+  // allLogos = allLogos.flat();
+
   /**
    * Deconstructor - binz method
    * @param {number} shape
@@ -603,55 +632,36 @@ export class MyTmam {
     console.log(Shape.pp(targetShape));
     console.log(Shape.graph(targetShape));
 
-    // const layers = Shape.toLayers(targetShape);
-
     // Find all logos
-    // TODO: include both strict and "seated" logos
     let allLogos = MyTmam.findAllLogos(targetShape);
     console.log(">LOGO", Shape.pp(allLogos));
     const numLogos = allLogos.length;
     console.log(">>NUM", numLogos);
-
-    // Reduce set of logos (needs work)
-    // - need to skip no logo cases (execept first case)
-    // - need to skip more than 4 logos
-    // - need to skip overlappig logos
-
-    // const logosets = [
-    //   [],
-    //   allLogos[0],
-    //   allLogos[1],
-    //   allLogos[2],
-    //   allLogos[3],
-    //   [allLogos[0], allLogos[2]].flat(),
-    //   [allLogos[1], allLogos[3]].flat(),
-    // ];
-    // allLogos = allLogos.flat();
 
     const layers = Shape.toLayers(targetShape);
     const revLogos = allLogos.slice().reverse();
     const numSets = 1 << numLogos;
 
     const partList = [];
+    const set1 = [];
+    const set2 = [];
     let found = false;
     let count = 0;
-    let bin, set1, set2;
-    let shape, flats, result;
+    let bin, shape, flats, result;
 
     for (let i = 0; i < numSets; ++i) {
       // generate logo sets
       bin = i.toString(2).padStart(numLogos, "0");
-      set1 = [];
-      set2 = [];
+      set1.length = 0;
+      set2.length = 0;
       for (let j = 0; j < numLogos; ++j) {
         if (bin[j] == 1) {
           set1.push(revLogos[j]);
           set2.push(allLogos[j]);
         }
       }
-      const logoSets = [set1, set2];
 
-      for (const logos of logoSets) {
+      for (const logos of [set1, set2]) {
         // console.log("LOGOS", Shape.pp(logos));
         // delete logos from layers
         shape = targetShape;

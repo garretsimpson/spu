@@ -860,3 +860,99 @@ Total work: 17 of 33554444
 
 - Now finds 5a5a in 12 instead of 20513.
 - Need to test all shapes.
+
+- test all key shapes
+
+Knowns: 6691
+Unknowns: 0
+[]
+
+Saving known builds
+Saving chart of unknowns
+
+Stats
+Max work: 8195
+Max logos: 24
+Total work: 60698 of 1358667674
+
+- All solutions to key shapes found.
+- Average work is 60698 / 6691 = 9.07
+- TODO: investigate stacking orders - how many are used?
+- Worst case is 8195 - need to find it.
+
+125a 11 1028
+16d2 10 523
+1a56 13 522
+1afa 18 513
+1e5a 18 523
+1e5b 18 513
+1e5e 18 513
+1e5f 18 513
+1ebe 18 513
+34a5 11 2051
+35a4 13 2052
+525a 14 8195
+725a 14 515
+785a 14 2052
+f1a5 14 521
+
+- Complex shapes (require a half-logo)
+
+Knowns: 20320
+Unknowns: 0
+[]
+
+Saving known builds
+Saving chart of unknowns
+
+Saving stats
+Stats
+Max work: 8195
+Max logos: 24
+Total work: 326431 of 2124015874
+
+- Average work 326431 / 20320 = 16.06
+
+- Shapes that take >1024 iters to solve...
+125a 11 1028
+21a5 11 1028
+24a5 11 2051
+25a9 13 1030
+25ac 13 1030
+34a5 11 2051
+35a4 13 2052
+425a 11 2051
+525a 14 8195
+585a 14 2052
+61a5 11 1028
+65a1 13 1028
+785a 14 2052
+925a 11 1028
+9a52 13 1028
+a1a5 14 4102
+a4a5 14 2054
+b4a5 14 2054
+c25a 11 2051
+ca52 13 2052
+d25a 14 8195
+e1a5 14 4102
+
+I wrote a software simulator of Binz' BUSTTMAM.  It simulates the component that finds half-logos, iterates over all combinations of them, and verifies the solution by trying various stacking orders.  It does not simulate the flat-stacker or "fast-lane" components.
+
+The good news is that this part of Binz' TMAM can find solutions to all possible shapes.  And for most shapes, it is very fast.  On average, it takes only 16 iterations to find a solution.
+
+However, there are a few shapes that much longer to find a solution.  There are 22 shapes that take more than 2^10 (1024) iterations.  For example...
+
+Deconstruct
+--Rr--Rr:Rg--Rg--:--Rb----:Ry--Ry--
+525a
+- - - -
+X - X -
+- X - -
+X - X -
+- X - X
+
+>LOGO [0018,0048,0042,0012,0240,0210,4200,1200,0242,0212,4240,1210,4242,1212]
+>>NUM 14
+STATS 8195 of 32768
+FOUND 525a [4242,0018,0001,000f] 01+23++

@@ -571,7 +571,7 @@ export class Shape {
     let value;
     for (let i = 0; i < 4; ++i) {
       value = code & 0xf;
-      if (value == 0) break;
+      // if (value == 0) break;
       result.push(value);
       code >>>= 4;
     }

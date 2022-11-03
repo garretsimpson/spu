@@ -11,6 +11,8 @@ import { Shape } from "./shape.js";
 import { Fileops } from "./fileops.js";
 
 export class MyTmam {
+  static stats = { counts: [0], logos: [0] };
+
   static init() {
     MyTmam.makeLogos();
   }
@@ -82,7 +84,7 @@ export class MyTmam {
     let result;
     for (const value of values) {
       result = MyTmam.bottomLayerNum(value);
-      console.log("bottomLayerNum:", Shape.pp(value), result);
+      console.log(`bottomLayerNum(${Shape.pp(value)}) returns ${result}`);
     }
   }
 
@@ -98,17 +100,17 @@ export class MyTmam {
     }
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
 
-    const keyShapes = possibleShapes.filter(
-      (code) => Shape.keyCode(code) == code
-    );
-    keyShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // const keyShapes = possibleShapes.filter(
+    //   (code) => Shape.keyCode(code) == code
+    // );
+    // keyShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     // const complexShapes = possibleShapes.filter(
     //   (code) => !Shape.canStackAll(code)
     // );
     // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
 
-    // const testShapes = [0x1, 0x21, 0x31, 0x5a5a]; // basic test shapes
+    const testShapes = [0x1, 0x21, 0x31, 0x5a5a]; // basic test shapes
     // const testShapes = [0x1634, 0x3422]; // 3-logo and fifth layer
     // const testShapes = [0x0178, 0x0361]; // hat and seat
     // const testShapes = [0x3343, 0x334a, 0x334b]; // stack order "10234++++"
@@ -118,8 +120,8 @@ export class MyTmam {
     // const testShapes = [0x17a4, 0x37a4]; // multiple solutions: strict logo (depending on search order) and seat joint
     // const testShapes = [0x4da1, 0x8e52]; // multiple solutions: strict logo (depending on search order) and seat joint
     // const testShapes = [0x167a]; // has 2 2-layer logos, but only 1 is needed - 167a [000a,0007,0012,0004] 0123+++
-    // const testShapes = [0x0163, 0x03c6, 0x1163, 0x1165]; // unknowns for binz
-    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // const testShapes = [0x3422, 0x3423]; // unknowns for binz
+    testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     console.log("Knowns:", knownShapes.size);
     console.log("Unknowns:", unknownShapes.size);
@@ -165,6 +167,18 @@ export class MyTmam {
     console.log("Saving chart of unknowns");
     const chart = Shape.chart(unknownShapes);
     Fileops.writeFile("data/unknown.txt", chart);
+    console.log("");
+
+    console.log("Stats");
+    const maxLogos = MyTmam.stats.logos.reduce((a, v) => Math.max(a, v));
+    const maxWork = MyTmam.stats.counts.reduce((a, v) => Math.max(a, v));
+    const totalWork = MyTmam.stats.logos
+      .map((v) => 2 << v) // 2 for 2 directions
+      .reduce((a, v) => a + v);
+    const work = MyTmam.stats.counts.reduce((a, v) => a + v);
+    console.log("Max work:", maxWork);
+    console.log("Max logos:", maxLogos);
+    console.log("Total work:", `${work} of ${totalWork}`);
   }
 
   /**
@@ -378,28 +392,25 @@ export class MyTmam {
 
   /**
    * Find half-logo parts from all positions.
-   * Don't return two logos when they appear in the same position.
+   * Don't return the logos when they appear in the same position.
    * @param {number} shape
    * @returns {Array<Array<number>>}
    */
   static findAllLogos(shape) {
     const LOGOS = MyTmam.LOGOS_X;
     const result = [];
-    const found = [];
-    for (const pos of [0, 1, 2, 3]) {
-      result[pos] = [];
-      found.length = 0;
-      for (const size of [4, 3, 2]) {
-        for (let off = 4 - size; off >= 0; --off) {
+    for (const size of [2, 3, 4]) {
+      for (let off = 0; off <= 4 - size; ++off) {
+        // Use position order NWSE [3, 2, 1, 0] from Binz' TMAM
+        for (const pos of [3, 2, 1, 0]) {
           for (let { logo, mask } of LOGOS[pos][size]) {
             mask <<= 4 * off;
             if ((shape & mask) == mask) break;
             logo <<= 4 * off;
-            if ((shape & logo) == logo) found.push(logo);
+            if ((shape & logo) == logo) result.push(logo);
           }
         }
       }
-      result[pos].push(...found);
     }
     return result;
   }
@@ -598,9 +609,14 @@ export class MyTmam {
     // TODO: include both strict and "seated" logos
     let allLogos = MyTmam.findAllLogos(targetShape);
     console.log(">LOGO", Shape.pp(allLogos));
+    const numLogos = allLogos.length;
+    console.log(">>NUM", numLogos);
 
     // Reduce set of logos (needs work)
-    // need to skip no logo cases (execept first case)
+    // - need to skip no logo cases (execept first case)
+    // - need to skip more than 4 logos
+    // - need to skip overlappig logos
+
     // const logosets = [
     //   [],
     //   allLogos[0],
@@ -610,68 +626,76 @@ export class MyTmam {
     //   [allLogos[0], allLogos[2]].flat(),
     //   [allLogos[1], allLogos[3]].flat(),
     // ];
-    allLogos = allLogos.flat();
-    const numLogos = allLogos.length;
+    // allLogos = allLogos.flat();
+
+    const layers = Shape.toLayers(targetShape);
+    const revLogos = allLogos.slice().reverse();
     const numSets = 1 << numLogos;
-    console.log("STATS", numLogos, numSets);
 
-    const logoSets = [];
-    let bin, set;
-    for (let i = 0; i < numSets; ++i) {
-      bin = i.toString(2).padStart(numLogos, "0");
-      set = [];
-      for (let j = 0; j < numLogos; ++j) {
-        if (bin[j] == 1) {
-          set.push(allLogos[j]);
-        }
-      }
-      logoSets[i] = set;
-    }
-    // console.log(">SETS", Shape.pp(logoSets));
-
-    let shape,
-      flats,
-      count = 0,
-      result;
     const partList = [];
     let found = false;
+    let count = 0;
+    let bin, set1, set2;
+    let shape, flats, result;
 
-    // for each combination of logos
-    for (const logos of logoSets) {
-      count++;
-      // console.log("LOGOS", Shape.pp(logos));
-      // delete logos from layers
-      shape = targetShape;
-      for (const logo of logos) {
-        shape = MyTmam.deletePart(shape, logo);
-        // console.log("SHAPE", Shape.pp(shape));
-      }
-      flats = Shape.toLayers(shape);
-      // console.log("FLATS", Shape.pp(flats));
-      // arrange layers (needs work)
-      // for each layer (starting with bottom),
-      // - add flat for that layer (if any)
-      // - add logos that have a bottom in that layer (if any)
-      partList.length = 0;
-      for (let i of [0, 1, 2, 3]) {
-        flats[i] && partList.push(flats[i]);
-        for (const logo of logos) {
-          const num = MyTmam.bottomLayerNum(logo);
-          if (num == i) {
-            partList.push(MyTmam.dropLayers(logo, num));
-          }
+    for (let i = 0; i < numSets; ++i) {
+      // generate logo sets
+      bin = i.toString(2).padStart(numLogos, "0");
+      set1 = [];
+      set2 = [];
+      for (let j = 0; j < numLogos; ++j) {
+        if (bin[j] == 1) {
+          set1.push(revLogos[j]);
+          set2.push(allLogos[j]);
         }
       }
-      // console.log("PARTS", Shape.pp(partList));
-      // add fifth layer if needed
-      // try stacking
-      result = { code: targetShape, build: partList };
-      found = MyTmam.tryBuild(result);
-      // console.log("");
+      const logoSets = [set1, set2];
+
+      for (const logos of logoSets) {
+        // console.log("LOGOS", Shape.pp(logos));
+        // delete logos from layers
+        shape = targetShape;
+        for (const logo of logos) {
+          shape = MyTmam.deletePart(shape, logo);
+        }
+        flats = Shape.toLayers(shape);
+        // console.log("FLATS", Shape.pp(flats));
+
+        // arrange layers (needs work)
+        // for each layer (starting with bottom),
+        // - add flat for that layer (if any)
+        // - add logos that have a bottom in that layer (if any)
+        partList.length = 0;
+        for (let i of [0, 1, 2, 3]) {
+          flats[i] && partList.push(flats[i]);
+          for (const logo of logos) {
+            const num = MyTmam.bottomLayerNum(logo);
+            if (num == i) {
+              partList.push(MyTmam.dropLayers(logo, num));
+            }
+          }
+        }
+        // add fifth layer if needed
+        if (layers.length == 4) {
+          partList.push(...Shape.FLAT_4);
+        }
+        // console.log("PARTS", Shape.pp(partList));
+
+        // try stacking
+        count++;
+        result = { code: targetShape, build: partList };
+        found = MyTmam.tryBuild(result);
+        // console.log("");
+
+        if (found) break;
+      }
       if (found) break;
     }
     if (!found) result = null;
-    console.log("STATS", count, numSets);
+
+    MyTmam.stats.logos[targetShape] = numLogos;
+    MyTmam.stats.counts[targetShape] = count;
+    console.log("STATS", `${count} of ${2 * numSets}`);
 
     return result;
   }

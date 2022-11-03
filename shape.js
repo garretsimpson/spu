@@ -570,8 +570,8 @@ export class Shape {
     let result = [];
     let value;
     for (let i = 0; i < 4; ++i) {
+      if (code == 0) break;
       value = code & 0xf;
-      // if (value == 0) break;
       result.push(value);
       code >>>= 4;
     }
@@ -781,6 +781,7 @@ export class Shape {
       ["layerCount", [0x000f], 1],
       ["layerCount", [0xffff], 4],
       ["toLayers", [0x0001], [0x0001]],
+      ["toLayers", [0x0120], [0x0000, 0x0002, 0x0001]],
       ["toLayers", [0xabcd], [0x000d, 0x000c, 0x000b, 0x000a]],
       ["isInvalid", [0x0000], true],
       ["isInvalid", [0x0001], false],

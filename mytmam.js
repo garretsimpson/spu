@@ -118,7 +118,7 @@ export class MyTmam {
     // const testShapes = [0x17a4, 0x37a4]; // multiple solutions: strict logo (depending on search order) and seat joint
     // const testShapes = [0x4da1, 0x8e52]; // multiple solutions: strict logo (depending on search order) and seat joint
     // const testShapes = [0x167a]; // has 2 2-layer logos, but only 1 is needed - 167a [000a,0007,0012,0004] 0123+++
-    const testShapes = [0x0138, 0x0178, 0x0361, 0x03d2]; // unknowns for binz
+    const testShapes = [0x0163, 0x03c6, 0x1163, 0x1165]; // unknowns for binz
     testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     console.log("Knowns:", knownShapes.size);
@@ -395,7 +395,7 @@ export class MyTmam {
           for (let { logo, mask } of LOGOS[pos][size]) {
             mask <<= 4 * off;
             logo <<= 4 * off;
-            if ((shape & mask) == logo) found.push(logo);
+            if ((shape & logo) == logo) found.push(logo);
           }
         }
         if (found.length > 0) {
@@ -566,30 +566,49 @@ export class MyTmam {
     console.log(Shape.pp(targetShape));
     console.log(Shape.graph(targetShape));
 
-    let shape, flats, floats, result, num;
-    const partList = [];
-    let found = false;
-    const layers = Shape.toLayers(targetShape);
+    // const layers = Shape.toLayers(targetShape);
 
     // Find all logos
     // TODO: include both strict and "seated" logos
-    const allLogos = MyTmam.findAllLogos(targetShape);
+    let allLogos = MyTmam.findAllLogos(targetShape);
     console.log(">LOGO", Shape.pp(allLogos));
 
     // Reduce set of logos (needs work)
     // need to skip no logo cases (execept first case)
-    const logosets = [
-      [],
-      allLogos[0],
-      allLogos[1],
-      allLogos[2],
-      allLogos[3],
-      [allLogos[0], allLogos[2]].flat(),
-      [allLogos[1], allLogos[3]].flat(),
-    ];
+    // const logosets = [
+    //   [],
+    //   allLogos[0],
+    //   allLogos[1],
+    //   allLogos[2],
+    //   allLogos[3],
+    //   [allLogos[0], allLogos[2]].flat(),
+    //   [allLogos[1], allLogos[3]].flat(),
+    // ];
+    allLogos = allLogos.flat();
+    const numLogos = allLogos.length;
+    const numSets = 1 << numLogos;
+    console.log("> NUM", numLogos);
+
+    const logoSets = [];
+    let bin, set;
+    for (let i = 0; i < numSets; ++i) {
+      bin = i.toString(2).padStart(numLogos, "0");
+      set = [];
+      for (let j = 0; j < numLogos; ++j) {
+        if (bin[j] == 1) {
+          set.push(allLogos[j]);
+        }
+      }
+      logoSets[i] = set;
+    }
+    console.log(">SETS", Shape.pp(logoSets));
+
+    let shape, flats, result;
+    const partList = [];
+    let found = false;
 
     // for each combination of logos
-    for (const logos of logosets) {
+    for (const logos of logoSets) {
       console.log("LOGOS", Shape.pp(logos));
       // delete logos from layers
       shape = targetShape;
@@ -607,7 +626,7 @@ export class MyTmam {
       for (let i of [0, 1, 2, 3]) {
         flats[i] && partList.push(flats[i]);
         for (const logo of logos) {
-          num = MyTmam.bottomLayerNum(logo);
+          const num = MyTmam.bottomLayerNum(logo);
           if (num == i) {
             partList.push(MyTmam.dropLayers(logo, num));
           }

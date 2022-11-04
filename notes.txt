@@ -956,3 +956,42 @@ X - X -
 >>NUM 14
 STATS 8195 of 32768
 FOUND 525a [4242,0018,0001,000f] 01+23++
+
+Knowns: 20320
+Unknowns: 0
+[]
+
+Saving known builds
+Saving chart of unknowns
+
+Saving stats
+Stats
+Max logos: 24
+Max iters: 285
+Total iters: 236628 of 13849796
+
+- Average iters 236628/20320 = 11.65
+
+1e5a 18 283
+2da5 18 279
+4b5a 18 285
+87a5 18 283
+
+I implemented a new iterator that uses hammingCombos() and it works much better.
+         total   ave   max
+binary   326431  16.1  8195
+hamming  236628  11.6   285
+
+Deconstruct
+--Rr--Rr:Rg--Rg--:RbRb--Rb:----Ry--
+4b5a
+- - - -
+- - X -
+X X - X
+X - X -
+- X - X
+
+>LOGO [0018,0048,0042,0012,0810,0840,0240,0210,4800,4200,0818,0848,0242,0212,4840,4240,4848,4242]
+>>NUM 18
+STATS 285 of 8096
+FOUND 4b5a [4848,0012,0003,000f] 012++3+

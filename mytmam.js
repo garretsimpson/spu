@@ -11,7 +11,7 @@ import { Shape } from "./shape.js";
 import { Fileops } from "./fileops.js";
 
 export class MyTmam {
-  static stats = { counts: [0], logos: [0] };
+  static stats = { combos: [0], iters: [0], logos: [0] };
 
   static init() {
     MyTmam.makeLogos();
@@ -77,121 +77,6 @@ export class MyTmam {
       codes[pos] = values;
     }
     return codes;
-  }
-
-  static test() {
-    const values = [0, 0x0001, 0x0012, 0x0120, 0x1200];
-    let result;
-    for (const value of values) {
-      result = MyTmam.bottomLayerNum(value);
-      console.log(`bottomLayerNum(${Shape.pp(value)}) returns ${result}`);
-    }
-  }
-
-  static run() {
-    const knownShapes = new Map();
-    const unknownShapes = new Map();
-
-    Shape.init();
-    MyTmam.init();
-    const possibleShapes = [];
-    for (let code = 0; code <= 0xffff; ++code) {
-      if (Shape.isPossible(code)) possibleShapes.push(code);
-    }
-    // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
-
-    // const keyShapes = possibleShapes.filter(
-    //   (code) => Shape.keyCode(code) == code
-    // );
-    // keyShapes.forEach((code) => unknownShapes.set(code, { code }));
-
-    const complexShapes = possibleShapes.filter(
-      (code) => !Shape.canStackAll(code)
-    );
-    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
-
-    // const testShapes = [0x1, 0x21, 0x31, 0x5a5a]; // basic test shapes
-    // const testShapes = [0x1634, 0x3422]; // 3-logo and fifth layer
-    // const testShapes = [0x0178, 0x0361]; // hat and seat
-    // const testShapes = [0x3343, 0x334a, 0x334b]; // stack order "10234++++"
-    // const testShapes = [0x1625, 0x1629, 0x162c, 0x162d]; // stack order "10324++++"
-    // const testShapes = [0x3425, 0x342c, 0x342d, 0x343c, 0x34a5, 0x35a1]; // stack order?
-    // const testShapes = [0x0361, 0x1361, 0x1634, 0x1b61, 0x36c2]; // seat joint
-    // const testShapes = [0x17a4, 0x37a4]; // multiple solutions: strict logo (depending on search order) and seat joint
-    // const testShapes = [0x4da1, 0x8e52]; // multiple solutions: strict logo (depending on search order) and seat joint
-    // const testShapes = [0x167a]; // has 2 2-layer logos, but only 1 is needed - 167a [000a,0007,0012,0004] 0123+++
-    // const testShapes = [0x34a5, 0x35a4, 0x525a, 0x785a]; // slow for binz
-    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
-
-    console.log("Knowns:", knownShapes.size);
-    console.log("Unknowns:", unknownShapes.size);
-    console.log("");
-
-    let result;
-    for (let code of Array.from(unknownShapes.keys())) {
-      result = MyTmam.deconstruct2(code);
-      if (!result) {
-        console.log("NOT FOUND", Shape.pp(code));
-      } else {
-        console.log(
-          "FOUND",
-          Shape.pp(code),
-          Shape.pp(result.build),
-          result.order
-        );
-        knownShapes.set(code, result);
-        unknownShapes.delete(code);
-      }
-      console.log("");
-    }
-
-    console.log("Knowns:", knownShapes.size);
-    console.log("Unknowns:", unknownShapes.size);
-    console.log(Shape.pp(Array.from(unknownShapes.keys())));
-    console.log("");
-
-    // Log known builds
-    console.log("Saving known builds");
-    let data = "";
-    for (const [key, value] of knownShapes) {
-      data += Shape.pp(key);
-      data += " ";
-      data += Shape.pp(value.build);
-      data += " ";
-      data += value.order;
-      data += "\n";
-    }
-    Fileops.writeFile("data/known.txt", data);
-
-    // Log remaining unknowns
-    console.log("Saving chart of unknowns");
-    const chart = Shape.chart(unknownShapes);
-    Fileops.writeFile("data/unknown.txt", chart);
-    console.log("");
-
-    console.log("Saving stats");
-    let statData = "";
-    for (let code = 0; code <= 0xffff; ++code) {
-      let logos = MyTmam.stats.logos[code];
-      let work = MyTmam.stats.counts[code];
-      if (!work) continue;
-      if (work <= 1024) continue;
-      let line = `${Shape.pp(code)} ${logos} ${work}`;
-      statData += line;
-      statData += "\n";
-    }
-    Fileops.writeFile("data/stats.txt", statData);
-
-    console.log("Stats");
-    const maxLogos = MyTmam.stats.logos.reduce((a, v) => Math.max(a, v));
-    const maxWork = MyTmam.stats.counts.reduce((a, v) => Math.max(a, v));
-    const totalWork = MyTmam.stats.logos
-      .map((v) => 2 << v) // 2 for 2 directions
-      .reduce((a, v) => a + v);
-    const work = MyTmam.stats.counts.reduce((a, v) => a + v);
-    console.log("Max work:", maxWork);
-    console.log("Max logos:", maxLogos);
-    console.log("Total work:", `${work} of ${totalWork}`);
   }
 
   /**
@@ -458,6 +343,80 @@ export class MyTmam {
     return result;
   }
 
+  static hammingCombos(max, bits, sum = 0, ret = []) {
+    --bits;
+    for (let pos = bits; pos < max; ++pos) {
+      const value = sum | (1 << pos);
+      if (bits) {
+        MyTmam.hammingCombos(pos, bits, value, ret);
+      } else {
+        ret.push(value);
+      }
+    }
+    return ret;
+  }
+
+  /**
+   * Verify build - try stacking the results
+   * @param {object} data {code: number, build: Array<number>}
+   * @returns {boolean}
+   */
+  static tryBuild(data) {
+    const ORDERS0 = [
+      [],
+      ["0"],
+      ["01+"],
+      ["012++", "102++"],
+      ["0123+++", "0213+++", "1023+++", "1032+++"],
+      ["01234++++", "01324++++", "02134++++", "10234++++", "10324++++"],
+    ];
+    const ORDERS1 = [
+      [],
+      ["0"],
+      ["01+"],
+      ["012++", "01+2+"], // both are needed
+      ["0123+++", "012++3+", "01+23++"], // not used: 01+2+3+
+      ["01234++++", "012++34++", "01+234+++"], // not used: 01+2+3+4+
+    ];
+    const ORDERS = ORDERS1;
+    const num = data.build.length;
+    if (num >= ORDERS.length) {
+      // console.error("too many parts");
+      return false;
+    }
+    let code;
+    for (const order of ORDERS[num]) {
+      code = MyTmam.stackOrder(data.build, order);
+      if (code == data.code) {
+        data.order = order;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Stack in the given order
+   * @param {Array<number>} codes
+   * @param {string} order
+   * @returns {number}
+   */
+  static stackOrder(codes, order) {
+    const stack = [];
+    let code;
+    for (const i of order) {
+      if (i == "+") {
+        code = Shape.stackCode(stack.pop(), stack.pop());
+      } else {
+        code = codes[i];
+      }
+      stack.push(code);
+    }
+    const result = stack.pop();
+    // console.log("ORDER", order, Shape.pp(codes), Shape.pp(result));
+    return result;
+  }
+
   /**
    * Deconstructor - prof ninja method
    * @param {number} shape
@@ -621,6 +580,19 @@ export class MyTmam {
   // ];
   // allLogos = allLogos.flat();
 
+  // const numSets = 1 << numLogos;
+  // for (let i = 0; i < numSets; ++i) {
+  //   // generate logo sets
+  //   bin = i.toString(2).padStart(numLogos, "0");
+  //   set1.length = 0;
+  //   set2.length = 0;
+  //   for (let j = 0; j < numLogos; ++j) {
+  //     if (bin[j] == 1) {
+  //       set1.push(revLogos[j]);
+  //       set2.push(allLogos[j]);
+  //     }
+  //   }
+
   /**
    * Deconstructor - binz method
    * @param {number} shape
@@ -640,18 +612,24 @@ export class MyTmam {
 
     const layers = Shape.toLayers(targetShape);
     const revLogos = allLogos.slice().reverse();
-    const numSets = 1 << numLogos;
 
     const partList = [];
     const set1 = [];
     const set2 = [];
     let found = false;
-    let count = 0;
+    let iters = 0;
     let bin, shape, flats, result;
 
-    for (let i = 0; i < numSets; ++i) {
+    // const numCombos = 1 << numLogos;
+    let combos = [0];
+    for (let i = 1; i < 5; ++i) {
+      combos.push(...MyTmam.hammingCombos(numLogos, i));
+    }
+    const numCombos = combos.length;
+    for (let i = 0; i < numCombos; ++i) {
       // generate logo sets
-      bin = i.toString(2).padStart(numLogos, "0");
+      // bin = i.toString(2).padStart(numLogos, "0");
+      bin = combos[i].toString(2).padStart(numLogos, "0");
       set1.length = 0;
       set2.length = 0;
       for (let j = 0; j < numLogos; ++j) {
@@ -692,7 +670,7 @@ export class MyTmam {
         // console.log("PARTS", Shape.pp(partList));
 
         // try stacking
-        count++;
+        iters++;
         result = { code: targetShape, build: partList };
         found = MyTmam.tryBuild(result);
         // console.log("");
@@ -704,8 +682,9 @@ export class MyTmam {
     if (!found) result = null;
 
     MyTmam.stats.logos[targetShape] = numLogos;
-    MyTmam.stats.counts[targetShape] = count;
-    console.log("STATS", `${count} of ${2 * numSets}`);
+    MyTmam.stats.iters[targetShape] = iters;
+    MyTmam.stats.combos[targetShape] = 2 * numCombos;
+    console.log("STATS", `${iters} of ${2 * numCombos}`);
 
     return result;
   }
@@ -726,64 +705,127 @@ export class MyTmam {
     }
   }
 
-  /**
-   * Verify build - try stacking the results
-   * @param {object} data {code: number, build: Array<number>}
-   * @returns {boolean}
-   */
-  static tryBuild(data) {
-    const ORDERS0 = [
-      [],
-      ["0"],
-      ["01+"],
-      ["012++", "102++"],
-      ["0123+++", "0213+++", "1023+++", "1032+++"],
-      ["01234++++", "01324++++", "02134++++", "10234++++", "10324++++"],
-    ];
-    const ORDERS1 = [
-      [],
-      ["0"],
-      ["01+"],
-      ["012++", "01+2+"], // both are needed
-      ["0123+++", "012++3+", "01+23++"], // not used: 01+2+3+
-      ["01234++++", "012++34++", "01+234+++"], // not used: 01+2+3+4+
-    ];
-    const ORDERS = ORDERS1;
-    const num = data.build.length;
-    if (num >= ORDERS.length) {
-      // console.error("too many parts");
-      return false;
+  static test() {
+    const values = [0, 0x0001, 0x0012, 0x0120, 0x1200];
+    let result;
+    for (const value of values) {
+      result = MyTmam.bottomLayerNum(value);
+      console.log(`bottomLayerNum(${Shape.pp(value)}) returns ${result}`);
     }
-    let code;
-    for (const order of ORDERS[num]) {
-      code = MyTmam.stackOrder(data.build, order);
-      if (code == data.code) {
-        data.order = order;
-        return true;
-      }
+
+    const size = 8;
+    const bits = 4;
+    const a = MyTmam.hammingCombos(size, bits);
+    console.log(
+      `hammingCombos(${size}, ${bits}) returns ${a.length} ${Shape.pp(a)}`
+    );
+    for (let i = 0; i < a.length; ++i) {
+      console.log(a[i].toString(2).padStart(size, "0"));
     }
-    return false;
   }
 
-  /**
-   * Stack in the given order
-   * @param {Array<number>} codes
-   * @param {string} order
-   * @returns {number}
-   */
-  static stackOrder(codes, order) {
-    const stack = [];
-    let code;
-    for (const i of order) {
-      if (i == "+") {
-        code = Shape.stackCode(stack.pop(), stack.pop());
-      } else {
-        code = codes[i];
-      }
-      stack.push(code);
+  static run() {
+    const knownShapes = new Map();
+    const unknownShapes = new Map();
+
+    Shape.init();
+    MyTmam.init();
+    const possibleShapes = [];
+    for (let code = 0; code <= 0xffff; ++code) {
+      if (Shape.isPossible(code)) possibleShapes.push(code);
     }
-    const result = stack.pop();
-    // console.log("ORDER", order, Shape.pp(codes), Shape.pp(result));
-    return result;
+    // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
+
+    // const keyShapes = possibleShapes.filter(
+    //   (code) => Shape.keyCode(code) == code
+    // );
+    // keyShapes.forEach((code) => unknownShapes.set(code, { code }));
+
+    const complexShapes = possibleShapes.filter(
+      (code) => !Shape.canStackAll(code)
+    );
+    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+
+    // const testShapes = [0x1, 0x21, 0x31, 0x5a5a]; // basic test shapes
+    // const testShapes = [0x1634, 0x3422]; // 3-logo and fifth layer
+    // const testShapes = [0x0178, 0x0361]; // hat and seat
+    // const testShapes = [0x3343, 0x334a, 0x334b]; // stack order "10234++++"
+    // const testShapes = [0x1625, 0x1629, 0x162c, 0x162d]; // stack order "10324++++"
+    // const testShapes = [0x3425, 0x342c, 0x342d, 0x343c, 0x34a5, 0x35a1]; // stack order?
+    // const testShapes = [0x0361, 0x1361, 0x1634, 0x1b61, 0x36c2]; // seat joint
+    // const testShapes = [0x17a4, 0x37a4]; // multiple solutions: strict logo (depending on search order) and seat joint
+    // const testShapes = [0x4da1, 0x8e52]; // multiple solutions: strict logo (depending on search order) and seat joint
+    // const testShapes = [0x167a]; // has 2 2-layer logos, but only 1 is needed - 167a [000a,0007,0012,0004] 0123+++
+    // const testShapes = [0x34a5, 0x35a4, 0x525a, 0x785a]; // slow for binz binary combos
+    // const testShapes = [0x1e5a, 0x2da5, 0x4b5a, 0x87a5]; // slow for binz hamming combos
+    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
+
+    console.log("Knowns:", knownShapes.size);
+    console.log("Unknowns:", unknownShapes.size);
+    console.log("");
+
+    let result;
+    for (let code of Array.from(unknownShapes.keys())) {
+      result = MyTmam.deconstruct2(code);
+      if (!result) {
+        console.log("NOT FOUND", Shape.pp(code));
+      } else {
+        console.log(
+          "FOUND",
+          Shape.pp(code),
+          Shape.pp(result.build),
+          result.order
+        );
+        knownShapes.set(code, result);
+        unknownShapes.delete(code);
+      }
+      console.log("");
+    }
+
+    console.log("Knowns:", knownShapes.size);
+    console.log("Unknowns:", unknownShapes.size);
+    console.log(Shape.pp(Array.from(unknownShapes.keys())));
+    console.log("");
+
+    // Log known builds
+    console.log("Saving known builds");
+    let data = "";
+    for (const [key, value] of knownShapes) {
+      data += Shape.pp(key);
+      data += " ";
+      data += Shape.pp(value.build);
+      data += " ";
+      data += value.order;
+      data += "\n";
+    }
+    Fileops.writeFile("data/known.txt", data);
+
+    // Log remaining unknowns
+    console.log("Saving chart of unknowns");
+    const chart = Shape.chart(unknownShapes);
+    Fileops.writeFile("data/unknown.txt", chart);
+    console.log("");
+
+    console.log("Saving stats");
+    let statData = "";
+    for (let code = 0; code <= 0xffff; ++code) {
+      let logos = MyTmam.stats.logos[code];
+      let iters = MyTmam.stats.iters[code];
+      if (!iters) continue;
+      if (iters <= 256) continue;
+      let line = `${Shape.pp(code)} ${logos} ${iters}`;
+      statData += line;
+      statData += "\n";
+    }
+    Fileops.writeFile("data/stats.txt", statData);
+
+    console.log("Stats");
+    const maxLogos = MyTmam.stats.logos.reduce((a, v) => Math.max(a, v));
+    const maxIters = MyTmam.stats.iters.reduce((a, v) => Math.max(a, v));
+    const totalCombos = MyTmam.stats.combos.reduce((a, v) => a + v);
+    const totalIters = MyTmam.stats.iters.reduce((a, v) => a + v);
+    console.log("Max logos:", maxLogos);
+    console.log("Max iters:", maxIters);
+    console.log("Total iters:", `${totalIters} of ${totalCombos}`);
   }
 }

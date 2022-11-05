@@ -671,7 +671,7 @@ export class MyTmam {
 
         // try stacking
         iters++;
-        result = { build: partList };
+        result = { build: partList, logos };
         found = MyTmam.tryBuild(targetShape, result);
         // console.log("");
 
@@ -732,9 +732,9 @@ export class MyTmam {
     Shape.init();
     MyTmam.init();
 
-    /** @type {Map<object>} */ // {build: [], order: ""}
+    /** @type {Map<number, object>} */ // {build: [], order: ""}
     const knownShapes = new Map();
-    /** @type {Map<number>} */
+    /** @type {Map<number, object>} */
     const unknownShapes = new Map();
 
     const possibleShapes = [];
@@ -748,12 +748,12 @@ export class MyTmam {
     // );
     // keyShapes.forEach((code) => unknownShapes.set(code, { code }));
 
-    // const complexShapes = possibleShapes.filter(
-    //   (code) => !Shape.canStackAll(code)
-    // );
-    // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    const complexShapes = possibleShapes.filter(
+      (code) => !Shape.canStackAll(code)
+    );
+    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
 
-    const testShapes = [0x1, 0x21, 0x31, 0x5a5a]; // basic test shapes
+    // const testShapes = [0x1, 0x21, 0x31, 0x5a5a]; // basic test shapes
     // const testShapes = [0x1634, 0x3422]; // 3-logo and fifth layer
     // const testShapes = [0x0178, 0x0361]; // hat and seat
     // const testShapes = [0x3343, 0x334a, 0x334b]; // stack order "10234++++"
@@ -765,7 +765,8 @@ export class MyTmam {
     // const testShapes = [0x167a]; // has 2 2-layer logos, but only 1 is needed - 167a [000a,0007,0012,0004] 0123+++
     // const testShapes = [0x34a5, 0x35a4, 0x525a, 0x785a]; // slow for binz binary combos
     // const testShapes = [0x1e5a, 0x2da5, 0x4b5a, 0x87a5]; // slow for binz hamming combos
-    testShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // const testShapes = [0x0178];
+    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     console.log("Knowns:", knownShapes.size);
     console.log("Unknowns:", unknownShapes.size);
@@ -796,16 +797,20 @@ export class MyTmam {
 
     // Log known builds
     console.log("Saving known builds");
-    let data = "";
+    let line = "";
     for (const [key, value] of knownShapes) {
-      data += Shape.pp(key);
-      data += " ";
-      data += Shape.pp(value.build);
-      data += " ";
-      data += value.order;
-      data += "\n";
+      const logoCount = value.logos
+        .map(
+          (code) =>
+            Shape.toLayers(MyTmam.dropLayers(code, MyTmam.bottomLayerNum(code)))
+              .length
+        )
+        .sort((a, b) => a - b);
+      line += `${Shape.pp(key)} ${Shape.pp(value.build)} ${value.order}`;
+      line += ` ${logoCount}`;
+      line += "\n";
     }
-    Fileops.writeFile("data/known.txt", data);
+    Fileops.writeFile("data/known.txt", line);
 
     // Log remaining unknowns
     console.log("Saving chart of unknowns");

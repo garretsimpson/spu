@@ -86,10 +86,6 @@ export class Shape {
   static allShapes;
   /** @type {Map<number,object>} */
   static keyShapes;
-  /** @type {Map<number,object>} */
-  static knownShapes;
-  /** @type {Map<number,object>} */
-  static unknownShapes;
 
   /**
    * @param {number} code
@@ -114,9 +110,6 @@ export class Shape {
       const key = Shape.keyCode(code);
       Shape.keyShapes.set(key, {});
     }
-
-    Shape.knownShapes = new Map();
-    Shape.unknownShapes = new Map();
   }
 
   static readShapeFile() {
@@ -912,21 +905,6 @@ export class Shape {
       if (!value.possible && !value.invalid) impossibleShapes.push(code);
     }
 
-    // Display results
-    // const NON = "-";
-    // for (const [code, value] of keyShapes) {
-    //   const unknown = unknownShapes.includes(code);
-    //   console.log(
-    //     Shape.pp(code),
-    //     value.layers.toString() + (value.impossible ? "X" : NON),
-    //     (value.invalid ? "I" : NON) +
-    //       (value.cuttable ? "C" : NON) +
-    //       (value.stackAll ? "S" : NON),
-    //     unknown ? "XXXX" : ""
-    //   );
-    // }
-    // console.log("");
-
     const TABLE_DATA = [
       ["Total key shapes", keyShapes.size],
       ["Possible shapes", possibleShapes.length],
@@ -943,39 +921,31 @@ export class Shape {
   }
 
   /**
-   * @param {Map<number,object>} shapes
+   * @param {Array<number>} shapes
    * @returns {string}
    */
   static chart(shapes) {
     const EOL = "\n";
+    const SEP = "   ";
     const MAX_NUM = 8;
 
     let result = "";
-    const codes = Array.from(shapes.keys()).sort((a, b) => a - b);
+    const codes = shapes.slice().sort((a, b) => a - b);
     const numLines = Math.floor(codes.length / MAX_NUM) + 1;
 
     for (let i = 0; i < numLines; i++) {
       const pos = MAX_NUM * i;
       const line = codes.slice(pos, pos + MAX_NUM);
-      const head = line
-        .map(
-          (code) =>
-            Shape.pp(code) +
-            " " +
-            (shapes.get(code).sflag ? "S" : "-") +
-            (shapes.get(code).cflag ? "C" : "-") +
-            " "
-        )
-        .join("   ");
+      const head = line.map((code) => Shape.pp(code) + "    ").join(SEP);
       result += head;
       result += EOL;
 
-      const graphs = line.map((code) => Shape.graph(shapes.get(code).code));
+      const graphs = line.map((code) => Shape.graph(code));
       for (let i = 0; i < 5; i++) {
         const row = graphs
           .map((v) => v.split(/\n/))
           .map((v) => v[i])
-          .join("   ");
+          .join(SEP);
         result += row;
         result += EOL;
       }

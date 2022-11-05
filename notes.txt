@@ -877,7 +877,7 @@ Total work: 60698 of 1358667674
 
 - All solutions to key shapes found.
 - Average work is 60698 / 6691 = 9.07
-- TODO: investigate stacking orders - how many are used?
+- TODO: investigate stacking orders - how many are used?  Looks like all (10) of them.
 - Worst case is 8195 - need to find it.
 
 125a 11 1028
@@ -936,12 +936,6 @@ c25a 11 2051
 ca52 13 2052
 d25a 14 8195
 e1a5 14 4102
-
-I wrote a software simulator of Binz' BUSTTMAM.  It simulates the component that finds half-logos, iterates over all combinations of them, and verifies the solution by trying various stacking orders.  It does not simulate the flat-stacker or "fast-lane" components.
-
-The good news is that this part of Binz' TMAM can find solutions to all possible shapes.  And for most shapes, it is very fast.  On average, it takes only 16 iterations to find a solution.
-
-However, there are a few shapes that much longer to find a solution.  There are 22 shapes that take more than 2^10 (1024) iterations.  For example...
 
 Deconstruct
 --Rr--Rr:Rg--Rg--:--Rb----:Ry--Ry--

@@ -989,3 +989,43 @@ X - X -
 >>NUM 18
 STATS 285 of 8096
 FOUND 4b5a [4848,0012,0003,000f] 012++3+
+
+- Added logo sets [2,3], [3,4], [4,2]
+- Does not do reverse logoset
+- Still uses hamming combos
+
+Knowns: 20320
+Unknowns: 0
+[]
+
+Saving known builds
+Saving chart of unknowns
+
+Saving stats
+Stats
+Max logos: 24
+Max iters: 226
+Total iters: 228840 of 6498218
+
+- total iters decreased to 228840 from 236628.
+- max iters decreased to 226 from 285.  Better, but not a lot.
+- considering this would be done in parallel, it would be about 76 instead of 143.
+- so about half the time needed.
+- probably a bit more than 76 because logosets are different lengths.
+- need to keep stats for each logoset.
+
+- maybe try NS, EW logosets.  But would also need NE, NW, SE, SW for seated logos.
+- that would be 6 instead of 3.  Or 18 logosets if both partitioning was used.
+- This would at least double the size of the TMAM.
+
+Slow shapes
+16d2 10 216
+1c78 10 222
+29e1 10 218
+2cb4 10 216
+43d2 10 217
+4978 10 221
+5aa5 8 226
+83e1 10 219
+86b4 10 222
+a55a 8 226

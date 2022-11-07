@@ -1,17 +1,22 @@
 /***
- * Code my TMAM
+ * TMAM simulator
  *
- * Ideas
- * - find parts produces a mask? or part and remainder?
- * - use a mask to find next part.
- * - work layers in place or shift down?
+ * Implements software versions of various TMAMs
  */
 
 import { Shape } from "./shape.js";
 import { Fileops } from "./fileops.js";
 
 export class MyTmam {
-  static stats = { combos: [0], iters: [0], logos: [0] };
+  // Some TMAMs have analyzers that work in parallel.
+  // In this TMAM simulator work is done serially, typically by interleaving the work of each analyzer.
+  // An iter is a unit of work.
+  // stats are per shape
+  // - combos - number of possible half-logo combinations.
+  // - iters - sum of work done by all analyzers.
+  // - logos - number of half-logos found.
+  // - maxIters - work done by the analyzer that did the most work.
+  static stats = { combos: [0], iters: [0], logos: [0], maxIters: [0] };
 
   static init() {
     MyTmam.makeLogos();
@@ -620,9 +625,11 @@ export class MyTmam {
     }
     const numCombos = combos.flat().length;
     // console.log(">>NUM", numCombos);
+    console.log("COMBO", combos.map((a) => a.length).toString());
 
     const logos = [];
     const partList = [];
+    const maxIters = [];
     let found = false;
     let iters = 0;
     let i = 0;
@@ -666,7 +673,7 @@ export class MyTmam {
       for (let i of [0, 1, 2, 3]) {
         flats[i] && partList.push(flats[i]);
         for (const logo of logos) {
-          const num = MyTmam.bottomLayerNum(logo);
+          num = MyTmam.bottomLayerNum(logo);
           if (num == i) {
             partList.push(MyTmam.dropLayers(logo, num));
           }
@@ -684,14 +691,19 @@ export class MyTmam {
       // console.log("");
 
       iters++;
-      if (found) break;
+      num = maxIters[i] || 0;
+      maxIters[i] = num + 1;
       i = (i + 1) % numSets;
+
+      if (found) break;
     }
     if (!found) result = null;
 
     MyTmam.stats.logos[targetShape] = numLogos;
     MyTmam.stats.iters[targetShape] = iters;
     MyTmam.stats.combos[targetShape] = numCombos;
+    MyTmam.stats.maxIters[targetShape] = Math.max(...maxIters);
+    console.log("ITERS", maxIters.toString());
     console.log("STATS", `${iters} of ${numCombos}`);
 
     return result;
@@ -757,7 +769,7 @@ export class MyTmam {
     );
 
     const testShapes = [];
-    testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
+    // testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
     // testShapes.push(0x1634, 0x342); // 3-logo and fifth layer
     // testShapes.push(0x0178, 0x0361); // hat and seat
     // testShapes.push(0x3343, 0x334a, 0x334b); // stack order "10234++++"
@@ -830,9 +842,9 @@ export class MyTmam {
     let statData = "";
     for (let code = 0; code <= 0xffff; ++code) {
       let logos = MyTmam.stats.logos[code];
-      let iters = MyTmam.stats.iters[code];
+      let iters = MyTmam.stats.maxIters[code];
       if (!iters) continue;
-      if (iters <= 200) continue;
+      if (iters <= 100) continue;
       statData += `${Shape.pp(code)} ${logos} ${iters}`;
       statData += "\n";
     }
@@ -840,11 +852,15 @@ export class MyTmam {
 
     console.log("Stats");
     const maxLogos = MyTmam.stats.logos.reduce((a, v) => Math.max(a, v));
-    const maxIters = MyTmam.stats.iters.reduce((a, v) => Math.max(a, v));
-    const totalCombos = MyTmam.stats.combos.reduce((a, v) => a + v);
+    const maxIters = MyTmam.stats.maxIters.reduce((a, v) => Math.max(a, v));
+    const totalMaxIters = MyTmam.stats.maxIters.reduce((a, v) => a + v);
+    const aveIters = Number(totalMaxIters / knownShapes.size).toFixed(2);
     const totalIters = MyTmam.stats.iters.reduce((a, v) => a + v);
+    const totalCombos = MyTmam.stats.combos.reduce((a, v) => a + v);
     console.log("Max logos:", maxLogos);
     console.log("Max iters:", maxIters);
+    console.log("Ave iters:", aveIters);
+    console.log("Total max iters:", totalMaxIters);
     console.log("Total iters:", `${totalIters} of ${totalCombos}`);
   }
 }

@@ -1064,3 +1064,49 @@ sets  combo    total   max   ave   time
    3  binary   442383  1599  7.26   533
    2  hamming  214328   238  5.27   119
    3  hamming  249160   227  4.09    76
+
+- The ave and max values are off because different sets have different lengths.
+- Modified the code to keep track of iters per combo.
+
+2, binary
+Max iters: 4097
+Ave iters: 7.18
+Total max iters: 145850
+Total iters: 303951 of 2123995552
+525a 14 4097
+a1a5 14 2050
+a4a5 14 1026
+
+3, binary
+Max iters: 1056
+Ave iters: 9.41
+Total max iters: 191268
+Total iters: 442383 of 100984300
+4a53 13 1056
+4a59 13 1056
+
+2, hamming
+Max logos: 24
+Max iters: 119
+Ave iters: 4.97
+Total max iters: 101039
+Total iters: 214328 of 13829476
+1c78 10 119
+4978 10 118
+83e1 10 116
+
+3, hamming
+Max iters: 113
+Ave iters: 4.84
+Total max iters: 98380
+Total iters: 249160 of 6498218
+5aa5 8 113
+1c78 10 109
+4978 10 108
+
+sets  combo    total   sum     ave   max
+   2  binary   303951  145850  7.18  4097
+   3  binary   442383  191268  9.41  1056
+   2  hamming  214328  101039  4.97  119
+   3  hamming  249160   98380  4.84  113
+

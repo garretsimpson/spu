@@ -588,12 +588,14 @@ export class MyTmam {
     // allLogos = allLogos.flat();
 
     // Make logo sets
-    const logoSets = [
+    const logoSets2 = [[], allLogos.flat(), allLogos.flat().reverse()];
+    const logoSets3 = [
       [],
       [...allLogos[2], ...allLogos[3]],
       [...allLogos[3], ...allLogos[4]],
       [...allLogos[4], ...allLogos[2]],
     ];
+    const logoSets = logoSets3;
     const numSets = logoSets.length;
     console.log(">SETS", Shape.pp(logoSets));
     // console.log(">>NUM", numSets);
@@ -603,14 +605,20 @@ export class MyTmam {
     const combos = [];
     for (const logoset of logoSets) {
       combo = [];
+      // binary combos
+      // let num = 1 << logoset.length;
+      // for (let i = 1; i < num; ++i) {
+      //   combo.push(i);
+      // }
+      // hamming combos
       for (let i = 1; i < 5; ++i) {
         combo.push(...MyTmam.hammingCombos(logoset.length, i));
       }
       if (combo.length == 0) combo.push(0);
       combos.push(combo);
+      // console.log(">COMB", Shape.pp(combo));
     }
     const numCombos = combos.flat().length;
-    // console.log(">COMB", Shape.pp(combos));
     // console.log(">>NUM", numCombos);
 
     const logos = [];
@@ -674,9 +682,9 @@ export class MyTmam {
       result = { build: partList, logos };
       found = MyTmam.tryBuild(targetShape, result);
       // console.log("");
-      if (found) break;
 
       iters++;
+      if (found) break;
       i = (i + 1) % numSets;
     }
     if (!found) result = null;
@@ -749,7 +757,7 @@ export class MyTmam {
     );
 
     const testShapes = [];
-    // testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
+    testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
     // testShapes.push(0x1634, 0x342); // 3-logo and fifth layer
     // testShapes.push(0x0178, 0x0361); // hat and seat
     // testShapes.push(0x3343, 0x334a, 0x334b); // stack order "10234++++"
@@ -761,12 +769,12 @@ export class MyTmam {
     // testShapes.push(0x167a); // has 2 2-layer logos, but only 1 is needed - 167a [000a,0007,0012,0004] 0123+++
     // testShapes.push(0x34a5, 0x35a4, 0x525a, 0x785a); // slow for binz binary combos
     // testShapes.push(0x1e5a, 0x2da5, 0x4b5a, 0x87a5); // slow for binz hamming combos
-    testShapes.push(0x5aa5, 0x1c78, 0x4978); // slow for binz 3 logosets w/hamming
+    // testShapes.push(0x5aa5, 0x1c78, 0x4978); // slow for binz 3 logosets w/hamming
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     // keyShapes.forEach((code) => unknownShapes.set(code, { code }));
-    // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
-    testShapes.forEach((code) => unknownShapes.set(code, { code }));
+    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     console.log("Knowns:", knownShapes.size);
     console.log("Unknowns:", unknownShapes.size);

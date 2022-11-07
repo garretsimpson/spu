@@ -1007,7 +1007,7 @@ Max logos: 24
 Max iters: 226
 Total iters: 228840 of 6498218
 
-- total iters decreased to 228840 from 236628.
+- total iters decreased to 228840 from 236628.  not correct due to error in iter count.
 - max iters decreased to 226 from 285.  Better, but not a lot.
 - considering this would be done in parallel, it would be about 76 instead of 143.
 - so about half the time needed.
@@ -1029,3 +1029,38 @@ Slow shapes
 83e1 10 219
 86b4 10 222
 a55a 8 226
+
+- Compare binary/hamming combos with 2 and 3 logo sets.
+- Use complex shapes - those that require logos
+
+Knowns: 20320
+
+2, binary
+Max iters: 8194
+Total iters: 303951 of 2123995552
+525a 14 8194
+d25a 14 8194
+
+3, binary
+Max iters: 1599
+Total iters: 442383 of 100984300
+4a53 13 1599
+4a59 13 1599
+
+2, hamming
+Max iters: 238
+Total iters: 214328 of 13829476
+1c78 10 238
+86b4 10 238
+
+3, hamming
+Max iters: 227
+Total iters: 249160 of 6498218
+5aa5 8 227
+a55a 8 227
+
+sets  combo    total   max   ave   time
+   2  binary   303951  8194  7.48  4097
+   3  binary   442383  1599  7.26   533
+   2  hamming  214328   238  5.27   119
+   3  hamming  249160   227  4.09    76

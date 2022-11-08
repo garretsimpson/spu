@@ -351,15 +351,41 @@ export class MyTmam {
     return result;
   }
 
-  static hammingCombos(max, bits, sum = 0, ret = []) {
+  /**
+   * Returns a list of all n-bit numbers with a given number of 1s.
+   * @param {number} max
+   * @param {number} bits
+   * @param {?number} sum
+   * @param {?array} ret
+   * @returns {array<number>}
+   */
+  static hammingCombos1(max, bits, sum = 0, ret = []) {
     --bits;
     for (let pos = bits; pos < max; ++pos) {
       const value = sum | (1 << pos);
       if (bits) {
-        MyTmam.hammingCombos(pos, bits, value, ret);
+        MyTmam.hammingCombos1(pos, bits, value, ret);
       } else {
         ret.push(value);
       }
+    }
+    return ret;
+  }
+
+  /**
+   * Returns a list of all n-bit numbers with 1..given number of 1s.
+   * @param {number} max
+   * @param {number} bits
+   * @param {?number} sum
+   * @param {?array} ret
+   * @returns {array<number>}
+   */
+  static hammingCombos2(max, bits, sum = 0, ret = []) {
+    --bits;
+    for (let pos = 0; pos < max; ++pos) {
+      const value = sum | (1 << pos);
+      ret.push(value);
+      if (bits) MyTmam.hammingCombos2(pos, bits, value, ret);
     }
     return ret;
   }
@@ -617,8 +643,9 @@ export class MyTmam {
       // }
       // hamming combos
       for (let i = 1; i < 5; ++i) {
-        combo.push(...MyTmam.hammingCombos(logoset.length, i));
+        combo.push(...MyTmam.hammingCombos1(logoset.length, i));
       }
+      // combo.push(...MyTmam.hammingCombos2(logoset.length, 4));
       if (combo.length == 0) combo.push(0);
       combos.push(combo);
       // console.log(">COMB", Shape.pp(combo));
@@ -735,17 +762,29 @@ export class MyTmam {
 
     const size = 8;
     const bits = 4;
-    const a = MyTmam.hammingCombos(size, bits);
-    console.log(
-      `hammingCombos(${size}, ${bits}) returns ${a.length} ${Shape.pp(a)}`
-    );
-    console.log("");
-    let value, pos;
-    for (let i = 0; i < a.length; ++i) {
-      value = a[i].toString(2).padStart(size, "0");
-      pos = size - value.lastIndexOf("01") - 2;
-      console.log(value, pos);
+    const a1 = [];
+    for (let i = 1; i < 5; ++i) {
+      a1.push(...MyTmam.hammingCombos1(size, i));
     }
+    console.log(
+      `hammingCombos1(${size}, ${bits}) returns ${a1.length} ${Shape.pp(a1)}`
+    );
+    const a2 = MyTmam.hammingCombos2(size, bits);
+    console.log(
+      `hammingCombos2(${size}, ${bits}) returns ${a2.length} ${Shape.pp(a2)}`
+    );
+
+    // const a = MyTmam.hammingCombos(size, bits);
+    // console.log(
+    //   `hammingCombos(${size}, ${bits}) returns ${a.length} ${Shape.pp(a)}`
+    // );
+    // console.log("");
+    // let value, pos;
+    // for (let i = 0; i < a.length; ++i) {
+    //   value = a[i].toString(2).padStart(size, "0");
+    //   pos = size - value.lastIndexOf("01") - 2;
+    //   console.log(value, pos);
+    // }
   }
 
   static run() {

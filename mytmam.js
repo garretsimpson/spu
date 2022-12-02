@@ -549,8 +549,8 @@ export class MyTmam {
 
     const configs = [
       { seat: false, reverse: false },
-      { seat: true, reverse: false },
       { seat: false, reverse: true },
+      { seat: true, reverse: false },
       { seat: true, reverse: true },
     ];
 
@@ -645,7 +645,7 @@ export class MyTmam {
       for (let i = 1; i < 5; ++i) {
         combo.push(...MyTmam.hammingCombos1(logoset.length, i));
       }
-      // combo.push(...MyTmam.hammingCombos2(logoset.length, 4));
+      combo.push(...MyTmam.hammingCombos2(logoset.length, 4));
       if (combo.length == 0) combo.push(0);
       combos.push(combo);
       // console.log(">COMB", Shape.pp(combo));
@@ -818,14 +818,16 @@ export class MyTmam {
     // testShapes.push(0x17a4, 0x37a4); // multiple solutions: strict logo (depending on search order) and seat joint
     // testShapes.push(0x4da1, 0x8e52); // multiple solutions: strict logo (depending on search order) and seat joint
     // testShapes.push(0x167a); // has 2 2-layer logos, but only 1 is needed - 167a [000a,0007,0012,0004] 0123+++
-    // testShapes.push(0x34a5, 0x35a4, 0x525a, 0x785a); // slow for binz binary combos
+    // testShapes.push(0x34a5, 0x35a4, 0x525a, 0x785a); // slow for binz 2 logosets w/binary combos
+    // testShapes.push(0x4a53, 0x4a59); // slow for binz 3 logosets w/binary combos
     // testShapes.push(0x1e5a, 0x2da5, 0x4b5a, 0x87a5); // slow for binz hamming combos
     // testShapes.push(0x5aa5, 0x1c78, 0x4978); // slow for binz 3 logosets w/hamming
+    testShapes.push(0x35a1, 0xf3a1); // problem shapes for 897701215
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     // keyShapes.forEach((code) => unknownShapes.set(code, { code }));
-    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
-    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     console.log("Knowns:", knownShapes.size);
     console.log("Unknowns:", unknownShapes.size);
@@ -833,7 +835,7 @@ export class MyTmam {
 
     let result;
     for (let shape of Array.from(unknownShapes.keys())) {
-      result = MyTmam.deconstruct2(shape);
+      result = MyTmam.deconstruct1(shape);
       if (!result) {
         console.log("NOT FOUND", Shape.pp(shape));
       } else {
@@ -858,15 +860,15 @@ export class MyTmam {
     console.log("Saving known builds");
     let data = "";
     for (const [key, value] of knownShapes) {
-      const logoCount = value.logos
-        .map(
-          (code) =>
-            Shape.toLayers(MyTmam.dropLayers(code, MyTmam.bottomLayerNum(code)))
-              .length
-        )
-        .sort((a, b) => a - b);
+      // const logoCount = value.logos
+      //   .map(
+      //     (code) =>
+      //       Shape.toLayers(MyTmam.dropLayers(code, MyTmam.bottomLayerNum(code)))
+      //         .length
+      //   )
+      //   .sort((a, b) => a - b);
       data += `${Shape.pp(key)} ${Shape.pp(value.build)} ${value.order}`;
-      data += ` ${logoCount}`;
+      // data += ` ${logoCount}`;
       data += "\n";
     }
     Fileops.writeFile("data/known.txt", data);

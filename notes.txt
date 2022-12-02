@@ -1148,3 +1148,70 @@ Total iters: 400400 of 6498218
 - Max iters was 113, now 412 - much worse
 - searching combos in numerical order is worse.
 - better to search for all 1 half-logos, then 2 half-logos, etc.
+
+- Can remove these half-logos...
+  - 2,3,4 layer half-logo with filled void on layer 1 (bottom layer of target shape).
+
+Problem shapes for 897701215...
+1111
+1100
+0101
+1000
+
+1100
+1010
+0101
+1000
+
+35a1       f3a1    
+- - - -    - - - - 
+X X - -    X X X X 
+X - X -    X X - - 
+- X - X    - X - X 
+X - - -    X - - - 
+
+Mon Nov 21 2022 08:18:23 GMT-0800 (Pacific Standard Time)
+
+Deconstruct
+Rr------:--Rg--Rg:Rb--Rb--:RyRy----
+35a1
+- - - -
+X X - -
+X - X -
+- X - X
+X - - -
+
+ROUND 1
+>LOGO [0121,0181]
+LOGO  f35a1 [0121]
+>LOGO [0048]
+LOGO  f348 [0048]
+LAYER 00f3 [0003]
+LAYER 000f [000f]
+ROUND 2
+>LOGO [0121,0181]
+LOGO  f35a1 [0181]
+>LOGO [0242]
+LOGO  f342 [0242]
+LAYER 00f1 [0001]
+LAYER 000f [000f]
+FOUND 35a1 [0181,0242,0001,000f] 0123+++
+
+Deconstruct
+Rr------:--Rg--Rg:RbRb----:RyRyRyRy
+f3a1
+- - - -
+X X X X
+X X - -
+- X - X
+X - - -
+
+ROUND 1
+>LOGO [0021,0181]
+LOGO  ff3a1 [0021]
+>LOGO [0018]
+LOGO  ff38 [0018]
+LAYER 0ff2 [0002]
+LAYER 00ff [000f]
+FOUND f3a1 [0021,0018,0002,000f] 0123+++
+

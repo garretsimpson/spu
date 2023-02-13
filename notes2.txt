@@ -1,0 +1,253 @@
+22-Jan-2022
+
+to test modloader in standalone
+# git fetch --all
+# git checkout modloader
+# cd electron
+# yarn install --ignore-optional
+# cd ..
+# yarn devStandalone
+
+once browser opens you should close tab and in another terminal use
+# cd electron
+# yarn startDev --load-mod="/path/to/mod"
+
+this should let you test on standalone with latest commit
+
+Update 28-Dec-2022
+# yarn
+# cd gulp
+# yarn gulp
+
+Once browser opens you should close tab and in another terminal use...
+
+# cd electron
+# yarn install --ignore-optional
+# yarn startDev
+
+- More from dengr
+
+# yarn tsc src/js/application.js --declaration --allowJs --emitDeclarationOnly --skipLibCheck --out types.js
+
+CbCuCbCu:Sr------:--CrSrCr:CwCwCwCw
+
+01-Feb-2022
+
+# cp build/xxx.js C:\Users\garre\AppData\Roaming\shapez.io\mods
+
+05-Jan-2022
+
+- Refactoring BPStrings
+
+>>>1ADAgIVAIGCAJYCJZA<<<
+
+>>>0AAABAAAV<<<
+
+
+function getClipboard() {
+    var pasteTarget = document.createElement("div");
+    pasteTarget.contentEditable = true;
+    var actElem = document.activeElement.appendChild(pasteTarget).parentNode;
+    pasteTarget.focus();
+    document.execCommand("Paste", null, null);
+    var paste = pasteTarget.innerText;
+    actElem.removeChild(pasteTarget);
+    return paste;
+};
+
+- zipit
+foreach ($f in ls build/\*.js) { node .\src\tools\zipit.js $f }
+
+10-Feb-2022
+
+- One flipper building
+>>>1ADCAOI<<<
+
+- 1 display
+[{…}]
+0:
+components:
+StaticMapEntity: {origin: {…}, rotation: 0, originalRotation: 0, code: 40}
+WiredPins: {slots: Array(1)}
+[[Prototype]]: Object
+uid: 0
+[[Prototype]]: Object
+length: 1
+[[Prototype]]: Array(0)
+
+- 1 Flipper 
+[{…}]
+0:
+components:
+ItemEjector: {slots: Array(1)}
+ItemProcessor: {nextOutputSlot: 0}
+StaticMapEntity:
+code: "modFlipperBuilding"
+origin: {x: 0, y: 0}
+originalRotation: 0
+rotation: 0
+[[Prototype]]: Object
+[[Prototype]]: Object
+uid: 0
+[[Prototype]]: Object
+length: 1
+[[Prototype]]: Array(0)
+
+- From Skim
+
+The first group of 3 bytes represents a chunk, 2 bytes are for the chunk offset (0, 0), the final byte is for the number of buildings contained 158.
+The next 158 groups represent buildings.
+First byte is the offset within chunk, mapped as y << 4 | x. (192 is (0, 12))
+Second byte is the rotation and id, mapped as rotation / 90 << 6 | code - 1. (27 is green corner wire 28 with 0 rotation)
+Further bytes are only if the building is a constant signal, using above-mentioned signal compression.
+
+0000 000X : boolean
+0000 1RGB : color
+
+AAAA 0000 : 1 layer shape header
+AAAA BBBB CCCC DDDD : 2-4 layer shape header
+ssRGB : each quad
+
+Example:
+CpCp--Sy would be 1101 0000 00101 00101 11110, just shy of 3 bytes
+
+
+wires                Recomputing wires network
+VM12:3 ##### data out: (9) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+VM12:3 ##### symbols: (3) ['modFlipperBuilding', 'bigDisplays-shapes', 'bigDisplays']
+VM12:3 Copy to clipboard: >>>0ADFtb2RGbGlwcGVyQnVpbGRpbmcAYmlnRGlzcGxheXMtc2hhcGVzAGJpZ0Rpc3BsYXlzAAAJAAAAAAIAKAQAAAEFAAACMQADMjADQRIDQiMDYQAV<<<
+VM12:3 Copied blueprint to clipboard
+VM12:3 Received data from clipboard: >>>0ADFtb2RGbGlwcGVyQnVpbGRpbmcAYmlnRGlzcGxheXMtc2hhcGVzAGJpZ0Rpc3BsYXlzAAAJAAAAAAIAKAQAAAEFAAACMQADMjADQRIDQiMDYQAV<<<
+VM12:3 ##### symbols: (3) ['modFlipperBuilding', 'bigDisplays-shapes', 'bigDisplays']
+VM12:3 ##### data in: (9) [Entity, Entity, Entity, Entity, Entity, Entity, Entity, Entity, Entity]
+bundle.js:2 ingame/logic         Running bulk operation ...
+
+
+v0 normal-layer
+>>>0AAAwJiITByIRKSIKAjMKBDMJGCIOETMOEjMNEzMMFDMLJyIQIDMRIjMQJDMPJSIUKCINMjMTNDMSRiISRyIPOCIMSSIJQjMUSCILUAAJUQALUgAPUwASZRESVxEUYQAMZxETcAAKcQANcgAQcwATdAAUdREPdxEQeRERgQAOhRELhhEMhxENiBEOkgARlREJlxEK<<<
+
+v0 wire-layer (note: has 2-layer signal bug)
+>>>0AAAoABEf/yEIXnOcARM0AwAgBAAqBQAuEAAnESE2EwAkFAAsFQAmIAEdIQAnIwAiJAAyJQA8MBEbMwAjNAAzQwArRAAtYSItYiIrcSIzciIjdRMbgCI8gSIygiIihCInhSMdkCImkSIskiIklAM2lSInoCIuoSIqoiIgpBE0pTMf/yEIXnOc<<<
+
+v1 normal-layer
+>>>2AAAAADAmIhMHIhEpIgoCMwoEMwkYIg4RMw4SMw0TMwwUMwsnIhAgMxEiMxAk
+Mw8lIhQoIg0yMxM0MxJGIhJHIg84IgxJIglCMxRIIgtQAAlRAAtSAA9TABJlERJX
+ERRhAAxnERNwAApxAA1yABBzABN0ABR1EQ93ERB5ERGBAA6FEQuGEQyHEQ2IEQ6S
+ABGVEQmXEQo=<<<
+
+v1 wire-layer
+>>>2AAAAACgAER//ACEIXnOcARM0AwAgBAAqBQAuEAAnESE2EwAkFAAsFQAmIAEd
+IQAnIwAiJAAyJQA8MBEbMwAjNAAzQwArRAAtYSItYiIrcSIzciIjdRMbgCI8gSIy
+giIihCInhSMdkCImkSIskiIklAM2lSInoCIuoSIqoiIgpBE0pTMf/wAhCF5znA==
+<<<
+
+v2 normal-layer - BAD
+>>>3AAAAAC8mIhMHIhEpIgoCMwoEMwkYIg4RMw4SMw0TMwwUMwsnIhAgMxEiMxAk
+Mw8lIhQoIg0yMxM0MxJGIhJHIg84IgxJIglCMxRIIgtQAAlRAAtSAA9TABJlERJX
+ERRhAAxnERNwAApxAA1yABBzABN0ABR1EQ93ERB5ERGBAA6FEQuGEQyHEQ2IEQ6S
+ABGVEQmXEQo=<<<
+
+v2 wire-layer - BAD
+>>>3AAAAAJYAAhwBIiwCAhsDIiwEIiwFIiwGABsHABsIABsJIiYQAR0RMy0TACoU
+Mh0VAhsWADIXADIYMy0ZEh0gERshADYiAB/ACEAjAR0kACclAB/MzAhCEIQhJhE0
+JxAcKBAdKTMtMDMsMTMsMgEcMwAmNAAnNTEcNhE1NwAyOAA0ORA2QDMsQTMsQgEd
+QwAyRAAnRSEdRxEcSDMtUDMmUSA2UhEbUwA2VBEqVQAqVgAyVwAyWBAdWTMtYDMf
+wAhAYTMsYhEbYxE8ZAI0ZSI2ZhEbZxA1aAA0aRA2cDMqcSA2cgEdcyEddBEfAXUz
+H8zMCEIQhCF2ERx3ADJ4Mh15Mh2AAR2BACeCESqDETKEACaFADyGADyHEx2IACaJ
+ACaQMx8zMAhCEISREjWSACyTEh2UAB8zMAhCEISVMx8BljMfAaABNaEiLKIANKMi
+LKQiLKUiLKYANKcANKgANKkiJrABNrEzLbMAKrQyNrUCNLYAMrcAMrgzLbkSHcAR
+NMEAHcIAH8AIQMMANsQAJ8UAH8zMCEIQhCHGERvHEjXIEjbJMy3QMyzRMyzSAzXT
+ACbUACfVMTXWERzXADLYABvZEB3gMyzhMyziAzbjADLkACflITbnETXoMy3wMybx
+Ih3yEzTzAR30ESr1ACr2ADL3ADL4EDb5My0BACQAMx/ACEABMywCEzQDETwEAhsF
+Ih0GETQHEhwIAhsJEh0QMyoRIx0SATYTIjYUER8BFTMfzMwIQhCEIRYRNRcAMhgw
+NhkwNiABNiEAJyIRKiMRMiQAJiUAPCYAPCcRNigAJikAJjAzHzMwCEIQhDESHDIA
+LDMQNjQAHzMwCEIQhDUzHwE2Mx8B<<<
+
+bogus
+>>>AAAAACgAER/<<<
+
+n.map(v => v.toString(2).padStart(8, '0'))
+
+java.util.Map
+java.util.stream
+
+25-Feb-2022
+
+- Get entity settings
+- Before serializing...
+temp = {}; entity.components.ConstantSignal.copyAdditionalStateTo(temp)
+
+temp
+{signal: ShapeItem}
+
+temp.signal
+ShapeItem {_type: 'shape', definition: ShapeDefinition}
+
+- First, get the list of component names and setting (additional info) names.
+- Then in pack, get the value from the serialized copy of the entity.
+
+t[0].components.ConstantSignal.signal.serialize()
+'RrRuRuRu:RuRgRuRu:RuRuRbRu:RuRuRuRw'
+
+t[0].components.ConstantSignal.serialize().signal
+{$: 'shape', data: 'RrRuRuRu:RuRgRuRu:RuRuRbRu:RuRuRuRw'}
+
+- version 1.5.0
+
+- 3 adj delays, 3 constants 
+>>>4AA9hZGp1c3RhYmxlRGVsYXkAAAUAAAAAAwAfACAAAAAjAB8MQAAAAEMAH/8A
+IQhec5w=<<<
+
+- This works, but the adj delays are set to "1".
+
+- version 1.6.0 (symbol table updated, but no additional data)
+
+>>>4AA9hZGp1c3RhYmxlRGVsYXkAAAUAAAAAAwAfACAAAAAjAB8MQAAAAEMAH/8A
+IQhec5w=<<<
+
+- Move constants to symbol table...
+
+[
+    "adjustableDelay",
+    "AdjustableDelay",
+    "{\"delay\":1}",
+    "ConstantSignal",
+    "{\"signal\":0}",
+    "{\"delay\":3}",
+    "{\"signal\":\"red\"}",
+    "{\"delay\":5}",
+    "{\"signal\":\"CbCbCbRb:CwCwCwCw\"}"
+]
+
+- Test additional state data - might have bugs
+>>>7AAeIhgJgVgrgzgFzAIwDYFMAi7VgJ7ACC08SaWO+wA3gEQSV60BcAjAL7ADC
+A9gHaIwfBAGUAlgHM+YVDVpxJ01CwAMnOg1xNmAZnXzFMlrQBO6CLX2b8LAKz6FU
+o81pdkbtwCVkzLgHd-QL9LYGAAUFDQgEAogCAAYGAAfCj4gBAAAkiYsIBiZNSAMA
+ABbKiAcC4C+IAIIA<<<
+
+- The serialized data is not the same as the additional state.
+
+i
+AdjustableDelayComponent {currentIdx: 0, signals: Array(4)}
+
+i.serialize()
+{signals: Array(4)}
+
+i.copyAdditionalStateTo(n);
+
+n
+{delay: 5}
+
+- What do blueprints do?  copy the serialized data, or call copyAdditionalStateTo() / clone()?
+
+- Blueprints must use copyAdditionalStateTo() because it was broken without it.
+
+27-Feb-2022
+
+- F6 Sandbox controller not working
+- Looks like it was removed here:
+https://github.com/tobspr/shapez.io/commit/556caed760f9a2ea731b0b574dfddf0685d5cda0#diff-a5b7249b2649a01b7060e9fa1c20254ab45397be675a6f4e3c083d79eb0690cc
+
+- Mod to fix...
+registerHudElement("sandboxController", HUDSandboxController);
+

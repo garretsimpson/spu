@@ -1,3 +1,51 @@
+24-Apr-2022
+
+- prim: all flats (cost 0), all logos (cost 10)
+353c ST(3111 ST(0031 ST(0003 0001) 0011 ST(0001 0001)) 242c ST(2424 0008))
+----RrRr:RgRg----:Ry--Ry--:RwRw----
+
+- The solution uses 6 parts, a 4-logo and 5th layer.
+- The solution I want is 4 parts: 2 2-logos and 2 2 part layers and no 5th layer.
+
+- prim: all flats (cost 0), 2-logo (cost 10), 3-logo (cost 20), 4-logo (cost 30)
+353c ST(0035 ST(0003 0005) 003c ST(0018 0024))
+----RrRr:RgRg----:Ry--Ry--:RwRw----
+
+- That is better.  Only 4 parts and matches what I wanted.
+- But, there are still 6 part builds...
+3c43 ST(033c ST(0031 ST(0003 0001) 002c ST(0024 0008)) 0043 ST(0042 0001))
+RrRr----:----Rg--:----RyRy:RwRw----
+
+- That's 3 layer, 2 2-logos, has fifth layer
+- I want 1 layer, 3 2-logos, no fifth layer
+
+- maybe because logos are expensive, and 5th layers cost only 1 stack?
+- Maybe add a cost to 5th layer shapes?
+
+- Try with flats (cost 0) and logos (cost 0)
+- That's better (and simpler).
+
+- Or, set cost of 2-logos to 2 (stack+cut), 3-logos to 3 (stack+stack+cut), ...
+- I think that is even better.
+
+- This avoids logos, but only as much as they cost to build.
+- Some builds are longer (more parts), but all are still 5 parts or less.
+- Like this one...
+
+old...
+0163 ST(0121 0042)
+new...
+0163 ST(0016 ST(0012 0004) 0003)
+RrRr----:--RgRg--:Ry------
+
+- First 5 part build:
+5222 ST(0054 ST(0005 0004) 1222 ST(0012 0022 ST(0002 0002)))
+- Has 3 layer, 1 2-logo, 5th layer
+
+file: data/builds_flat0_logo234.txt
+
+-----
+
 Unknown shapes when using LOGO_A and LOGO_C
 [03d2,07b4,121a,121e,125a,12b4,1385,1387,13a4,13b4,13d2,1678,16b4,1785,1787,17a4,17b4,1b61,1e78,3185,3187,31d2,3425,342d,3478,34a5,3585,3587,35a1,35a4,35b4,361a,361e,3658,3678,36b4,3785,3787,37a4,37b4,521a,521e,52b4,5385,5387,53a4,53b4,7185,7187,71d2,721a,721e,72b4,7385,7387,73a4,73b4,794a,794b,7952,79d2]
 

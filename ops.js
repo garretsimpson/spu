@@ -238,7 +238,7 @@ export class Ops {
   }
 
   static runMultiOps() {
-    const CONFIGS = [
+    const CONFIGS123 = [
       {
         name: "1-layer",
         shapes: Shape.FLATS,
@@ -247,25 +247,51 @@ export class Ops {
       {
         name: "2-logo ",
         shapes: Shape.LOGO_2,
-        // cost: 1,
+        cost: 1,
         maxIter: 4000,
       },
       {
         name: "3-logo ",
         shapes: Shape.LOGO_3,
-        // cost: 2,
-        // maxIter: 2500,
+        cost: 2,
+        maxIter: 2500,
       },
       {
         name: "4-logo ",
         shapes: Shape.LOGO_4,
-        // cost: 3,
+        cost: 3,
+      },
+    ];
+
+    const CONFIGS2 = [
+      {
+        name: "stacks ",
+        shapes: Shape.STACKS,
+        maxIter: 6500,
+      },
+      {
+        name: "2-logo ",
+        shapes: Shape.LOGO_2,
+        cost: 1,
+        maxIter: 9500,
+      },
+      {
+        name: "3-logo ",
+        shapes: Shape.LOGO_3,
+        cost: 2,
+        maxIter: 2000,
+      },
+      {
+        name: "4-logo ",
+        shapes: Shape.LOGO_4,
+        cost: 3,
+        maxIter: 500,
       },
     ];
 
     const results = {};
     let shapes;
-    for (let config of CONFIGS) {
+    for (let config of CONFIGS123) {
       shapes = config.shapes.map((code) => {
         return {
           code,
@@ -289,10 +315,10 @@ export class Ops {
     }
     console.log("");
 
-    const all3 = results["3-logo "].keys;
-    const all4 = results["4-logo "].keys;
-    const only4 = all4.filter((v) => !all3.includes(v));
-    Ops.saveChart(only4);
+    // const all3 = results["3-logo "].keys;
+    // const all4 = results["4-logo "].keys;
+    // const only4 = all4.filter((v) => !all3.includes(v));
+    // Ops.saveChart(only4);
 
     Ops.processShapes();
   }

@@ -34,6 +34,17 @@ export class Shape {
     ...Shape.FLAT_4,
   ];
 
+  static STACK_1 = [0x1, 0x2, 0x4, 0x8];
+  static STACK_2 = [0x11, 0x22, 0x44, 0x88];
+  static STACK_3 = [0x111, 0x222, 0x444, 0x888];
+  static STACK_4 = [0x1111, 0x2222, 0x4444, 0x8888];
+  static STACKS = [
+    ...Shape.STACK_1,
+    ...Shape.STACK_2,
+    ...Shape.STACK_3,
+    ...Shape.STACK_4,
+  ];
+
   static MASKS = {
     E: [0, 0x3, 0x33, 0x333, 0x3333],
     N: [0, 0x9, 0x99, 0x999, 0x9999],

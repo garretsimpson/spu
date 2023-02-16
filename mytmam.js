@@ -7,6 +7,8 @@
 import { Shape } from "./shape.js";
 import { Fileops } from "./fileops.js";
 
+const RULE = { FLAT: "-", STACK: "|", LEFT: "\\", RIGHT: "/" };
+
 export class MyTmam {
   // Some TMAMs have analyzers that work in parallel.
   // In this TMAM simulator work is done serially, typically by interleaving the work of each analyzer.
@@ -245,6 +247,27 @@ export class MyTmam {
   }
 
   /**
+   * Find all flats from the bottom layer
+   */
+  static findBottomFlats(shape) {
+    let result = [];
+    let mask = 0xf;
+    let top, bottom;
+    for (let num = 0; num < 4; ++num) {
+      bottom = shape & mask;
+      shape >>= 4;
+      top = shape & mask;
+      if (top == 0) {
+        result[num] = bottom;
+        break;
+      }
+      if ((top & bottom) == 0) break;
+      result[num] = bottom;
+    }
+    return result;
+  }
+
+  /**
    * Find half-logo parts
    * @param {number} shape
    * @param {object} config
@@ -412,6 +435,7 @@ export class MyTmam {
       ["0123+++", "012++3+", "01+23++"], // not used: 01+2+3+
       ["01234++++", "012++34++", "01+234+++"], // not used: 01+2+3+4+
     ];
+    // const ORDERS2 = [[], ["0"], ["01+"], ["01+2+"], ["01+2+3+"], ["01+2+3+4+"]];
     const ORDERS = ORDERS1;
     const num = data.build.length;
     if (num >= ORDERS.length) {
@@ -548,10 +572,10 @@ export class MyTmam {
     console.log(Shape.graph(targetShape));
 
     const configs = [
-      { seat: false, reverse: false },
-      { seat: false, reverse: true },
       { seat: true, reverse: false },
       { seat: true, reverse: true },
+      { seat: false, reverse: false },
+      { seat: false, reverse: true },
     ];
 
     let num = 0;
@@ -737,10 +761,140 @@ export class MyTmam {
   }
 
   /**
+   * Returns the values of each quad in an array.
+   * The array has 6 values, so that the prev and next quad values can be easily accessed.
+   * @param {*} layer
+   * @returns {Array}
+   */
+  static getQuads(layer) {
+    const q1 = layer & 0b0001;
+    const q2 = layer & 0b0010;
+    const q3 = layer & 0b0100;
+    const q4 = layer & 0b1000;
+    return [q4, q1, q2, q3, q4, q1];
+  }
+
+  /**
+   * Simple stack - Just add the top part to the layer above the bottom part.
+   */
+  static simpleStack(top, bottom) {
+    const num = Shape.layerCount(bottom);
+    const result = (top << (4 * num)) | bottom;
+    return result;
+  }
+
+  /**
+   * Deconstructor - Skim method
+   * @param {number} shape
+   */
+  static deconstruct3(targetShape) {
+    console.log("Deconstruct");
+    console.log(Shape.toShape(targetShape));
+    console.log(Shape.pp(targetShape));
+    console.log(Shape.graph(targetShape));
+
+    let shape = targetShape;
+    const partList = [];
+    // const flats = MyTmam.findBottomFlats(shape);
+    // let num = 0;
+    // for (let flat of flats) {
+    //   console.log("FLAT ", Shape.pp(flat));
+    //   shape = MyTmam.deletePart(shape, flat << (4 * num));
+    //   num++;
+    // }
+    // console.log("SHAPE", Shape.pp(shape));
+
+    const CONFIGS0 = [[RULE.FLAT, RULE.FLAT, RULE.FLAT]];
+    const CONFIGS1 = [[RULE.STACK, RULE.STACK, RULE.STACK]];
+    const CONFIGS = CONFIGS1;
+
+    const layers = Shape.toLayers(shape);
+    let layer, nextLayer;
+    let part, layerParts, passedPart;
+    let quads, nextQuads;
+    const pass = [null, 0, 0, 0, 0];
+    let rule, prevRule;
+    let eject;
+
+    for (let config of CONFIGS) {
+      console.log("CONFIG", config.join(""));
+      for (const layerNum of [0, 1, 2, 3]) {
+        layer = layers[layerNum];
+        if (!layer) break;
+        console.log("LAYER", Shape.pp(layer));
+
+        nextLayer = layers[layerNum + 1] || 0; // TODO: 5th layer
+        quads = MyTmam.getQuads(layer);
+        nextQuads = MyTmam.getQuads(nextLayer);
+        layerParts = [];
+        rule = config[layerNum];
+
+        for (const quadNum of [1, 2, 3, 4]) {
+          part = quads[quadNum];
+          if (!part) continue;
+
+          // If there is a passed part, stack it
+          passedPart = pass[quadNum];
+          if (passedPart) {
+            part = MyTmam.simpleStack(part, passedPart);
+            pass[quadNum] = 0;
+          }
+
+          // Run rules
+          eject = false;
+          switch (rule) {
+            case RULE.FLAT:
+              eject = true;
+              break;
+            case RULE.STACK:
+              if (nextQuads[quadNum]) {
+                if (!passedPart || (passedPart && prevRule == RULE.STACK)) {
+                  pass[quadNum] = part;
+                  break;
+                }
+              }
+              eject = true;
+              break;
+            default:
+              eject = true;
+              break;
+          }
+
+          // Eject part
+          if (eject) {
+            if (passedPart != 0) {
+              partList.push(part);
+              console.log(">PART", Shape.pp(part));
+            } else {
+              layerParts.push(part);
+              console.log(">QUAD", Shape.pp(part));
+            }
+          }
+        }
+
+        // Stack any leftover parts
+        if (layerParts.length != 0) {
+          part = layerParts[0] | layerParts[1] | layerParts[2] | layerParts[3];
+          partList.push(part);
+        }
+
+        prevRule = rule;
+      }
+    }
+
+    console.log("PARTS", Shape.pp(partList));
+    let result = null;
+    const build = { build: partList };
+    const found = MyTmam.tryBuild(targetShape, build);
+    if (found) result = build;
+    return result;
+  }
+
+  /**
    * Wizard deconstructor by Nabby
    * @param {number} shape
    */
-  static deconstruct3(shape) {
+  static deconstruct4(shape) {
     console.log("Deconstruct");
     console.log(Shape.pp(shape));
 
@@ -809,6 +963,7 @@ export class MyTmam {
 
     const testShapes = [];
     // testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
+    testShapes.push(0x0f, 0xffff, 0x4b, 0xfe1f); // classic shapes
     // testShapes.push(0x1634, 0x342); // 3-logo and fifth layer
     // testShapes.push(0x0178, 0x0361); // hat and seat
     // testShapes.push(0x3343, 0x334a, 0x334b); // stack order "10234++++"
@@ -822,7 +977,10 @@ export class MyTmam {
     // testShapes.push(0x4a53, 0x4a59); // slow for binz 3 logosets w/binary combos
     // testShapes.push(0x1e5a, 0x2da5, 0x4b5a, 0x87a5); // slow for binz hamming combos
     // testShapes.push(0x5aa5, 0x1c78, 0x4978); // slow for binz 3 logosets w/hamming
-    testShapes.push(0x35a1, 0xf3a1); // problem shapes for 897701215
+    // testShapes.push(0x35a1, 0xf3a1); // problem shapes for 897701215
+    // testShapes.push(0x1361, 0x1569, 0x15c3, 0x19c1); // problem for stacking ORDER0
+    // testShapes.push(0x13c, 0x0162, 0x0163, 0x0164, 0x0165); // problem for stacking ORDER0
+    // testShapes.push(0x1212, 0x2121); // problem for stacking ORDER0
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     // keyShapes.forEach((code) => unknownShapes.set(code, { code }));
@@ -835,7 +993,8 @@ export class MyTmam {
 
     let result;
     for (let shape of Array.from(unknownShapes.keys())) {
-      result = MyTmam.deconstruct1(shape);
+      result = MyTmam.deconstruct3(shape);
+      // result = false;
       if (!result) {
         console.log("NOT FOUND", Shape.pp(shape));
       } else {

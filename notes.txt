@@ -1265,3 +1265,70 @@ FOUND f3a1 [0021,0018,0002,000f] 0123+++
 
 - Might be 4-part solutions only need 2-layer half-logos?
 - Maybe search using binary in that case would not make much difference?
+
+16-Feb-2023
+Working on desconstructor design by Skim
+
+It is not iterative.  It grows half-logos, all four corners/sides at the same time.
+
+Here's the cardboard box top issue...
+
+Deconstruct
+RrRrRrRr:RgRgRgRg:RbRbRbRb:RyRyRyRy
+ffff
+- - - -
+X X X X
+X X X X
+X X X X
+X X X X
+
+RULES \/\
+LAYER 000f
+RULE  \
+LAYER 000f
+RULE  /
+>PART 0012
+>PART 0024
+>PART 0048
+>PART 0081
+LAYER 000f
+RULE  \
+LAYER 000f
+RULE  -
+>PART 0012
+>PART 0024
+>PART 0048
+>PART 0081
+PARTS [0012,0024,0048,0081,0012,0024,0048,0081]
+
+Truth table
+- - - -
+A B C D
+E F G H
+- - - -
+
+F - Current corner
+P - Passed in part
+Q - Previous rule
+R - Current rule:
+  - flat (eject)
+  | stack up
+  \ float left
+  / float right
+
+A B C D E F G H P Q R
+. . . . . 0 . . . . .  NOP
+. 1 . . . 1 . . 0 . |   >B
+. 1 . . . 1 . . 1 | |  S>B
+1 . . . . 1 . . 0 . \   >A
+1 . . . 0 1 . . 1 / \  S>A
+0 . 1 . . 1 . 0 0 . \   >C
+0 . 1 . . 1 0 0 1 \ \  S>C
+. . 1 . . 1 . . 0 . /   >C
+. . 1 . . 1 0 . 1 \ /  S>C
+1 . 0 . . 1 . 0 0 . /   >A
+1 . 0 . 0 1 . 0 1 / /  S>A
+
+Process
+- If P exists, stack current corner on top of it.
+- Pass result to next layer, else eject it as a part.

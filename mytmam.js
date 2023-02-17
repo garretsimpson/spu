@@ -762,7 +762,6 @@ export class MyTmam {
 
   /**
    * Returns the values of each quad in an array.
-   * The array has 6 values, so that the prev and next quad values can be easily accessed.
    * @param {*} layer
    * @returns {Array}
    */
@@ -771,7 +770,7 @@ export class MyTmam {
     const q2 = layer & 0b0010;
     const q3 = layer & 0b0100;
     const q4 = layer & 0b1000;
-    return [q4, q1, q2, q3, q4, q1];
+    return [q1, q2, q3, q4];
   }
 
   /**
@@ -794,7 +793,6 @@ export class MyTmam {
     console.log(Shape.graph(targetShape));
 
     let shape = targetShape;
-    const partList = [];
     // const flats = MyTmam.findBottomFlats(shape);
     // let num = 0;
     // for (let flat of flats) {
@@ -804,20 +802,28 @@ export class MyTmam {
     // }
     // console.log("SHAPE", Shape.pp(shape));
 
-    const CONFIGS0 = [[RULE.FLAT, RULE.FLAT, RULE.FLAT]];
-    const CONFIGS1 = [[RULE.STACK, RULE.STACK, RULE.STACK]];
-    const CONFIGS = CONFIGS1;
+    const CONFIGS = [
+      // [RULE.FLAT, RULE.FLAT, RULE.FLAT],
+      // [RULE.STACK, RULE.STACK, RULE.STACK],
+      [RULE.LEFT, RULE.RIGHT, RULE.LEFT],
+    ];
 
+    let result = null;
+    let partList;
     const layers = Shape.toLayers(shape);
     let layer, nextLayer;
     let part, layerParts, passedPart;
-    let quads, nextQuads;
-    const pass = [null, 0, 0, 0, 0];
+    let quads, peerQuad, nextQuads;
+    let onLeft, onRight;
+    let pass = [],
+      prevPass = [];
     let rule, prevRule;
     let eject;
 
     for (let config of CONFIGS) {
-      console.log("CONFIG", config.join(""));
+      console.log("RULES", config.join(""));
+      partList = [];
+
       for (const layerNum of [0, 1, 2, 3]) {
         layer = layers[layerNum];
         if (!layer) break;
@@ -827,17 +833,23 @@ export class MyTmam {
         quads = MyTmam.getQuads(layer);
         nextQuads = MyTmam.getQuads(nextLayer);
         layerParts = [];
-        rule = config[layerNum];
+        pass = [];
 
-        for (const quadNum of [1, 2, 3, 4]) {
+        rule = config[layerNum] || RULE.FLAT;
+        console.log("RULE ", rule);
+
+        for (const quadNum of [0, 1, 2, 3]) {
           part = quads[quadNum];
           if (!part) continue;
 
+          onLeft = (quadNum + 3) % 4;
+          onRight = (quadNum + 1) % 4;
+          peerQuad = quads[(quadNum + 2) % 4];
+
           // If there is a passed part, stack it
-          passedPart = pass[quadNum];
+          passedPart = prevPass[quadNum];
           if (passedPart) {
             part = MyTmam.simpleStack(part, passedPart);
-            pass[quadNum] = 0;
           }
 
           // Run rules
@@ -855,8 +867,48 @@ export class MyTmam {
               }
               eject = true;
               break;
-            default:
+            case RULE.LEFT:
+              if (nextQuads[onLeft]) {
+                if (
+                  !passedPart ||
+                  (passedPart && prevRule == RULE.RIGHT && !quads[onLeft])
+                ) {
+                  pass[onLeft] = part;
+                  break;
+                }
+              } else if (nextQuads[onRight] && !peerQuad) {
+                if (
+                  !passedPart ||
+                  (passedPart && prevRule == RULE.LEFT && !quads[onRight])
+                ) {
+                  pass[onRight] = part;
+                  break;
+                }
+              }
               eject = true;
+              break;
+            case RULE.RIGHT:
+              if (nextQuads[onRight]) {
+                if (
+                  !passedPart ||
+                  (passedPart && prevRule == RULE.LEFT && !quads[onRight])
+                ) {
+                  pass[onRight] = part;
+                  break;
+                }
+              } else if (nextQuads[onLeft] && !peerQuad) {
+                if (
+                  !passedPart ||
+                  (passedPart && prevRule == RULE.RIGHT && !quads[onLeft])
+                ) {
+                  pass[onLeft] = part;
+                  break;
+                }
+              }
+              eject = true;
+              break;
+            default:
+              console.warn("Unknown rule:", rule);
               break;
           }
 
@@ -878,15 +930,20 @@ export class MyTmam {
           partList.push(part);
         }
 
+        prevPass = pass;
         prevRule = rule;
       }
+
+      console.log("PARTS", Shape.pp(partList));
+      const build = { build: partList };
+      const found = MyTmam.tryBuild(targetShape, build);
+      if (found) {
+        result = build;
+        break;
+      }
+      console.log("");
     }
 
-    console.log("PARTS", Shape.pp(partList));
-    let result = null;
-    const build = { build: partList };
-    const found = MyTmam.tryBuild(targetShape, build);
-    if (found) result = build;
     return result;
   }
 

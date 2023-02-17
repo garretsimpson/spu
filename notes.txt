@@ -1318,7 +1318,7 @@ E F G H
 
 F - Current corner
 P - Passed in part
-Q - Previous rule
+Q - Passed in direction
 R - Current rule:
   - flat (eject)
   | stack up
@@ -1549,6 +1549,9 @@ NOT FOUND 16d2
 
 16d2 [0042,0048,0121] 012++
 
+Saddle shape.  Two logos joined at the hip on top of another logo.
+How did I fix this?  Added //\
+
 Deconstruct
 --Rr----:Rg----Rg:RbRbRb--:Ry------
 1792
@@ -1565,4 +1568,253 @@ B C D -
 A - - B
 - A - -
 
+Modified float finding to always fail if there is a corner to the side.
+Turned off bottom flats.
+
+Knowns: 14600
+Unknowns: 5720
+[0138,0164,016c,0178...
+
+Better than the run with the initial rules.
+
+Deconstruct
+------Rr:RgRg----:Rb------:--------
+0138
+- - - -
+- - - -
+X - - -
+X X - -
+- - - X
+
+That's 2 2-layer logos, seated.
+It doesn't work because the rule won't start a logo when there is a corner.
+
+0261
+- - - -
+- X - -
+- X X -
+X - - -
+
+It works with my tmam because the bottom half-logo is removed first.
+Skim's TMAM works quads in parallel, but layers bottom up.
+The second layer knows that the second quad is claimed I think.  It could ignore it in this case.
+
+Truth table v2
+- - - -
+A B C D
+E F G H
+- - - -
+
+M N O P - Passed in parts 
+
+F - Current corner
+Q - Passed in direction
+R - Current rule:
+  - flat (eject)
+  | stack up
+  \ float left
+  / float right
+
+A B C D E F G H M N O P Q R
+. . . . . 0 . . . . . . . .  NOP
+. 1 . . . 1 . . . 0 . . . |   >B
+. 1 . . . 1 . . . 1 . . | |  S>B
+1 . . . 0 1 . . . 0 . . . \   >A
+1 . . . 1 1 . . 1 0 . . . \   >A
+1 . . . 0 1 . . . 1 . . / \  S>A
+0 . 1 . . 1 0 0 . 0 . . . \   >C
+0 . 1 . . 1 1 0 . 0 1 . . \   >C
+0 . 1 . . 1 0 0 . 1 . . \ \  S>C
+. . 1 . . 1 0 . . 0 . . . /   >C
+. . 1 . . 1 1 . . 0 1 . . /   >C
+. . 1 . . 1 0 . . 1 . . \ /  S>C
+1 . 0 . 0 1 . 0 . 0 . . . /   >A
+1 . 0 . 1 1 . 0 1 0 . . . /   >A
+1 . 0 . 0 1 . 0 . 1 . . / /  S>A
+
+Knowns: 15196
+Unknowns: 5124
+[0164,016c,01c4,01c6...
+
+Deconstruct
+----Rr--:--RgRg--:Rb------:--------
+0164
+- - - -
+- - - -
+X - - -
+- X X -
+- - X -
+
+This is a logo on top of a stable layer.
+It used to work because bottom flats removed the bottom layer.
+Now it fails because it attempt to build a logo with the corner on the bottom.
+
+Try checking for corners directly above.
+
+Knowns: 15800
+Unknowns: 4520
+[0361,0392,03d2,03e1...
+
+Deconstruct
+Rr------:--RgRg--:RbRb----:--------
+0361
+- - - -
+- - - -
+X X - -
+- X X -
+X - - -
+
+RULES \/\
+LAYER 0001
+RULE  \
+>PASS [0000,0001,0000,0000]
+>DIR  ["-","/","-","-"]
+LAYER 0006
+RULE  /
+>PART 0021
+>PASS [0000,0004,0000,0000]
+>DIR  ["-","\\","-","-"]
+LAYER 0003
+RULE  \
+>QUAD 0001
+>PART 0024
+>PASS [0000,0000,0000,0000]
+>DIR  ["-","-","-","-"]
+PARTS [0021,0024,0001]
+
+RULES /\/
+LAYER 0001
+RULE  /
+>PASS [0000,0001,0000,0000]
+>DIR  ["-","/","-","-"]
+LAYER 0006
+RULE  \
+>PART 0021
+>PASS [0000,0004,0000,0000]
+>DIR  ["-","\\","-","-"]
+LAYER 0003
+RULE  /
+>QUAD 0001
+>PART 0024
+>PASS [0000,0000,0000,0000]
+>DIR  ["-","-","-","-"]
+PARTS [0021,0024,0001]
+
+NOT FOUND 0361
+
+Now the first seat joint fails because the 3-layer logo is cut short due to the corner in the seat.
+
+Try ignoring the corner above when there is a passed part.
+
+That made 2 of 4 found.
+
+Deconstruct
+--Rr----:Rg--RgRg:RbRb----:--------
+03d2
+- - - -
+- - - -
+X X - -
+X - X X
+- X - -
+
+RULES \/\
+LAYER 0002
+RULE  \
+>PASS [0002,0000,0000,0000]
+>DIR  ["\\","-","-","-"]
+LAYER 000d
+RULE  /
+>PART 0012
+>QUAD 0004
+>PASS [0008,0000,0000,0000]
+>DIR  ["/","-","-","-"]
+LAYER 0003
+RULE  \
+>PART 0018
+>QUAD 0002
+>PASS [0000,0000,0000,0000]
+>DIR  ["-","-","-","-"]
+PARTS [0012,001c,0002]
+
+RULES /\/
+LAYER 0002
+RULE  /
+>PASS [0000,0000,0002,0000]
+>DIR  ["-","-","/","-"]
+LAYER 000d
+RULE  \
+>QUAD 0001
+>QUAD 0008
+>PASS [0000,0042,0000,0000]
+>DIR  ["-","\\","-","-"]
+LAYER 0003
+RULE  /
+>QUAD 0001
+>PART 0242
+>PASS [0000,0000,0000,0000]
+>DIR  ["-","-","-","-"]
+PARTS [0242,0009,0001]
+
+NOT FOUND 03d2
+
+03d2 [0012,0018,0024] 012++
+
+I think this fails because the logo on top fails to build because there is a peer quad.
+Not correct - But the peer is already claimed by the layer below, so it should not matter.
+
+Fixed the logic for checking the corner above.
+Only when there is no passed part, the part directly above must not exist.
+
+I'm probably going down a rat's nest...
+
+Knowns: 16080
+Unknowns: 4240
+[1642,1643,16c3,16d2...
+
+Well, it's better.
+
+Deconstruct
+--Rr----:----Rg--:--RbRb--:Ry------
+1642
+- - - -
+X - - -
+- X X -
+- - X -
+- X - -
+
+1642 [0042,0012,0004] 012++
+
+I think this is a case for /-\.
+
+Try without /\/...
+
+Knowns: 15652
+Unknowns: 4668
+[1792,17c2,1851,1853...
+
+Add /\/ back...
+
+Knowns: 16160
+Unknowns: 4160
+[1792,17c2,1c78,1d38...
+
+Well, some more are found, but making slow progress.
+
+Now we are back to 1792...
+
+Deconstruct
+--Rr----:Rg----Rg:RbRbRb--:Ry------
+1792
+- - - -
+X - - -
+X X X -
+X - - X
+- X - -
+
+--Rr----:Rg----Rg:RbRbRb--:Ry------
+1792
+C - - -
+B C D -
+A - - B
+- A - -
 

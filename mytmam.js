@@ -796,17 +796,19 @@ export class MyTmam {
     let partList = [];
 
     // Find stable layers on the bottom
-    const flats = MyTmam.findBottomFlats(shape);
+    // const flats = MyTmam.findBottomFlats(shape);
+    const flats = [];
 
+    // TODO: Are /\/ and \/\ both needed?
     const CONFIGS = [
       // [RULE.FLAT, RULE.FLAT, RULE.FLAT],
       // [RULE.STACK, RULE.STACK, RULE.STACK],
       [RULE.LEFT, RULE.RIGHT, RULE.LEFT],
       [RULE.RIGHT, RULE.LEFT, RULE.RIGHT],
-      [RULE.LEFT, RULE.FLAT, RULE.RIGHT],
+      // [RULE.LEFT, RULE.FLAT, RULE.RIGHT],
       [RULE.RIGHT, RULE.FLAT, RULE.LEFT],
       [RULE.RIGHT, RULE.RIGHT, RULE.LEFT],
-      [RULE.LEFT, RULE.LEFT, RULE.LEFT],
+      // [RULE.LEFT, RULE.LEFT, RULE.LEFT],
     ];
 
     let result = null;
@@ -814,7 +816,7 @@ export class MyTmam {
     let layer, nextLayer;
     let num, rule, part, layerParts, passedPart, passedDir;
     let quads, peerQuad, nextQuads;
-    let onLeft, onRight;
+    let onLeft, onRight, peer;
     let pass, dir;
     let prevPass = [0, 0, 0, 0];
     let prevDir = [RULE.FLAT, RULE.FLAT, RULE.FLAT, RULE.FLAT];
@@ -849,9 +851,11 @@ export class MyTmam {
           part = quads[quadNum];
           if (!part) continue;
 
-          onLeft = (quadNum + 3) % 4;
           onRight = (quadNum + 1) % 4;
-          peerQuad = quads[(quadNum + 2) % 4];
+          peer = (quadNum + 2) % 4;
+          onLeft = (quadNum + 3) % 4;
+          peerQuad = quads[peer];
+          // if (prevPass[peer]) peerQuad = 0;
 
           // If there is a passed part, stack it
           passedPart = prevPass[quadNum];
@@ -868,7 +872,7 @@ export class MyTmam {
               break;
             case RULE.STACK:
               if (nextQuads[quadNum]) {
-                if (!passedPart || (passedPart && passedDir == RULE.STACK)) {
+                if (!passedPart || passedDir == RULE.STACK) {
                   pass[quadNum] = part;
                   dir[quadNum] = RULE.STACK;
                   break;
@@ -879,8 +883,12 @@ export class MyTmam {
             case RULE.LEFT:
               if (nextQuads[onLeft]) {
                 if (
-                  !passedPart ||
-                  (passedPart && passedDir == RULE.RIGHT && !quads[onLeft])
+                  (!passedPart && !quads[onLeft] && !nextQuads[quadNum]) ||
+                  (!passedPart &&
+                    quads[onLeft] &&
+                    prevPass[onLeft] &&
+                    !nextQuads[quadNum]) ||
+                  (passedDir == RULE.RIGHT && !quads[onLeft])
                 ) {
                   pass[onLeft] = part;
                   dir[onLeft] = RULE.LEFT;
@@ -888,8 +896,12 @@ export class MyTmam {
                 }
               } else if (nextQuads[onRight] && !peerQuad) {
                 if (
-                  !passedPart ||
-                  (passedPart && passedDir == RULE.LEFT && !quads[onRight])
+                  (!passedPart && !quads[onRight] && !nextQuads[quadNum]) ||
+                  (!passedPart &&
+                    quads[onRight] &&
+                    prevPass[onRight] &&
+                    !nextQuads[quadNum]) ||
+                  (passedDir == RULE.LEFT && !quads[onRight])
                 ) {
                   pass[onRight] = part;
                   dir[onRight] = RULE.RIGHT;
@@ -901,8 +913,12 @@ export class MyTmam {
             case RULE.RIGHT:
               if (nextQuads[onRight]) {
                 if (
-                  !passedPart ||
-                  (passedPart && passedDir == RULE.LEFT && !quads[onRight])
+                  (!passedPart && !quads[onRight] && !nextQuads[quadNum]) ||
+                  (!passedPart &&
+                    quads[onRight] &&
+                    prevPass[onRight] &&
+                    !nextQuads[quadNum]) ||
+                  (passedDir == RULE.LEFT && !quads[onRight])
                 ) {
                   pass[onRight] = part;
                   dir[onRight] = RULE.RIGHT;
@@ -910,8 +926,12 @@ export class MyTmam {
                 }
               } else if (nextQuads[onLeft] && !peerQuad) {
                 if (
-                  !passedPart ||
-                  (passedPart && passedDir == RULE.RIGHT && !quads[onLeft])
+                  (!passedPart && !quads[onLeft] && !nextQuads[quadNum]) ||
+                  (!passedPart &&
+                    quads[onLeft] &&
+                    prevPass[onLeft] &&
+                    !nextQuads[quadNum]) ||
+                  (passedDir == RULE.RIGHT && !quads[onLeft])
                 ) {
                   pass[onLeft] = part;
                   dir[onLeft] = RULE.LEFT;
@@ -942,12 +962,11 @@ export class MyTmam {
         // Stack any leftover parts
         if (layerParts.length != 0) {
           part = layerParts.reduce((a, b) => a | b);
-          // part = layerParts[0] | layerParts[1] | layerParts[2] | layerParts[3];
           partList[layerNum].push(part);
         }
 
-        console.log(">PASS", Shape.pp(pass));
-        console.log(">DIR ", Shape.pp(dir));
+        console.log("PASS ", Shape.pp(pass));
+        console.log("DIR  ", Shape.pp(dir));
         prevPass = pass;
         prevDir = dir;
       }
@@ -1042,7 +1061,7 @@ export class MyTmam {
 
     const testShapes = [];
     // testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
-    // testShapes.push(0x0f, 0xffff, 0x4b, 0xfe1f); // classic shapes
+    // testShapes.push(0x000f, 0xffff, 0x004b, 0xfe1f); // classic shapes
     // testShapes.push(0x1634, 0x342); // 3-logo and fifth layer
     // testShapes.push(0x0178, 0x0361); // hat and seat
     // testShapes.push(0x3343, 0x334a, 0x334b); // stack order "10234++++"
@@ -1060,7 +1079,7 @@ export class MyTmam {
     // testShapes.push(0x1361, 0x1569, 0x15c3, 0x19c1); // problem for stacking ORDER0
     // testShapes.push(0x13c, 0x0162, 0x0163, 0x0164, 0x0165); // problem for stacking ORDER0
     // testShapes.push(0x1212, 0x2121); // problem for stacking ORDER0
-    testShapes.push(0x16d2, 0x16e1, 0x1792, 0x17c1); // working on Skim design
+    testShapes.push(0x1792); // working on Skim design
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     // keyShapes.forEach((code) => unknownShapes.set(code, { code }));

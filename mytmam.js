@@ -793,47 +793,54 @@ export class MyTmam {
     console.log(Shape.graph(targetShape));
 
     let shape = targetShape;
-    // const flats = MyTmam.findBottomFlats(shape);
-    // let num = 0;
-    // for (let flat of flats) {
-    //   console.log("FLAT ", Shape.pp(flat));
-    //   shape = MyTmam.deletePart(shape, flat << (4 * num));
-    //   num++;
-    // }
-    // console.log("SHAPE", Shape.pp(shape));
+    let partList = [];
+
+    // Find stable layers on the bottom
+    const flats = MyTmam.findBottomFlats(shape);
 
     const CONFIGS = [
       // [RULE.FLAT, RULE.FLAT, RULE.FLAT],
       // [RULE.STACK, RULE.STACK, RULE.STACK],
       [RULE.LEFT, RULE.RIGHT, RULE.LEFT],
+      [RULE.RIGHT, RULE.LEFT, RULE.RIGHT],
+      [RULE.LEFT, RULE.FLAT, RULE.RIGHT],
+      [RULE.RIGHT, RULE.FLAT, RULE.LEFT],
+      [RULE.RIGHT, RULE.RIGHT, RULE.LEFT],
+      [RULE.LEFT, RULE.LEFT, RULE.LEFT],
     ];
 
     let result = null;
-    let partList;
     const layers = Shape.toLayers(shape);
     let layer, nextLayer;
-    let part, layerParts, passedPart;
+    let num, rule, part, layerParts, passedPart, passedDir;
     let quads, peerQuad, nextQuads;
     let onLeft, onRight;
-    let pass = [],
-      prevPass = [];
-    let rule, prevRule;
+    let pass, dir;
+    let prevPass = [0, 0, 0, 0];
+    let prevDir = [RULE.FLAT, RULE.FLAT, RULE.FLAT, RULE.FLAT];
     let eject;
 
     for (let config of CONFIGS) {
       console.log("RULES", config.join(""));
-      partList = [];
+      partList = [[], [], [], []];
 
       for (const layerNum of [0, 1, 2, 3]) {
         layer = layers[layerNum];
         if (!layer) break;
         console.log("LAYER", Shape.pp(layer));
 
-        nextLayer = layers[layerNum + 1] || 0; // TODO: 5th layer
+        if (layerNum < flats.length) {
+          partList[layerNum].push(layer);
+          console.log(">FLAT", Shape.pp(layer));
+          continue;
+        }
+
+        nextLayer = layers[layerNum + 1] || 0;
         quads = MyTmam.getQuads(layer);
         nextQuads = MyTmam.getQuads(nextLayer);
         layerParts = [];
-        pass = [];
+        pass = [0, 0, 0, 0];
+        dir = [RULE.FLAT, RULE.FLAT, RULE.FLAT, RULE.FLAT];
 
         rule = config[layerNum] || RULE.FLAT;
         console.log("RULE ", rule);
@@ -851,6 +858,7 @@ export class MyTmam {
           if (passedPart) {
             part = MyTmam.simpleStack(part, passedPart);
           }
+          passedDir = prevDir[quadNum];
 
           // Run rules
           eject = false;
@@ -860,8 +868,9 @@ export class MyTmam {
               break;
             case RULE.STACK:
               if (nextQuads[quadNum]) {
-                if (!passedPart || (passedPart && prevRule == RULE.STACK)) {
+                if (!passedPart || (passedPart && passedDir == RULE.STACK)) {
                   pass[quadNum] = part;
+                  dir[quadNum] = RULE.STACK;
                   break;
                 }
               }
@@ -871,17 +880,19 @@ export class MyTmam {
               if (nextQuads[onLeft]) {
                 if (
                   !passedPart ||
-                  (passedPart && prevRule == RULE.RIGHT && !quads[onLeft])
+                  (passedPart && passedDir == RULE.RIGHT && !quads[onLeft])
                 ) {
                   pass[onLeft] = part;
+                  dir[onLeft] = RULE.LEFT;
                   break;
                 }
               } else if (nextQuads[onRight] && !peerQuad) {
                 if (
                   !passedPart ||
-                  (passedPart && prevRule == RULE.LEFT && !quads[onRight])
+                  (passedPart && passedDir == RULE.LEFT && !quads[onRight])
                 ) {
                   pass[onRight] = part;
+                  dir[onRight] = RULE.RIGHT;
                   break;
                 }
               }
@@ -891,17 +902,19 @@ export class MyTmam {
               if (nextQuads[onRight]) {
                 if (
                   !passedPart ||
-                  (passedPart && prevRule == RULE.LEFT && !quads[onRight])
+                  (passedPart && passedDir == RULE.LEFT && !quads[onRight])
                 ) {
                   pass[onRight] = part;
+                  dir[onRight] = RULE.RIGHT;
                   break;
                 }
               } else if (nextQuads[onLeft] && !peerQuad) {
                 if (
                   !passedPart ||
-                  (passedPart && prevRule == RULE.RIGHT && !quads[onLeft])
+                  (passedPart && passedDir == RULE.RIGHT && !quads[onLeft])
                 ) {
                   pass[onLeft] = part;
+                  dir[onLeft] = RULE.LEFT;
                   break;
                 }
               }
@@ -914,8 +927,10 @@ export class MyTmam {
 
           // Eject part
           if (eject) {
-            if (passedPart != 0) {
-              partList.push(part);
+            if (passedPart) {
+              // Sort parts according to their bottom layer.
+              num = Shape.layerCount(part);
+              partList[layerNum - num + 1].push(part);
               console.log(">PART", Shape.pp(part));
             } else {
               layerParts.push(part);
@@ -926,14 +941,21 @@ export class MyTmam {
 
         // Stack any leftover parts
         if (layerParts.length != 0) {
-          part = layerParts[0] | layerParts[1] | layerParts[2] | layerParts[3];
-          partList.push(part);
+          part = layerParts.reduce((a, b) => a | b);
+          // part = layerParts[0] | layerParts[1] | layerParts[2] | layerParts[3];
+          partList[layerNum].push(part);
         }
 
+        console.log(">PASS", Shape.pp(pass));
+        console.log(">DIR ", Shape.pp(dir));
         prevPass = pass;
-        prevRule = rule;
+        prevDir = dir;
       }
 
+      // Make superparts by stacking all parts with the same bottom layer.
+      partList = partList
+        .filter((s) => s.length > 0)
+        .map((s) => s.reduce((a, b) => a | b));
       console.log("PARTS", Shape.pp(partList));
       const build = { build: partList };
       const found = MyTmam.tryBuild(targetShape, build);
@@ -1020,7 +1042,7 @@ export class MyTmam {
 
     const testShapes = [];
     // testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
-    testShapes.push(0x0f, 0xffff, 0x4b, 0xfe1f); // classic shapes
+    // testShapes.push(0x0f, 0xffff, 0x4b, 0xfe1f); // classic shapes
     // testShapes.push(0x1634, 0x342); // 3-logo and fifth layer
     // testShapes.push(0x0178, 0x0361); // hat and seat
     // testShapes.push(0x3343, 0x334a, 0x334b); // stack order "10234++++"
@@ -1038,6 +1060,7 @@ export class MyTmam {
     // testShapes.push(0x1361, 0x1569, 0x15c3, 0x19c1); // problem for stacking ORDER0
     // testShapes.push(0x13c, 0x0162, 0x0163, 0x0164, 0x0165); // problem for stacking ORDER0
     // testShapes.push(0x1212, 0x2121); // problem for stacking ORDER0
+    testShapes.push(0x16d2, 0x16e1, 0x1792, 0x17c1); // working on Skim design
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     // keyShapes.forEach((code) => unknownShapes.set(code, { code }));

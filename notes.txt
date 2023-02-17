@@ -571,6 +571,15 @@ X - X X    X - X X    X X - -    X X - X    - - X X    X - X X    - X X -    X -
 X X - -    - X X -    - X X -    X - X -    - X X -    - X - X    X X - -    X X - - 
 - - - X    - - - X    X - - -    - X - -    - - - X    - - X -    - - X -    - - - X 
 
+Test just seats, which don't add a 5th layer
+
+      { seat: true, reverse: false },
+      { seat: true, reverse: true },
+
+Knowns: 16050 (complex shapes)
+Unknowns: 4270
+[1642,1643,16c3,16d2,1792,17c2,1c48,1c49,...]
+
 -----
 30-Jun-2022
 

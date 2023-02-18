@@ -7,7 +7,8 @@
 import { Shape } from "./shape.js";
 import { Fileops } from "./fileops.js";
 
-const RULE = { EJECT: "@", FLAT: "-", STACK: "|", LEFT: "\\", RIGHT: "/" };
+const RULE = { FLAT: "-", STACK: "|", LEFT: "\\", RIGHT: "/" };
+const OPS = { EJECT: "@", STACK: "|", LEFT: "\\", RIGHT: "/" };
 
 export class MyTmam {
   // Some TMAMs have analyzers that work in parallel.
@@ -785,7 +786,15 @@ export class MyTmam {
   /**
    * check if part can be passed as a float
    */
-  static canFloat(dir, src, dest, prevDir, quads, nextQuads) {
+  static canFloat1(dir, src, dest, prevDir, quads, nextQuads) {
+    const result = !dir[src] || (dir[src] == prevDir && !quads[dest]);
+    return result;
+  }
+
+  /**
+   * check if part can be passed as a float
+   */
+  static canFloat2(dir, src, dest, prevDir, quads, nextQuads) {
     const result =
       (!dir[src] && !quads[dest] && !nextQuads[src]) ||
       (!dir[src] && quads[dest] && dir[dest] && !nextQuads[src]) ||
@@ -798,128 +807,44 @@ export class MyTmam {
    * Returns the direction the corner should be passed, or ejected.
    */
   static runRule(rule, quad, prevDir, quads, nextQuads) {
-    let result = RULE.EJECT;
+    let result = OPS.EJECT;
     const onRight = (quad + 1) % 4;
     const peer = (quad + 2) % 4;
     const onLeft = (quad + 3) % 4;
     const passedDir = prevDir[quad];
     const peerQuad = quads[peer];
+    const canFloat = MyTmam.canFloat1;
 
     switch (rule) {
       case RULE.FLAT:
-        result = RULE.EJECT;
+        result = OPS.EJECT;
         break;
       case RULE.STACK:
         if (nextQuads[quad]) {
           if (!passedDir || passedDir == RULE.STACK) {
-            result = RULE.STACK;
+            result = OPS.STACK;
           }
         }
         break;
       case RULE.LEFT:
         if (nextQuads[onLeft]) {
-          if (
-            MyTmam.canFloat(prevDir, quad, onLeft, RULE.RIGHT, quads, nextQuads)
-          ) {
-            result = RULE.LEFT;
+          if (canFloat(prevDir, quad, onLeft, RULE.RIGHT, quads, nextQuads)) {
+            result = OPS.LEFT;
           }
         } else if (nextQuads[onRight] && !peerQuad) {
-          if (
-            MyTmam.canFloat(prevDir, quad, onRight, RULE.LEFT, quads, nextQuads)
-          ) {
-            result = RULE.RIGHT;
+          if (canFloat(prevDir, quad, onRight, RULE.LEFT, quads, nextQuads)) {
+            result = OPS.RIGHT;
           }
         }
         break;
       case RULE.RIGHT:
         if (nextQuads[onRight]) {
-          if (
-            MyTmam.canFloat(prevDir, quad, onRight, RULE.LEFT, quads, nextQuads)
-          ) {
-            result = RULE.RIGHT;
+          if (canFloat(prevDir, quad, onRight, RULE.LEFT, quads, nextQuads)) {
+            result = OPS.RIGHT;
           }
         } else if (nextQuads[onLeft] && !peerQuad) {
-          if (
-            MyTmam.canFloat(prevDir, quad, onLeft, RULE.RIGHT, quads, nextQuads)
-          ) {
-            result = RULE.LEFT;
-          }
-        }
-        break;
-      default:
-        console.warn("Unknown rule:", rule);
-        break;
-    }
-
-    return result;
-  }
-
-  static runRule0(rule, quad, prevDir, quads, nextQuads) {
-    let result = RULE.EJECT;
-    const onRight = (quad + 1) % 4;
-    const peer = (quad + 2) % 4;
-    const onLeft = (quad + 3) % 4;
-    const passedDir = prevDir[quad];
-    const peerQuad = quads[peer];
-
-    switch (rule) {
-      case RULE.FLAT:
-        result = RULE.EJECT;
-        break;
-      case RULE.STACK:
-        if (nextQuads[quad]) {
-          if (!passedDir || passedDir == RULE.STACK) {
-            result = RULE.STACK;
-          }
-        }
-        break;
-      case RULE.LEFT:
-        if (nextQuads[onLeft]) {
-          if (
-            (!passedDir && !quads[onLeft] && !nextQuads[quad]) ||
-            (!passedDir &&
-              quads[onLeft] &&
-              prevDir[onLeft] &&
-              !nextQuads[quad]) ||
-            (passedDir == RULE.RIGHT && !quads[onLeft])
-          ) {
-            result = RULE.LEFT;
-          }
-        } else if (nextQuads[onRight] && !peerQuad) {
-          if (
-            (!passedDir && !quads[onRight] && !nextQuads[quad]) ||
-            (!passedDir &&
-              quads[onRight] &&
-              prevDir[onRight] &&
-              !nextQuads[quad]) ||
-            (passedDir == RULE.LEFT && !quads[onRight])
-          ) {
-            result = RULE.RIGHT;
-          }
-        }
-        break;
-      case RULE.RIGHT:
-        if (nextQuads[onRight]) {
-          if (
-            (!passedDir && !quads[onRight] && !nextQuads[quad]) ||
-            (!passedDir &&
-              quads[onRight] &&
-              prevDir[onRight] &&
-              !nextQuads[quad]) ||
-            (passedDir == RULE.LEFT && !quads[onRight])
-          ) {
-            result = RULE.RIGHT;
-          }
-        } else if (nextQuads[onLeft] && !peerQuad) {
-          if (
-            (!passedDir && !quads[onLeft] && !nextQuads[quad]) ||
-            (!passedDir &&
-              quads[onLeft] &&
-              prevDir[onLeft] &&
-              !nextQuads[quad]) ||
-            (passedDir == RULE.RIGHT && !quads[onLeft])
-          ) {
-            result = RULE.LEFT;
+          if (canFloat(prevDir, quad, onLeft, RULE.RIGHT, quads, nextQuads)) {
+            result = OPS.LEFT;
           }
         }
         break;
@@ -950,14 +875,14 @@ export class MyTmam {
 
     // TODO: Are /\/ and \/\ both needed?
     const CONFIGS = [
-      // [RULE.FLAT, RULE.FLAT, RULE.FLAT],
-      // [RULE.STACK, RULE.STACK, RULE.STACK],
-      [RULE.LEFT, RULE.RIGHT, RULE.LEFT],
-      [RULE.RIGHT, RULE.LEFT, RULE.RIGHT],
-      // [RULE.LEFT, RULE.FLAT, RULE.RIGHT],
-      [RULE.RIGHT, RULE.FLAT, RULE.LEFT],
-      [RULE.RIGHT, RULE.RIGHT, RULE.LEFT],
-      // [RULE.LEFT, RULE.LEFT, RULE.LEFT],
+      // { rules: [RULE.FLAT, RULE.FLAT, RULE.FLAT] },
+      // { rules: [RULE.STACK, RULE.STACK, RULE.STACK] },
+      { rules: [RULE.LEFT, RULE.RIGHT, RULE.LEFT] },
+      { rules: [RULE.RIGHT, RULE.LEFT, RULE.RIGHT] },
+      // { rules: [RULE.LEFT, RULE.FLAT, RULE.RIGHT] },
+      // { rules: [RULE.RIGHT, RULE.FLAT, RULE.LEFT] },
+      // { rules: [RULE.RIGHT, RULE.RIGHT, RULE.LEFT] },
+      // { rules: [RULE.LEFT, RULE.LEFT, RULE.LEFT] },
     ];
 
     let result = null;
@@ -970,30 +895,29 @@ export class MyTmam {
     let prevPass = [0, 0, 0, 0];
     let prevDir = [null, null, null, null];
 
-    for (let config of CONFIGS) {
-      console.log("RULES", config.join(""));
+    for (const config of CONFIGS) {
+      console.log("RULES", config.rules.join(""));
       partList = [[], [], [], []];
 
       for (const layerNum of [0, 1, 2, 3]) {
+        rule = config.rules[layerNum] || RULE.FLAT;
         layer = layers[layerNum];
         if (!layer) break;
-        console.log("LAYER", Shape.pp(layer));
+        console.log("LAYER", layerNum, rule, Shape.pp(layer));
 
+        /* Eject flat part */
         if (layerNum < flats.length) {
           partList[layerNum].push(layer);
           console.log(">FLAT", Shape.pp(layer));
           continue;
         }
 
-        nextLayer = layers[layerNum + 1] || 0;
         quads = MyTmam.getQuads(layer);
+        nextLayer = layers[layerNum + 1] || 0;
         nextQuads = MyTmam.getQuads(nextLayer);
         layerParts = [];
         pass = [0, 0, 0, 0];
         dir = [null, null, null, null];
-
-        rule = config[layerNum] || RULE.FLAT;
-        console.log("RULE ", rule);
 
         for (const quadNum of [0, 1, 2, 3]) {
           part = quads[quadNum];
@@ -1010,19 +934,19 @@ export class MyTmam {
           onLeft = (quadNum + 3) % 4;
           onRight = (quadNum + 1) % 4;
           switch (op) {
-            case RULE.STACK:
+            case OPS.STACK:
               pass[quadNum] = part;
               dir[quadNum] = RULE.STACK;
               break;
-            case RULE.LEFT:
+            case OPS.LEFT:
               pass[onLeft] = part;
               dir[onLeft] = RULE.LEFT;
               break;
-            case RULE.RIGHT:
+            case OPS.RIGHT:
               pass[onRight] = part;
               dir[onRight] = RULE.RIGHT;
               break;
-            case RULE.EJECT:
+            case OPS.EJECT:
               if (passedPart) {
                 // Sort parts according to their bottom layer.
                 num = Shape.layerCount(part);
@@ -1056,6 +980,8 @@ export class MyTmam {
         .filter((s) => s.length > 0)
         .map((s) => s.reduce((a, b) => a | b));
       console.log("PARTS", Shape.pp(partList));
+
+      // Find stacking order
       const build = { build: partList };
       const found = MyTmam.tryBuild(targetShape, build);
       if (found) {

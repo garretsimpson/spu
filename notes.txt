@@ -1818,3 +1818,7 @@ B C D -
 A - - B
 - A - -
 
+Ideas
+- remove flat layer if there are no passed parts and it stacks.
+- refactor rules to a function or two.
+- Make it work like my TMAM with strict and loose half-logos. (?)

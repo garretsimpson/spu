@@ -7,7 +7,14 @@
 import { Shape } from "./shape.js";
 import { Fileops } from "./fileops.js";
 
-const RULE = { FLAT: "-", STACK: "|", LEFT: "\\", RIGHT: "/" };
+const RULE = {
+  FLAT: "-",
+  STACK: "|",
+  LEFT: "<",
+  RIGHT: ">",
+  LEFT_SEAT: "\\",
+  RIGHT_SEAT: "/",
+};
 const OPS = { EJECT: "@", STACK: "|", LEFT: "\\", RIGHT: "/" };
 
 export class MyTmam {
@@ -849,19 +856,61 @@ export class MyTmam {
     const peer = (quad + 2) % 4;
     const onRight = (quad + 1) % 4;
 
-    let nextQuad, peerQuad, sideQuad, sidePass, prevDir;
-    let topQuad = state.nextQuads[quad];
+    let nextQuad, peerQuad, sideQuad, prevDir;
+    let topQuad =
+      (rule == RULE.LEFT || rule == RULE.RIGHT) && state.nextQuads[quad];
     switch (dir) {
       case OPS.LEFT:
         nextQuad = state.nextQuads[onLeft];
-        peerQuad = rule == RULE.RIGHT && state.quads[peer];
+        peerQuad =
+          (rule == RULE.RIGHT || rule == RULE.RIGHT_SEAT) && state.quads[peer];
+        sideQuad = state.quads[onLeft];
+        prevDir = OPS.RIGHT;
+        break;
+      case OPS.RIGHT:
+        nextQuad = state.nextQuads[onRight];
+        peerQuad =
+          (rule == RULE.LEFT || rule == RULE.LEFT_SEAT) && state.quads[peer];
+        sideQuad = state.quads[onRight];
+        prevDir = OPS.LEFT;
+        break;
+    }
+
+    return (
+      nextQuad &&
+      !peerQuad &&
+      (!passedPart || (passedDir == prevDir && !sideQuad && !topQuad))
+    );
+  }
+
+  /**
+   * Check if part can be grown as a float.
+   */
+  static canFloat3(rule, dir, state) {
+    const quad = state.quadNum;
+    const passedDir = state.prevDir[quad];
+    const passedPart = state.prevPass[quad];
+    const onLeft = (quad + 3) % 4;
+    const peer = (quad + 2) % 4;
+    const onRight = (quad + 1) % 4;
+
+    let nextQuad, peerQuad, sideQuad, sidePass, prevDir;
+    const topQuad =
+      (rule == RULE.LEFT || rule == RULE.RIGHT) && state.nextQuads[quad];
+    const topPeer = state.nextQuads[peer];
+    switch (dir) {
+      case OPS.LEFT:
+        nextQuad = state.nextQuads[onLeft];
+        peerQuad =
+          (rule == RULE.RIGHT || rule == RULE.RIGHT_SEAT) && state.quads[peer];
         sideQuad = state.quads[onLeft];
         sidePass = state.prevPass[onLeft];
         prevDir = OPS.RIGHT;
         break;
       case OPS.RIGHT:
         nextQuad = state.nextQuads[onRight];
-        peerQuad = rule == RULE.LEFT && state.quads[peer];
+        peerQuad =
+          (rule == RULE.LEFT || rule == RULE.LEFT_SEAT) && state.quads[peer];
         sideQuad = state.quads[onRight];
         sidePass = state.prevPass[onRight];
         prevDir = OPS.LEFT;
@@ -869,9 +918,10 @@ export class MyTmam {
     }
     return (
       nextQuad &&
-      !peerQuad &&
-      ((!passedPart && !sideQuad && !topQuad) ||
-        (!passedPart && sideQuad && sidePass && !topQuad) ||
+      !(peerQuad && !topPeer) &&
+      !topQuad &&
+      ((!passedPart && !sideQuad) ||
+        (!passedPart && sideQuad && sidePass) ||
         (passedDir == prevDir && !sideQuad))
     );
   }
@@ -883,7 +933,7 @@ export class MyTmam {
   static runRule(rule, state) {
     let result = OPS.EJECT;
     const canStack = MyTmam.canStack;
-    const canFloat = MyTmam.canFloat1;
+    let canFloat = MyTmam.canFloat3;
     switch (rule) {
       case RULE.FLAT:
         result = OPS.EJECT;
@@ -894,6 +944,7 @@ export class MyTmam {
         }
         break;
       case RULE.LEFT:
+      case RULE.LEFT_SEAT:
         if (canFloat(rule, OPS.LEFT, state)) {
           result = OPS.LEFT;
         } else if (canFloat(rule, OPS.RIGHT, state)) {
@@ -901,6 +952,7 @@ export class MyTmam {
         }
         break;
       case RULE.RIGHT:
+      case RULE.RIGHT_SEAT:
         if (canFloat(rule, OPS.RIGHT, state)) {
           result = OPS.RIGHT;
         } else if (canFloat(rule, OPS.LEFT, state)) {
@@ -929,11 +981,13 @@ export class MyTmam {
     const CONFIGS = [
       // { rules: [RULE.FLAT, RULE.FLAT, RULE.FLAT] },
       // { rules: [RULE.STACK, RULE.STACK, RULE.STACK] },
+      { rules: [RULE.LEFT_SEAT, RULE.RIGHT_SEAT, RULE.LEFT_SEAT] },
+      { rules: [RULE.RIGHT_SEAT, RULE.LEFT_SEAT, RULE.RIGHT_SEAT] },
       { rules: [RULE.LEFT, RULE.RIGHT, RULE.LEFT] },
       { rules: [RULE.RIGHT, RULE.LEFT, RULE.RIGHT] },
       // { rules: [RULE.LEFT, RULE.FLAT, RULE.RIGHT] },
       // { rules: [RULE.RIGHT, RULE.FLAT, RULE.LEFT] },
-      // { rules: [RULE.RIGHT, RULE.RIGHT, RULE.LEFT] },
+      // { rules: [RULE.RIGHT_SEAT, RULE.RIGHT_SEAT, RULE.LEFT_SEAT] },
       // { rules: [RULE.LEFT, RULE.LEFT, RULE.LEFT] },
     ];
 
@@ -1158,13 +1212,13 @@ export class MyTmam {
     // testShapes.push(0x1361, 0x1569, 0x15c3, 0x19c1); // problem for stacking ORDER0
     // testShapes.push(0x13c, 0x0162, 0x0163, 0x0164, 0x0165); // problem for stacking ORDER0
     // testShapes.push(0x1212, 0x2121); // problem for stacking ORDER0
-    // testShapes.push(0x1792, 0x17c1, 0x17c2, 0x1d38); // working on Skim design
-    testShapes.push(0x1792); // working on Skim design
+    testShapes.push(0x16d2, 0x1c78, 0x29e1, 0x2cb4); // working on Skim design
+    // testShapes.push(0x1792); // working on Skim design
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     // keyShapes.forEach((code) => unknownShapes.set(code, { code }));
-    // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
-    testShapes.forEach((code) => unknownShapes.set(code, { code }));
+    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     console.log("Knowns:", knownShapes.size);
     console.log("Unknowns:", unknownShapes.size);

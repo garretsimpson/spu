@@ -2018,3 +2018,95 @@ C - - -
 B C D -
 A - - B
 - A - -
+
+Try an alternate growing that uses strict logos.
+
+Stop when there is a corner directly on top (a hat).
+
+      { rules: [RULE.LEFT, RULE.RIGHT, RULE.LEFT] },
+      { rules: [RULE.RIGHT, RULE.LEFT, RULE.RIGHT] },
+
+Unknowns: 136
+[0361,0392,03d2,03e1,...
+
+That looks familar. 0361 is a seat joint.
+
+So try rules for both.
+
+      { rules: [RULE.LEFT_SEAT, RULE.RIGHT_SEAT, RULE.LEFT_SEAT] },
+      { rules: [RULE.RIGHT_SEAT, RULE.LEFT_SEAT, RULE.RIGHT_SEAT] },
+      { rules: [RULE.LEFT, RULE.RIGHT, RULE.LEFT] },
+      { rules: [RULE.RIGHT, RULE.LEFT, RULE.RIGHT] },
+
+Unknowns: 32
+[1661,16d2,16e1,17c1,1c78,1cc1,1ce1,1d61,2992,29d2,29e1,2bc2,2cb4,2cc2,2cd2,2e92,4334,43b4,43d2,4794,4978,4994,49b4,4d34,8338,8378,83e1,8668,8678,86b4,8b68,8e38]  
+
+Fixed 1792.  But still 32 more to go.
+
+Deconstruct
+Rr------:--RgRg--:--RbRb--:Ry------
+1661
+- - - -
+X - - -
+- X X -
+- X X -
+X - - -
+
+1661 [0021,0004,0012,0004] 0123+++
+
+Fails because it starts growing a logo on the second layer.
+My TMAM works because of the flat layer removal.
+Adding my additional flat removal code fixes 3 out of the first 4.
+
+But let's try something else.
+
+Combined both alternate growing methods.
+Again fixes 3 out of the first 4.
+Run all to check...
+Still runing with only 4 rules.
+
+Unknowns: 8
+[16d2,1c78,29e1,2cb4,43d2,4978,83e1,86b4]
+
+Only 8 to go.  No new failures, which is good news.
+
+Deconstruct
+--Rr----:Rg--RgRg:--RbRb--:Ry------
+16d2
+- - - - 
+X - - - 
+- X X - 
+X - X X 
+- X - - 
+
+C - - -
+- C B -
+C - A B
+- A - -
+
+16d2 [0042,0048,0121] 012++
+
+Saddle shape
+
+This one fails because...
+The 1 in layer 2 does not start a logo becuase it thinks its peer can claim it.
+Which is true, but because in strict logo mode, the peer stops growing at this point.
+But it doesn't know this.
+It's peer has a hat, which makes it (the peer) stop growing.
+
+I could try strict growing rules, that is, always grow in the direction of the rule.
+I think that would fail for this shape, because it has two logos start on layer 2,
+that grow in opposite directions.
+
+Rule //\ and >>< find it.
+
+Deconstruct
+------Rr:RgRgRg--:----RbRb:Ry------
+1c78
+- - - -
+X - - -
+- - X X
+X X X -
+- - - X
+
+

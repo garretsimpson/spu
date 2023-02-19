@@ -784,15 +784,53 @@ export class MyTmam {
   }
 
   /**
-   * check if part can be passed as a float
+   * Check if part can be grown as a stack.
    */
-  static canFloat1(dir, src, dest, prevDir, quads, nextQuads) {
-    const result = !dir[src] || (dir[src] == prevDir && !quads[dest]);
-    return result;
+  static canStack(state) {
+    const quad = state.quadNum;
+    const passedDir = state.prevDir[quad];
+    const passedPart = state.prevPass[quad];
+    const nextQuad = state.nextQuads[quad];
+
+    return nextQuad && (!passedPart || passedDir == OPS.STACK);
   }
 
   /**
-   * check if part can be passed as a float
+   * Check if part can be grown as a float.
+   */
+  static canFloat1(rule, dir, state) {
+    const quad = state.quadNum;
+    const passedDir = state.prevDir[quad];
+    const passedPart = state.prevPass[quad];
+    const onRight = (quad + 1) % 4;
+    const peer = (quad + 2) % 4;
+    const onLeft = (quad + 3) % 4;
+
+    let nextQuad, peerQuad, sideQuad, prevDir;
+    switch (dir) {
+      case OPS.LEFT:
+        nextQuad = state.nextQuads[onLeft];
+        peerQuad = rule == RULE.RIGHT && state.quads[peer];
+        sideQuad = state.quads[onLeft];
+        prevDir = OPS.RIGHT;
+        break;
+      case OPS.RIGHT:
+        nextQuad = state.nextQuads[onRight];
+        peerQuad = rule == RULE.LEFT && state.quads[peer];
+        sideQuad = state.quads[onRight];
+        prevDir = OPS.LEFT;
+        break;
+    }
+
+    return (
+      nextQuad &&
+      !peerQuad &&
+      (!passedPart || (passedDir == prevDir && !sideQuad))
+    );
+  }
+
+  /**
+   * Check if part can be grown as a float.
    */
   static canFloat2(dir, src, dest, prevDir, quads, nextQuads) {
     const result =
@@ -806,46 +844,31 @@ export class MyTmam {
    * Run the rule for one quad.
    * Returns the direction the corner should be passed, or ejected.
    */
-  static runRule(rule, quad, prevDir, quads, nextQuads) {
+  static runRule(rule, state) {
     let result = OPS.EJECT;
-    const onRight = (quad + 1) % 4;
-    const peer = (quad + 2) % 4;
-    const onLeft = (quad + 3) % 4;
-    const passedDir = prevDir[quad];
-    const peerQuad = quads[peer];
+    const canStack = MyTmam.canStack;
     const canFloat = MyTmam.canFloat1;
-
     switch (rule) {
       case RULE.FLAT:
         result = OPS.EJECT;
         break;
       case RULE.STACK:
-        if (nextQuads[quad]) {
-          if (!passedDir || passedDir == RULE.STACK) {
-            result = OPS.STACK;
-          }
+        if (canStack(state)) {
+          result = OPS.STACK;
         }
         break;
       case RULE.LEFT:
-        if (nextQuads[onLeft]) {
-          if (canFloat(prevDir, quad, onLeft, RULE.RIGHT, quads, nextQuads)) {
-            result = OPS.LEFT;
-          }
-        } else if (nextQuads[onRight] && !peerQuad) {
-          if (canFloat(prevDir, quad, onRight, RULE.LEFT, quads, nextQuads)) {
-            result = OPS.RIGHT;
-          }
+        if (canFloat(rule, OPS.LEFT, state)) {
+          result = OPS.LEFT;
+        } else if (canFloat(rule, OPS.RIGHT, state)) {
+          result = OPS.RIGHT;
         }
         break;
       case RULE.RIGHT:
-        if (nextQuads[onRight]) {
-          if (canFloat(prevDir, quad, onRight, RULE.LEFT, quads, nextQuads)) {
-            result = OPS.RIGHT;
-          }
-        } else if (nextQuads[onLeft] && !peerQuad) {
-          if (canFloat(prevDir, quad, onLeft, RULE.RIGHT, quads, nextQuads)) {
-            result = OPS.LEFT;
-          }
+        if (canFloat(rule, OPS.RIGHT, state)) {
+          result = OPS.RIGHT;
+        } else if (canFloat(rule, OPS.LEFT, state)) {
+          result = OPS.LEFT;
         }
         break;
       default:
@@ -866,12 +889,9 @@ export class MyTmam {
     console.log(Shape.pp(targetShape));
     console.log(Shape.graph(targetShape));
 
-    let shape = targetShape;
-    let partList = [];
-
     // Find stable layers on the bottom
     // const flats = MyTmam.findBottomFlats(shape);
-    const flats = [];
+    // const flats = [];
 
     // TODO: Are /\/ and \/\ both needed?
     const CONFIGS = [
@@ -886,12 +906,11 @@ export class MyTmam {
     ];
 
     let result = null;
-    const layers = Shape.toLayers(shape);
-    let layer, nextLayer;
-    let op, num, rule, part, layerParts, passedPart, passedDir;
-    let quads, nextQuads;
-    let onLeft, onRight;
-    let pass, dir;
+    let partList;
+    const layers = Shape.toLayers(targetShape);
+    let layer, rule, layerParts, pass, dir;
+    let quads, nextLayer, nextQuads;
+    let passedPart, op, part;
     let prevPass = [0, 0, 0, 0];
     let prevDir = [null, null, null, null];
 
@@ -900,24 +919,24 @@ export class MyTmam {
       partList = [[], [], [], []];
 
       for (const layerNum of [0, 1, 2, 3]) {
-        rule = config.rules[layerNum] || RULE.FLAT;
         layer = layers[layerNum];
         if (!layer) break;
+        rule = config.rules[layerNum] || RULE.FLAT;
         console.log("LAYER", layerNum, rule, Shape.pp(layer));
 
         /* Eject flat part */
-        if (layerNum < flats.length) {
-          partList[layerNum].push(layer);
-          console.log(">FLAT", Shape.pp(layer));
-          continue;
-        }
+        // if (layerNum < flats.length) {
+        //   partList[layerNum].push(layer);
+        //   console.log(">FLAT", Shape.pp(layer));
+        //   continue;
+        // }
 
-        quads = MyTmam.getQuads(layer);
-        nextLayer = layers[layerNum + 1] || 0;
-        nextQuads = MyTmam.getQuads(nextLayer);
         layerParts = [];
         pass = [0, 0, 0, 0];
         dir = [null, null, null, null];
+        quads = MyTmam.getQuads(layer);
+        nextLayer = layers[layerNum + 1] || 0;
+        nextQuads = MyTmam.getQuads(nextLayer);
 
         for (const quadNum of [0, 1, 2, 3]) {
           part = quads[quadNum];
@@ -930,26 +949,35 @@ export class MyTmam {
           }
 
           // Run rules
-          op = MyTmam.runRule(rule, quadNum, prevDir, quads, nextQuads);
-          onLeft = (quadNum + 3) % 4;
-          onRight = (quadNum + 1) % 4;
+          op = MyTmam.runRule(rule, {
+            targetShape,
+            layerNum,
+            quadNum,
+            prevPass,
+            prevDir,
+            quads,
+            nextQuads,
+            config,
+          });
+          const onLeft = (quadNum + 3) % 4;
+          const onRight = (quadNum + 1) % 4;
           switch (op) {
             case OPS.STACK:
               pass[quadNum] = part;
-              dir[quadNum] = RULE.STACK;
+              dir[quadNum] = OPS.STACK;
               break;
             case OPS.LEFT:
               pass[onLeft] = part;
-              dir[onLeft] = RULE.LEFT;
+              dir[onLeft] = OPS.LEFT;
               break;
             case OPS.RIGHT:
               pass[onRight] = part;
-              dir[onRight] = RULE.RIGHT;
+              dir[onRight] = OPS.RIGHT;
               break;
             case OPS.EJECT:
               if (passedPart) {
                 // Sort parts according to their bottom layer.
-                num = Shape.layerCount(part);
+                let num = Shape.layerCount(part);
                 partList[layerNum - num + 1].push(part);
                 console.log(">PART", Shape.pp(part));
               } else {

@@ -1570,6 +1570,8 @@ A - - B
 
 Modified float finding to always fail if there is a corner to the side.
 Turned off bottom flats.
+EDIT: I did this in an attempt to resolve cardboard box top without pre-preprocessing flat supporting layers.
+It does not help with 1792, because it only changes when to start a logo, not how to continue growing one.
 
 Knowns: 14600
 Unknowns: 5720
@@ -1822,3 +1824,197 @@ Ideas
 - remove flat layer if there are no passed parts and it stacks.
 - refactor rules to a function or two.
 - Make it work like my TMAM with strict and loose half-logos. (?)
+- Fix 5th layer shapes.
+
+Refactored the code.
+Added eject flats.
+Restored original rules.
+Using only \/\ and /\/.
+
+Knowns: 16008
+Unknowns: 4312
+[1642,1643,1661,16c3...
+
+Not too bad.  Found almost as many as latest attempt.
+
+Deconstruct
+--Rr----:----Rg--:--RbRb--:Ry------
+1642
+- - - -
+X - - -
+- X X -
+- - X -
+- X - -
+
+PARTS [0242,0004,0001]
+
+1642 [0042,0012,0004] 012++
+
+This is finding a 3-layer logo with a filled seat.
+It eats the part needed to support the half-logo on the top layer.
+
+My TMAM works because it uses strict logos, and stops at 2 layers.
+It needs to stop at two layers. Possible solutions...
+- Explicity with a rule like /-\.
+- Somehow implement rules with strict and loose logos.
+- Pattern matching - recognize that the corner is needed for half-logo on the top layer.
+- Heuristic - Maybe the corner in the seat can be used?
+
+Added 5th layer.
+
+      { rules: [RULE.LEFT, RULE.RIGHT, RULE.LEFT] },
+      { rules: [RULE.RIGHT, RULE.LEFT, RULE.RIGHT] }
+      
+Knowns: 20248
+Unknowns: 72
+[1642,1643,1661,16c3,16d2,16e1,1792,17c1,17c2,1c48,1c49,1c69,1c78,1cc1,1ce1,1d38,1d61,1d68,2981,2983,2992,29c3,29d2,29e1,2b61,2bc1,2bc2,2c84,2c86,2c96,2cb4,2cc2,2cd2,2e34,2e92,2e94,4312,4316,4334,4396,43b4,43d2,4792,4794,47c2,4918,491c,493c,4978,4994,49b4,4d34,4d38,4d68,8321,8329,8338,8369,8378,83e1,8624,862c,863c,8668,8678,86b4,8b61,8b68,8bc1,8e34,8e38,8e94]
+
+Much better.
+I see 1792 is still there.
+
+Try with explicit rules...
+      { rules: [RULE.LEFT, RULE.RIGHT, RULE.LEFT] },
+      { rules: [RULE.RIGHT, RULE.LEFT, RULE.RIGHT] },
+      { rules: [RULE.LEFT, RULE.FLAT, RULE.RIGHT] },
+      { rules: [RULE.RIGHT, RULE.FLAT, RULE.LEFT] },
+      { rules: [RULE.RIGHT, RULE.RIGHT, RULE.LEFT] },
+      { rules: [RULE.LEFT, RULE.LEFT, RULE.LEFT] },
+
+Knowns: 20296
+Unknowns: 24
+[1792,17c1,17c2,1d38,1d61,1d68,2b61,2bc1,2bc2,2e34,2e92,2e94,4792,4794,47c2,4d34,4d38,4d68,8b61,8b68,8bc1,8e34,8e38,8e94]
+
+That's pretty good.
+
+Deconstruct
+--Rr----:Rg----Rg:RbRbRb--:Ry------
+1792
+- - - -
+X - - -
+X X X -
+X - - X
+- X - -
+
+Deconstruct
+Rr------:----RgRg:RbRbRb--:Ry------
+17c1
+- - - -
+X - - -
+X X X -
+- - X X
+X - - -
+
+RULES \/\
+LAYER 0 \ 0001
+PASS  [0000,0000,0000,0001]
+DIR   [null,null,null,"\\"]
+LAYER 1 / 000c
+PASS  [0081,0004,0000,0000]
+DIR   ["/","\\",null,null]
+LAYER 2 \ 0007
+>PART 0181
+>PART 0024
+>QUAD 0004
+PASS  [0000,0000,0000,0000]
+DIR   [null,null,null,null]
+LAYER 3 - 0001
+>FLAT 0001
+PARTS [0181,0024,0004,0001]
+
+17c1 [0181,0004,0012,0004] 0123+++
+
+This fails mostly because it is finding a 2-layer logo (24) starting on the second layer.
+My TMAM works because the 4 gets ejected as a flat supporting the layer above (after 181 is removed).
+
+Added addtional flat rule.
+Rerverted to using only \/\ and /\/.
+
+Knowns: 19096
+Unknowns: 1224
+[1312,1316,1396,1642...
+
+Fixed 17c1, but got worse (was 72) results overall.
+
+1312 fails because it is a 4-layer half logo with a filled void.
+
+My TMAM works because it stops at a strict 2-layer logo.
+
+Try adding the addtional rules back.
+
+Unknowns: 28
+[1792,17c2,1d38,1d68,2b61,2bc1,2e34,2e94,37a4,3b58,3e34,4792,47c2,4d38,4d68,67a1,6d68,6e58,8b61,8bc1,8e34,8e94,9792,9b52,9da4,cbc1,cda1,ce52]
+
+Still worse (was 24).
+
+Unknowns: 24
+[1792,17c1,17c2,1d38,1d61,1d68,2b61,2bc1,2bc2,2e34,2e92,2e94,4792,4794,47c2,4d34,4d38,4d68,8b61,8b68,8bc1,8e34,8e38,8e94]
+
+37a4 is one that was added when it got worse.
+
+Deconstruct
+----Rr--:--Rg--Rg:RbRbRb--:RyRy----
+37a4
+- - - -
+X X - -
+X X X -
+- X - X
+- - X -
+
+RULES \/\
+LAYER 0 \ 0004
+PASS  [0000,0004,0000,0000]
+DIR   [null,"\\",null,null]
+LAYER 1 / 000a
+PASS  [0008,0000,0024,0000]
+DIR   ["/",null,"/",null]
+LAYER 2 \ 0007
+>PART 0018
+>PART 0424
+PASS  [0002,0000,0000,0000]
+DIR   ["\\",null,null,null]
+LAYER 3 - 0003
+>PART 0012
+>QUAD 0002
+PASS  [0000,0000,0000,0000]
+DIR   [null,null,null,null]
+PARTS [0424,0018,0012,0002]
+FOUND 37a4 [0424,0018,0012,0002] 0123+++
+
+37a4 [0024,0018,0006,0003] 0123+++
+
+Again with the filled 4-layer logo for the failure case.
+The working case finds the filled void and stops at 3 layers.
+My TMAM stops at 2 layers with strict logos.
+
+Changed float growing to stop in some cases.
+Rerverted to using only \/\ and /\/.
+
+Unknowns: 48
+[1642,1643,16c3,16d2,1792,17c2,1c48,1c49,1c69,1c78,1d38,1d68,2981,2983,29c3,29e1,2b61,2bc1,2c84,2c86,2c96,2cb4,2e34,2e94,4312,4316,4396,43d2,4792,47c2,4918,491c,493c,4978,4d38,4d68,8321,8329,8369,83e1,8624,862c,863c,86b4,8b61,8bc1,8e34,8e94]
+
+Better (was 72).
+Still see 1792.
+
+Add rules back.
+
+Unknowns: 16
+[1792,17c2,1d38,1d68,2b61,2bc1,2e34,2e94,4792,47c2,4d38,4d68,8b61,8bc1,8e34,8e94]
+
+Better.  Still 1792.
+That's because the new float growing does not alter the rule for growing floats, only when to start them.
+
+Deconstruct
+--Rr----:Rg----Rg:RbRbRb--:Ry------
+1792
+- - - -
+X - - -
+X X X -
+X - - X
+- X - -
+
+--Rr----:Rg----Rg:RbRbRb--:Ry------
+1792
+C - - -
+B C D -
+A - - B
+- A - -

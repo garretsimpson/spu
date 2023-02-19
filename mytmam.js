@@ -127,7 +127,7 @@ export class MyTmam {
    * @returns {boolean}
    */
   static isStable(above, below) {
-    return (above & below) != 0;
+    return above == 0 || (above & below) != 0;
   }
 
   /**
@@ -811,9 +811,9 @@ export class MyTmam {
     const quad = state.quadNum;
     const passedDir = state.prevDir[quad];
     const passedPart = state.prevPass[quad];
-    const onRight = (quad + 1) % 4;
-    const peer = (quad + 2) % 4;
     const onLeft = (quad + 3) % 4;
+    const peer = (quad + 2) % 4;
+    const onRight = (quad + 1) % 4;
 
     let nextQuad, peerQuad, sideQuad, prevDir;
     switch (dir) {
@@ -841,12 +841,39 @@ export class MyTmam {
   /**
    * Check if part can be grown as a float.
    */
-  static canFloat2(dir, src, dest, prevDir, quads, nextQuads) {
-    const result =
-      (!dir[src] && !quads[dest] && !nextQuads[src]) ||
-      (!dir[src] && quads[dest] && dir[dest] && !nextQuads[src]) ||
-      (dir[src] == prevDir && !quads[dest]);
-    return result;
+  static canFloat2(rule, dir, state) {
+    const quad = state.quadNum;
+    const passedDir = state.prevDir[quad];
+    const passedPart = state.prevPass[quad];
+    const onLeft = (quad + 3) % 4;
+    const peer = (quad + 2) % 4;
+    const onRight = (quad + 1) % 4;
+
+    let nextQuad, peerQuad, sideQuad, sidePass, prevDir;
+    let topQuad = state.nextQuads[quad];
+    switch (dir) {
+      case OPS.LEFT:
+        nextQuad = state.nextQuads[onLeft];
+        peerQuad = rule == RULE.RIGHT && state.quads[peer];
+        sideQuad = state.quads[onLeft];
+        sidePass = state.prevPass[onLeft];
+        prevDir = OPS.RIGHT;
+        break;
+      case OPS.RIGHT:
+        nextQuad = state.nextQuads[onRight];
+        peerQuad = rule == RULE.LEFT && state.quads[peer];
+        sideQuad = state.quads[onRight];
+        sidePass = state.prevPass[onRight];
+        prevDir = OPS.LEFT;
+        break;
+    }
+    return (
+      nextQuad &&
+      !peerQuad &&
+      ((!passedPart && !sideQuad && !topQuad) ||
+        (!passedPart && sideQuad && sidePass && !topQuad) ||
+        (passedDir == prevDir && !sideQuad))
+    );
   }
 
   /**
@@ -929,14 +956,21 @@ export class MyTmam {
         rule = config.rules[layerNum] || RULE.FLAT;
         console.log("LAYER", layerNum, rule, Shape.pp(layer));
 
-        /* Eject flat part */
+        /* Eject flat parts that are not claimed */
         nextLayer = layers[layerNum + 1] || 0;
         const nonePass = prevPass.reduce((a, b) => a | b) == 0;
-        if (nonePass && (!nextLayer || MyTmam.isStable(nextLayer, layer))) {
+        if (nonePass && MyTmam.isStable(nextLayer, layer)) {
           partList[layerNum].push(layer);
           console.log(">FLAT", Shape.pp(layer));
           continue;
         }
+        // const passValue = prevPass.reduce((a, v, i) => a | (+(v > 0) << i), 0);
+        // const testLayer = MyTmam.deletePart(layer, passValue);
+        // if (testLayer && MyTmam.isStable(nextLayer, testLayer)) {
+        //   partList[layerNum].push(testLayer);
+        //   console.log(">FLAT", Shape.pp(testLayer));
+        //   layer = MyTmam.deletePart(layer, testLayer);
+        // }
 
         layerParts = [];
         pass = [0, 0, 0, 0];
@@ -1017,7 +1051,12 @@ export class MyTmam {
 
       // Find stacking order
       const build = { build: partList };
-      const found = MyTmam.tryBuild(targetShape, build);
+      let found = MyTmam.tryBuild(targetShape, build);
+      // Try with 5th layer
+      if (!found) {
+        partList.push(...Shape.FLAT_4);
+        found = MyTmam.tryBuild(targetShape, build);
+      }
       if (found) {
         result = build;
         break;
@@ -1101,8 +1140,8 @@ export class MyTmam {
 
     const testShapes = [];
     // testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
-    testShapes.push(0x000f, 0xffff, 0x004b, 0xfe1f); // classic shapes
-    // testShapes.push(0x1634, 0x342); // 3-logo and fifth layer
+    // testShapes.push(0x000f, 0xffff, 0x004b, 0xfe1f); // classic shapes
+    // testShapes.push(0x3444); // 5th layer shapes
     // testShapes.push(0x0178, 0x0361); // hat and seat
     // testShapes.push(0x3343, 0x334a, 0x334b); // stack order "10234++++"
     // testShapes.push(0x1625, 0x1629, 0x162c, 0x162d); // stack order "10324++++"
@@ -1119,7 +1158,8 @@ export class MyTmam {
     // testShapes.push(0x1361, 0x1569, 0x15c3, 0x19c1); // problem for stacking ORDER0
     // testShapes.push(0x13c, 0x0162, 0x0163, 0x0164, 0x0165); // problem for stacking ORDER0
     // testShapes.push(0x1212, 0x2121); // problem for stacking ORDER0
-    // testShapes.push(0x1792); // working on Skim design
+    // testShapes.push(0x1792, 0x17c1, 0x17c2, 0x1d38); // working on Skim design
+    testShapes.push(0x1792); // working on Skim design
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     // keyShapes.forEach((code) => unknownShapes.set(code, { code }));

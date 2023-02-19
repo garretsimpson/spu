@@ -122,6 +122,15 @@ export class MyTmam {
   }
 
   /**
+   * @param {number} above
+   * @param {number} below
+   * @returns {boolean}
+   */
+  static isStable(above, below) {
+    return (above & below) != 0;
+  }
+
+  /**
    * @param {number} shape
    * @returns {number}
    */
@@ -889,10 +898,6 @@ export class MyTmam {
     console.log(Shape.pp(targetShape));
     console.log(Shape.graph(targetShape));
 
-    // Find stable layers on the bottom
-    // const flats = MyTmam.findBottomFlats(shape);
-    // const flats = [];
-
     // TODO: Are /\/ and \/\ both needed?
     const CONFIGS = [
       // { rules: [RULE.FLAT, RULE.FLAT, RULE.FLAT] },
@@ -925,17 +930,18 @@ export class MyTmam {
         console.log("LAYER", layerNum, rule, Shape.pp(layer));
 
         /* Eject flat part */
-        // if (layerNum < flats.length) {
-        //   partList[layerNum].push(layer);
-        //   console.log(">FLAT", Shape.pp(layer));
-        //   continue;
-        // }
+        nextLayer = layers[layerNum + 1] || 0;
+        const nonePass = prevPass.reduce((a, b) => a | b) == 0;
+        if (nonePass && (!nextLayer || MyTmam.isStable(nextLayer, layer))) {
+          partList[layerNum].push(layer);
+          console.log(">FLAT", Shape.pp(layer));
+          continue;
+        }
 
         layerParts = [];
         pass = [0, 0, 0, 0];
         dir = [null, null, null, null];
         quads = MyTmam.getQuads(layer);
-        nextLayer = layers[layerNum + 1] || 0;
         nextQuads = MyTmam.getQuads(nextLayer);
 
         for (const quadNum of [0, 1, 2, 3]) {

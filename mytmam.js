@@ -589,10 +589,10 @@ export class MyTmam {
     console.log(Shape.graph(targetShape));
 
     const configs = [
-      { seat: true, reverse: false },
-      { seat: true, reverse: true },
       { seat: false, reverse: false },
       { seat: false, reverse: true },
+      { seat: true, reverse: false },
+      { seat: true, reverse: true },
     ];
 
     let num = 0;
@@ -981,10 +981,10 @@ export class MyTmam {
     const CONFIGS = [
       // { rules: [RULE.FLAT, RULE.FLAT, RULE.FLAT] },
       // { rules: [RULE.STACK, RULE.STACK, RULE.STACK] },
-      { rules: [RULE.LEFT_SEAT, RULE.RIGHT_SEAT, RULE.LEFT_SEAT] },
-      { rules: [RULE.RIGHT_SEAT, RULE.LEFT_SEAT, RULE.RIGHT_SEAT] },
       { rules: [RULE.LEFT, RULE.RIGHT, RULE.LEFT] },
       { rules: [RULE.RIGHT, RULE.LEFT, RULE.RIGHT] },
+      { rules: [RULE.LEFT_SEAT, RULE.RIGHT_SEAT, RULE.LEFT_SEAT] },
+      { rules: [RULE.RIGHT_SEAT, RULE.LEFT_SEAT, RULE.RIGHT_SEAT] },
     ];
 
     let result = null;
@@ -1061,7 +1061,7 @@ export class MyTmam {
               if (passedPart) {
                 // Sort parts according to their bottom layer.
                 let num = Shape.layerCount(part);
-                partList[layerNum - num + 1].push(part);
+                partList[layerNum - num + 1].unshift(part);
                 console.log(">PART", Shape.pp(part));
               } else {
                 layerParts.push(part);
@@ -1086,10 +1086,7 @@ export class MyTmam {
         prevDir = dir;
       }
 
-      // Make superparts by stacking all parts with the same bottom layer.
-      partList = partList
-        .filter((s) => s.length > 0)
-        .map((s) => s.reduce((a, b) => a | b));
+      partList = partList.flat();
       console.log("PARTS", Shape.pp(partList));
 
       // Find stacking order
@@ -1183,7 +1180,7 @@ export class MyTmam {
 
     const testShapes = [];
     // testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
-    // testShapes.push(0x000f, 0xffff, 0x004b, 0xfe1f); // classic shapes
+    testShapes.push(0x000f, 0xffff, 0x004b, 0xfe1f); // classic shapes
     // testShapes.push(0x3444); // 5th layer shapes
     // testShapes.push(0x0178, 0x0361); // hat and seat
     // testShapes.push(0x3343, 0x334a, 0x334b); // stack order "10234++++"
@@ -1201,7 +1198,7 @@ export class MyTmam {
     // testShapes.push(0x1361, 0x1569, 0x15c3, 0x19c1); // problem for stacking ORDER0
     // testShapes.push(0x13c, 0x0162, 0x0163, 0x0164, 0x0165); // problem for stacking ORDER0
     // testShapes.push(0x1212, 0x2121); // problem for stacking ORDER0
-    // testShapes.push(0x16e1, 0x1ce1, 0x29d2, 0x2cd2); // working on Skim design
+    // testShapes.push(0x1569, 0x15c3, 0x1b78, 0x1bd2); // working on Skim design
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     // keyShapes.forEach((code) => unknownShapes.set(code, { code }));

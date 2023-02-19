@@ -2135,3 +2135,84 @@ X - - -
 X - - -
 
 16e1 [0021,000c,0012,0004] 0123+++
+
+This starts a 2-layer half-logo on layer 2, but rest of layer 2 should be output as a flat.
+
+Trying to remove superparts...
+
+Deconstruct
+Rr----Rr:--RgRg--:Rb--Rb--:Ry------
+1569
+- - - -
+X - - -
+X - X -
+- X X -
+X - - X
+
+PARTS [0048,0121,0004,0001]
+1569 [0121,0048,0004,0001] 012++3+
+
+This fails because stacking attempts to put the 4 on top of the 121 first.
+
+My TMAM works ...
+Becuase the 121 goes first, and the 48 and the 4 go next.
+
+Maybe sort by half-logo height, tallest first?
+Reverse the order they were found?
+
+That works.  No longer need super parts.
+
+Deconstruct
+RrRrRrRr:Rg------:--RbRbRb:RyRyRyRy
+fe1f
+- - - -
+X X X X
+- X X X
+X - - -
+X X X X
+
+RULES \/\
+LAYER 0 \ 000f
+>FLAT 000f
+LAYER 1 / 0001
+PASS  [0000,0001,0000,0000]
+DIR   [null,"/",null,null]
+LAYER 2 \ 000e
+>QUAD 0008
+PASS  [0021,0004,0000,0000]
+DIR   ["\\","\\",null,null]
+LAYER 3 - 000f
+>PART 0121
+>PART 0024
+>QUAD 0004
+>QUAD 0008
+PASS  [0000,0000,0000,0000]
+DIR   [null,null,null,null]
+PARTS [000f,0121,0024,0008,000c]
+FOUND fe1f [000f,0121,0024,0008,000c] 01234++++
+
+econstruct
+RrRrRrRr:Rg------:--RbRbRb:RyRyRyRy
+fe1f
+- - - -
+X X X X
+- X X X
+X - - -
+X X X X
+
+RULES <><
+LAYER 0 < 000f
+>FLAT 000f
+LAYER 1 > 0001
+PASS  [0000,0001,0000,0000]
+DIR   [null,"/",null,null]
+LAYER 2 < 000e
+>PART 0021
+>QUAD 0004
+>QUAD 0008
+PASS  [0000,0000,0000,0000]
+DIR   [null,null,null,null]
+LAYER 3 - 000f
+>FLAT 000f
+PARTS [000f,0021,000c,000f]
+FOUND fe1f [000f,0021,000c,000f] 0123+++

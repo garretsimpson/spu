@@ -897,7 +897,8 @@ export class MyTmam {
     let nextQuad, peerQuad, sideQuad, sidePass, prevDir;
     const topQuad =
       (rule == RULE.LEFT || rule == RULE.RIGHT) && state.nextQuads[quad];
-    const topPeer = state.nextQuads[peer];
+    const topPeer =
+      (rule == RULE.LEFT || rule == RULE.RIGHT) && state.nextQuads[peer];
     switch (dir) {
       case OPS.LEFT:
         nextQuad = state.nextQuads[onLeft];
@@ -918,7 +919,7 @@ export class MyTmam {
     }
     return (
       nextQuad &&
-      !(peerQuad && !topPeer) &&
+      (!peerQuad || topPeer) &&
       !topQuad &&
       ((!passedPart && !sideQuad) ||
         (!passedPart && sideQuad && sidePass) ||
@@ -969,7 +970,7 @@ export class MyTmam {
 
   /**
    * Deconstructor - Skim method
-   * @param {number} shape
+   * @param {number} targetShape
    */
   static deconstruct3(targetShape) {
     console.log("Deconstruct");
@@ -977,7 +978,6 @@ export class MyTmam {
     console.log(Shape.pp(targetShape));
     console.log(Shape.graph(targetShape));
 
-    // TODO: Are /\/ and \/\ both needed?
     const CONFIGS = [
       // { rules: [RULE.FLAT, RULE.FLAT, RULE.FLAT] },
       // { rules: [RULE.STACK, RULE.STACK, RULE.STACK] },
@@ -985,10 +985,6 @@ export class MyTmam {
       { rules: [RULE.RIGHT_SEAT, RULE.LEFT_SEAT, RULE.RIGHT_SEAT] },
       { rules: [RULE.LEFT, RULE.RIGHT, RULE.LEFT] },
       { rules: [RULE.RIGHT, RULE.LEFT, RULE.RIGHT] },
-      // { rules: [RULE.LEFT, RULE.FLAT, RULE.RIGHT] },
-      // { rules: [RULE.RIGHT, RULE.FLAT, RULE.LEFT] },
-      // { rules: [RULE.RIGHT_SEAT, RULE.RIGHT_SEAT, RULE.LEFT_SEAT] },
-      // { rules: [RULE.LEFT, RULE.LEFT, RULE.LEFT] },
     ];
 
     let result = null;
@@ -1010,7 +1006,7 @@ export class MyTmam {
         rule = config.rules[layerNum] || RULE.FLAT;
         console.log("LAYER", layerNum, rule, Shape.pp(layer));
 
-        /* Eject flat parts that are not claimed */
+        /* If there are no passed parts, eject the layer as a flat part */
         nextLayer = layers[layerNum + 1] || 0;
         const nonePass = prevPass.reduce((a, b) => a | b) == 0;
         if (nonePass && MyTmam.isStable(nextLayer, layer)) {
@@ -1018,13 +1014,6 @@ export class MyTmam {
           console.log(">FLAT", Shape.pp(layer));
           continue;
         }
-        // const passValue = prevPass.reduce((a, v, i) => a | (+(v > 0) << i), 0);
-        // const testLayer = MyTmam.deletePart(layer, passValue);
-        // if (testLayer && MyTmam.isStable(nextLayer, testLayer)) {
-        //   partList[layerNum].push(testLayer);
-        //   console.log(">FLAT", Shape.pp(testLayer));
-        //   layer = MyTmam.deletePart(layer, testLayer);
-        // }
 
         layerParts = [];
         pass = [0, 0, 0, 0];
@@ -1212,8 +1201,7 @@ export class MyTmam {
     // testShapes.push(0x1361, 0x1569, 0x15c3, 0x19c1); // problem for stacking ORDER0
     // testShapes.push(0x13c, 0x0162, 0x0163, 0x0164, 0x0165); // problem for stacking ORDER0
     // testShapes.push(0x1212, 0x2121); // problem for stacking ORDER0
-    testShapes.push(0x16d2, 0x1c78, 0x29e1, 0x2cb4); // working on Skim design
-    // testShapes.push(0x1792); // working on Skim design
+    // testShapes.push(0x16e1, 0x1ce1, 0x29d2, 0x2cd2); // working on Skim design
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     // keyShapes.forEach((code) => unknownShapes.set(code, { code }));

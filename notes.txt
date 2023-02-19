@@ -2109,4 +2109,29 @@ X - - -
 X X X -
 - - - X
 
+Added peer hat checking.
 
+Knowns: 20320
+Unknowns: 0
+
+Done!
+
+Trying to simplify the grow logic...
+  nextQuad &&
+      (!peerQuad || topPeer) &&
+      !topQuad &&
+      (!passedPart || (passedDir == prevDir && !sideQuad && !topQuad))
+
+Unknowns: 8
+[16e1,1ce1,29d2,2cd2,43b4,49b4,8378,8678]
+
+Deconstruct
+Rr------:--RgRgRg:--RbRb--:Ry------
+16e1
+- - - -
+X - - -
+- X X -
+- X X X
+X - - -
+
+16e1 [0021,000c,0012,0004] 0123+++

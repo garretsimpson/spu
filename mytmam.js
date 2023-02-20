@@ -934,7 +934,7 @@ export class MyTmam {
   static runRule(rule, state) {
     let result = OPS.EJECT;
     const canStack = MyTmam.canStack;
-    let canFloat = MyTmam.canFloat3;
+    const canFloat = MyTmam.canFloat3;
     switch (rule) {
       case RULE.FLAT:
         result = OPS.EJECT;

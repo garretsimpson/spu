@@ -1601,39 +1601,6 @@ It works with my tmam because the bottom half-logo is removed first.
 Skim's TMAM works quads in parallel, but layers bottom up.
 The second layer knows that the second quad is claimed I think.  It could ignore it in this case.
 
-Truth table v2
-- - - -
-A B C D
-E F G H
-- - - -
-
-M N O P - Passed in parts 
-
-F - Current corner
-Q - Passed in direction
-R - Current rule:
-  - flat (eject)
-  | stack up
-  \ float left
-  / float right
-
-A B C D E F G H M N O P Q R
-. . . . . 0 . . . . . . . .  NOP
-. 1 . . . 1 . . . 0 . . . |   >B
-. 1 . . . 1 . . . 1 . . | |  S>B
-1 . . . 0 1 . . . 0 . . . \   >A
-1 . . . 1 1 . . 1 0 . . . \   >A
-1 . . . 0 1 . . . 1 . . / \  S>A
-0 . 1 . . 1 0 0 . 0 . . . \   >C
-0 . 1 . . 1 1 0 . 0 1 . . \   >C
-0 . 1 . . 1 0 0 . 1 . . \ \  S>C
-. . 1 . . 1 0 . . 0 . . . /   >C
-. . 1 . . 1 1 . . 0 1 . . /   >C
-. . 1 . . 1 0 . . 1 . . \ /  S>C
-1 . 0 . 0 1 . 0 . 0 . . . /   >A
-1 . 0 . 1 1 . 0 1 0 . . . /   >A
-1 . 0 . 0 1 . 0 . 1 . . / /  S>A
-
 Knowns: 15196
 Unknowns: 5124
 [0164,016c,01c4,01c6...
@@ -2191,7 +2158,7 @@ DIR   [null,null,null,null]
 PARTS [000f,0121,0024,0008,000c]
 FOUND fe1f [000f,0121,0024,0008,000c] 01234++++
 
-econstruct
+Deconstruct
 RrRrRrRr:Rg------:--RbRbRb:RyRyRyRy
 fe1f
 - - - -
@@ -2216,3 +2183,61 @@ LAYER 3 - 000f
 >FLAT 000f
 PARTS [000f,0021,000c,000f]
 FOUND fe1f [000f,0021,000c,000f] 0123+++
+
+Truth table v2
+- - - -
+A B C D
+E F G H
+- - - -
+
+M N O P - Passed in parts 
+
+F - Current corner
+Q - Passed in direction
+R - Current rule:
+  - flat (eject)
+  | stack up
+  \ float left - seat
+  / float right - seat
+  < float left - strict
+  > float right - strict
+
+A B C D E F G H M N O P Q R
+. . . . . 0 . . . . . . . .  NOP
+. 1 . . . 1 . . . 0 . . . |   >B
+. 1 . . . 1 . . . 1 . . | |  S>B
+
+A B C D E F G H M N O P Q R
+1 . . . 0 1 . . . 0 . . . \   >A
+1 . . . 1 1 . . 1 0 . . . \   >A
+1 . . . 0 1 . . . 1 . . / \  S>A
+0 . 1 . . 1 0 0 . 0 . . . \   >C
+0 . 1 . . 1 1 0 . 0 1 . . \   >C
+0 . 1 . . 1 0 0 . 1 . . \ \  S>C
+. . 1 . . 1 0 . . 0 . . . /   >C
+. . 1 . . 1 1 . . 0 1 . . /   >C
+. . 1 . . 1 0 . . 1 . . \ /  S>C
+1 . 0 . 0 1 . 0 . 0 . . . /   >A
+1 . 0 . 1 1 . 0 1 0 . . . /   >A
+1 . 0 . 0 1 . 0 . 1 . . / /  S>A
+
+A B C D E F G H M N O P Q R
+1 0 . . 0 1 . . . 0 . . . <   >A
+1 0 . . 1 1 . . 1 0 . . . <   >A
+1 0 . . 0 1 . . . 1 . . > <  S>A
+0 0 1 . . 1 0 0 . 0 . . . <   >C
+0 0 1 . . 1 1 0 . 0 1 . . <   >C
+0 0 1 . . 1 0 0 . 1 . . < <  S>C
+0 0 1 1 . 1 0 . . 0 . . . <   >C
+0 0 1 1 . 1 1 . . 0 1 . . <   >C
+0 0 1 1 . 1 0 . . 1 . . < <  S>C
+. 0 1 . . 1 0 . . 0 . . . >   >C
+. 0 1 . . 1 1 . . 0 1 . . >   >C
+. 0 1 . . 1 0 . . 1 . . < >  S>C
+1 0 0 . 0 1 . 0 . 0 . . . >   >A
+1 0 0 . 1 1 . 0 1 0 . . . >   >A
+1 0 0 . 0 1 . 0 . 1 . . > >  S>A
+1 0 0 1 0 1 . . . 0 . . . >   >A
+1 0 0 1 1 1 . . 1 0 . . . >   >A
+1 0 0 1 0 1 . . . 1 . . > >  S>A
+

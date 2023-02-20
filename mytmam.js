@@ -888,17 +888,17 @@ export class MyTmam {
    */
   static canFloat3(rule, dir, state) {
     const quad = state.quadNum;
-    const passedDir = state.prevDir[quad];
-    const passedPart = state.prevPass[quad];
     const onLeft = (quad + 3) % 4;
     const peer = (quad + 2) % 4;
     const onRight = (quad + 1) % 4;
+    const strict = rule == RULE.LEFT || rule == RULE.RIGHT;
+
+    const passedDir = state.prevDir[quad];
+    const passedPart = state.prevPass[quad];
+    const topQuad = strict && state.nextQuads[quad];
+    const topPeer = strict && state.nextQuads[peer];
 
     let nextQuad, peerQuad, sideQuad, sidePass, prevDir;
-    const topQuad =
-      (rule == RULE.LEFT || rule == RULE.RIGHT) && state.nextQuads[quad];
-    const topPeer =
-      (rule == RULE.LEFT || rule == RULE.RIGHT) && state.nextQuads[peer];
     switch (dir) {
       case OPS.LEFT:
         nextQuad = state.nextQuads[onLeft];
@@ -917,13 +917,16 @@ export class MyTmam {
         prevDir = OPS.LEFT;
         break;
     }
+
     return (
       nextQuad &&
-      (!peerQuad || topPeer) &&
+      !(peerQuad && !topPeer) &&
       !topQuad &&
-      ((!passedPart && !sideQuad) ||
-        (!passedPart && sideQuad && sidePass) ||
+      ((!passedPart && !(sideQuad && !sidePass)) ||
         (passedDir == prevDir && !sideQuad))
+      // ((!passedPart && !sideQuad) ||
+      // (!passedPart && sideQuad && sidePass) ||
+      // (passedDir == prevDir && !sideQuad))
     );
   }
 
@@ -1180,7 +1183,7 @@ export class MyTmam {
 
     const testShapes = [];
     // testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
-    testShapes.push(0x000f, 0xffff, 0x004b, 0xfe1f); // classic shapes
+    // testShapes.push(0x000f, 0xffff, 0x004b, 0xfe1f); // classic shapes
     // testShapes.push(0x3444); // 5th layer shapes
     // testShapes.push(0x0178, 0x0361); // hat and seat
     // testShapes.push(0x3343, 0x334a, 0x334b); // stack order "10234++++"
@@ -1198,7 +1201,7 @@ export class MyTmam {
     // testShapes.push(0x1361, 0x1569, 0x15c3, 0x19c1); // problem for stacking ORDER0
     // testShapes.push(0x13c, 0x0162, 0x0163, 0x0164, 0x0165); // problem for stacking ORDER0
     // testShapes.push(0x1212, 0x2121); // problem for stacking ORDER0
-    // testShapes.push(0x1569, 0x15c3, 0x1b78, 0x1bd2); // working on Skim design
+    testShapes.push(0x1578); // working on Skim design
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     // keyShapes.forEach((code) => unknownShapes.set(code, { code }));

@@ -2087,7 +2087,7 @@ Trying to simplify the grow logic...
   nextQuad &&
       (!peerQuad || topPeer) &&
       !topQuad &&
-      (!passedPart || (passedDir == prevDir && !sideQuad && !topQuad))
+      (!passedPart || (passedDir == prevDir && !sideQuad))
 
 Unknowns: 8
 [16e1,1ce1,29d2,2cd2,43b4,49b4,8378,8678]
@@ -2240,4 +2240,40 @@ A B C D E F G H M N O P Q R
 1 0 0 1 0 1 . . . 0 . . . >   >A
 1 0 0 1 1 1 . . 1 0 . . . >   >A
 1 0 0 1 0 1 . . . 1 . . > >  S>A
+
+Trying to simplify 5 part soliutions
+
+Deconstruct
+------Rr:RgRgRg--:Rb--Rb--:Ry------
+1578
+- - - -
+X - - -
+X - X -
+X X X -
+- - - X
+
+RULES <><
+LAYER 0 < 0008
+PASS  [0000,0000,0008,0000]
+DIR   [null,null,"\\",null]
+LAYER 1 > 0007
+>QUAD 0001
+>PART 0048
+PASS  [0000,0000,0002,0000]
+DIR   [null,null,"/",null]
+LAYER 2 < 0005
+>QUAD 0001
+>PART 0042
+PASS  [0000,0000,0000,0000]
+DIR   [null,null,null,null]
+LAYER 3 - 0001
+>FLAT 0001
+PARTS [0048,0042,0001,0001,0001]
+FOUND 1578 [0048,0042,0001,0001,0001] 01234++++
+
+1578 [0048,0003,0005,0001] 0123+++
+
+My TMAM works because after it ejects 48, the remainder of layer 2 is a flat.
+
+Teach flat logic about hats?
 

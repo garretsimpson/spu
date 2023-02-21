@@ -2275,5 +2275,74 @@ FOUND 1578 [0048,0042,0001,0001,0001] 01234++++
 
 My TMAM works because after it ejects 48, the remainder of layer 2 is a flat.
 
+Skim's starts growing another logo seat on top of the 48.
+
 Teach flat logic about hats?
 
+That worked - Now all 5 parts solutions only use the scafold as the 5th part.
+
+Trying to simplify the grow rule again...
+
+      nextQuad &&
+      !topQuad &&
+      !(peerQuad && !topPeer) &&
+      (!passedPart || (passedDir == prevDir && !sideQuad))
+
+Unknowns: 116
+[35b4,35e1,3a78,3ad2...
+
+
+Deconstruct
+----Rr--:RgRg--Rg:Rb--Rb--:RyRy----
+35b4
+- - - -
+X X - -
+X - X -
+X X - X
+- - X -
+
+PARTS [2424,0018,0001,0001]
+
+35b4 [2424,0009,0001,0001,000f] 01234++++
+
+This is supposed to find a 4-layer logo, 3 flats and a 5th layer.
+
+But it starts a logo 18 rather than ejecting the flat.
+
+Starting to look like I need to handle finding flat layers like growing logos.
+The logic so far:
+- no passed parts - support the layer above
+- has passed parts - layer without passed parts supports layer above
+  - in strict mode, hats modify passed layer.
+
+- Why can't the indiviual quads be ejected when logo growing fails?
+- It can, but that's what makes the grow rule complex / contain a heuristic.
+- Maybe we're just shifting the logic from logos to flats.
+- Might make sense to do that if we can make a set of flat rules, like...
+  - must support layer above
+  - must not contain corners claim by floats below
+  - etc.
+- Also, flats are all on the same layer, so can/must be done before floats.  They grow sideways.
+
+Created a findFlat() method to put the logic in one place.
+
+Tried ejecting just the corners that were not claimed and supporting the corner above (hat).
+But 35b4 fails because 8 on the second layer is not ejected and it attempts to grow a logo there.
+Need to eject all corners when a flat is found?
+
+Try ejecting all corners except those claimed.
+This fixed 0x35b4, 0x35e1, 0x3a78, 0x3ad2.
+Note: still running with simplified logo finding.
+
+Something is bad.
+
+Unknowns: 16466
+[0112,0116,0118,011a...
+
+0112 [0012,0001] 01+
+
+Maybe parts are out of order now?
+Seems to be missing the flat part from the parts list.
+Fixed a bug.
+
+It worked!

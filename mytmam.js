@@ -800,6 +800,24 @@ export class MyTmam {
   }
 
   /**
+   * Find flat part
+   */
+  static findFlat(state) {
+    let result;
+
+    const passLayer = state.prevPass.reduce(
+      (a, x, i) => a | (+(x > 0) << i),
+      0
+    );
+    const part = MyTmam.deletePart(state.layer, passLayer);
+    if (MyTmam.isStable(state.nextLayer, part)) {
+      result = part;
+    }
+
+    return result;
+  }
+
+  /**
    * Check if part can be grown as a stack.
    */
   static canStack(state) {
@@ -898,14 +916,13 @@ export class MyTmam {
     const topQuad = strict && state.nextQuads[quad];
     const topPeer = strict && state.nextQuads[peer];
 
-    let nextQuad, peerQuad, sideQuad, sidePass, prevDir;
+    let nextQuad, peerQuad, sideQuad, prevDir;
     switch (dir) {
       case OPS.LEFT:
         nextQuad = state.nextQuads[onLeft];
         peerQuad =
           (rule == RULE.RIGHT || rule == RULE.RIGHT_SEAT) && state.quads[peer];
         sideQuad = state.quads[onLeft];
-        sidePass = state.prevPass[onLeft];
         prevDir = OPS.RIGHT;
         break;
       case OPS.RIGHT:
@@ -913,20 +930,15 @@ export class MyTmam {
         peerQuad =
           (rule == RULE.LEFT || rule == RULE.LEFT_SEAT) && state.quads[peer];
         sideQuad = state.quads[onRight];
-        sidePass = state.prevPass[onRight];
         prevDir = OPS.LEFT;
         break;
     }
 
     return (
       nextQuad &&
-      !(peerQuad && !topPeer) &&
       !topQuad &&
-      ((!passedPart && !(sideQuad && !sidePass)) ||
-        (passedDir == prevDir && !sideQuad))
-      // ((!passedPart && !sideQuad) ||
-      // (!passedPart && sideQuad && sidePass) ||
-      // (passedDir == prevDir && !sideQuad))
+      !(peerQuad && !topPeer) &&
+      (!passedPart || (passedDir == prevDir && !sideQuad))
     );
   }
 
@@ -1008,21 +1020,26 @@ export class MyTmam {
         if (!layer) break;
         rule = config.rules[layerNum] || RULE.FLAT;
         console.log("LAYER", layerNum, rule, Shape.pp(layer));
-
-        /* If there are no passed parts, eject the layer as a flat part */
         nextLayer = layers[layerNum + 1] || 0;
-        const nonePass = prevPass.reduce((a, b) => a | b) == 0;
-        if (nonePass && MyTmam.isStable(nextLayer, layer)) {
-          partList[layerNum].push(layer);
-          console.log(">FLAT", Shape.pp(layer));
-          continue;
+        layerParts = [];
+
+        part = MyTmam.findFlat({
+          targetShape,
+          layerNum,
+          prevPass,
+          layer,
+          nextLayer,
+        });
+        if (part) {
+          console.log(">FLAT", Shape.pp(part));
+          layerParts.push(part);
+          layer = MyTmam.deletePart(layer, part);
         }
 
-        layerParts = [];
-        pass = [0, 0, 0, 0];
-        dir = [null, null, null, null];
         quads = MyTmam.getQuads(layer);
         nextQuads = MyTmam.getQuads(nextLayer);
+        pass = [0, 0, 0, 0];
+        dir = [null, null, null, null];
 
         for (const quadNum of [0, 1, 2, 3]) {
           part = quads[quadNum];
@@ -1201,7 +1218,8 @@ export class MyTmam {
     // testShapes.push(0x1361, 0x1569, 0x15c3, 0x19c1); // problem for stacking ORDER0
     // testShapes.push(0x13c, 0x0162, 0x0163, 0x0164, 0x0165); // problem for stacking ORDER0
     // testShapes.push(0x1212, 0x2121); // problem for stacking ORDER0
-    testShapes.push(0x1578); // working on Skim design
+    // testShapes.push(0x1578, 0x16d2, 0x1792); // working on Skim design
+    // testShapes.push(0x35b4, 0x35e1, 0x3a78, 0x3ad2); // working on Skim design
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     // keyShapes.forEach((code) => unknownShapes.set(code, { code }));

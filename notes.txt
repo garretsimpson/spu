@@ -2346,3 +2346,81 @@ Seems to be missing the flat part from the parts list.
 Fixed a bug.
 
 It worked!
+
+Truth table v3
+- - - -
+A B C D
+E F G H
+- - - -
+
+F - Current corner
+P - Passed in part
+Q - Passed in direction
+R - Current rule:
+  | stack up
+  \ float left (seat)
+  / float right (seat)
+  < float left (strict)
+  > float right (strict)
+
+A B C D E F G H P Q R
+. . . . . 0 . . . . .  NOP
+. 1 . . . 1 . . 0 . |   |B
+. 1 . . . 1 . . 1 | |  S|B
+
+A B C D E F G H P Q R
+1 . . . . 1 . . 0 . \   \A
+1 . . . 0 1 . . 1 / \  S\A
+0 . 1 . . 1 . 0 0 . \   /C
+0 . 1 . . 1 0 0 1 \ \  S/C
+. . 1 . . 1 . . 0 . /   /C
+. . 1 . . 1 0 . 1 \ /  S/C
+1 . 0 . . 1 . 0 0 . /   \A
+1 . 0 . 0 1 . 0 1 / /  S\A
+
+A B C D E F G H P Q R
+1 0 . . . 1 . . 0 . <   \A
+1 0 . . 0 1 . . 1 / <  S\A
+0 0 1 . . 1 . 0 0 . <   /C
+0 0 1 . . 1 0 0 1 \ <  S/C
+0 0 1 1 . 1 . . 0 . <   /C
+0 0 1 1 . 1 0 . 1 \ <  S/C
+. 0 1 . . 1 . . 0 . >   /C
+. 0 1 . . 1 0 . 1 \ >  S/C
+1 0 0 . . 1 . 0 0 . >   \A
+1 0 0 . 0 1 . 0 1 / >  S\A
+1 0 0 1 . 1 . . 0 . >   \A
+1 0 0 1 0 1 . . 1 / >  S\A
+
+Try mixing rules...
+
+      { rules: [RULE.LEFT, RULE.RIGHT_SEAT, RULE.LEFT] },
+      { rules: [RULE.RIGHT, RULE.LEFT_SEAT, RULE.RIGHT] },
+
+Knowns: 19710
+Unknowns: 610
+[1312,1316,1396,1642...
+
+Deconstruct
+--Rr----:Rg------:RbRb----:Ry------
+1312
+- - - -
+X - - -
+X X - -
+X - - -
+- X - -
+
+1312 [0012,0003,0001] 012++
+
+This is failing because it is creating 1212.
+That's a bug.  The bug is deleting the flat from the layer before passing it to the growing function.
+Fixed it by not deleting the flat part, instead skip quads that are in the flat part.
+
+Try this...
+
+      { rules: [RULE.LEFT, RULE.RIGHT, RULE.LEFT] },
+      { rules: [RULE.RIGHT, RULE.LEFT, RULE.RIGHT] },
+      { rules: [RULE.LEFT, RULE.RIGHT_SEAT, RULE.LEFT] },
+      { rules: [RULE.RIGHT, RULE.LEFT_SEAT, RULE.RIGHT] },
+
+This works, but probably not helpful since it's probably easier if all the rules are the same type.

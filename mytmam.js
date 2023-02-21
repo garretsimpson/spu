@@ -832,79 +832,7 @@ export class MyTmam {
   /**
    * Check if part can be grown as a float.
    */
-  static canFloat1(rule, dir, state) {
-    const quad = state.quadNum;
-    const passedDir = state.prevDir[quad];
-    const passedPart = state.prevPass[quad];
-    const onLeft = (quad + 3) % 4;
-    const peer = (quad + 2) % 4;
-    const onRight = (quad + 1) % 4;
-
-    let nextQuad, peerQuad, sideQuad, prevDir;
-    switch (dir) {
-      case OPS.LEFT:
-        nextQuad = state.nextQuads[onLeft];
-        peerQuad = rule == RULE.RIGHT && state.quads[peer];
-        sideQuad = state.quads[onLeft];
-        prevDir = OPS.RIGHT;
-        break;
-      case OPS.RIGHT:
-        nextQuad = state.nextQuads[onRight];
-        peerQuad = rule == RULE.LEFT && state.quads[peer];
-        sideQuad = state.quads[onRight];
-        prevDir = OPS.LEFT;
-        break;
-    }
-
-    return (
-      nextQuad &&
-      !peerQuad &&
-      (!passedPart || (passedDir == prevDir && !sideQuad))
-    );
-  }
-
-  /**
-   * Check if part can be grown as a float.
-   */
-  static canFloat2(rule, dir, state) {
-    const quad = state.quadNum;
-    const passedDir = state.prevDir[quad];
-    const passedPart = state.prevPass[quad];
-    const onLeft = (quad + 3) % 4;
-    const peer = (quad + 2) % 4;
-    const onRight = (quad + 1) % 4;
-
-    let nextQuad, peerQuad, sideQuad, prevDir;
-    let topQuad =
-      (rule == RULE.LEFT || rule == RULE.RIGHT) && state.nextQuads[quad];
-    switch (dir) {
-      case OPS.LEFT:
-        nextQuad = state.nextQuads[onLeft];
-        peerQuad =
-          (rule == RULE.RIGHT || rule == RULE.RIGHT_SEAT) && state.quads[peer];
-        sideQuad = state.quads[onLeft];
-        prevDir = OPS.RIGHT;
-        break;
-      case OPS.RIGHT:
-        nextQuad = state.nextQuads[onRight];
-        peerQuad =
-          (rule == RULE.LEFT || rule == RULE.LEFT_SEAT) && state.quads[peer];
-        sideQuad = state.quads[onRight];
-        prevDir = OPS.LEFT;
-        break;
-    }
-
-    return (
-      nextQuad &&
-      !peerQuad &&
-      (!passedPart || (passedDir == prevDir && !sideQuad && !topQuad))
-    );
-  }
-
-  /**
-   * Check if part can be grown as a float.
-   */
-  static canFloat3(rule, dir, state) {
+  static canFloat(rule, dir, state) {
     const quad = state.quadNum;
     const onLeft = (quad + 3) % 4;
     const peer = (quad + 2) % 4;
@@ -948,8 +876,9 @@ export class MyTmam {
    */
   static runRule(rule, state) {
     let result = OPS.EJECT;
+
     const canStack = MyTmam.canStack;
-    const canFloat = MyTmam.canFloat3;
+    const canFloat = MyTmam.canFloat;
     switch (rule) {
       case RULE.FLAT:
         result = OPS.EJECT;
@@ -1005,7 +934,7 @@ export class MyTmam {
     let result = null;
     let partList;
     const layers = Shape.toLayers(targetShape);
-    let layer, rule, layerParts, pass, dir;
+    let layer, rule, layerParts, flat, pass, dir;
     let quads, nextLayer, nextQuads;
     let passedPart, op, part;
     let prevPass = [0, 0, 0, 0];
@@ -1023,17 +952,16 @@ export class MyTmam {
         nextLayer = layers[layerNum + 1] || 0;
         layerParts = [];
 
-        part = MyTmam.findFlat({
+        flat = MyTmam.findFlat({
           targetShape,
           layerNum,
           prevPass,
           layer,
           nextLayer,
         });
-        if (part) {
-          console.log(">FLAT", Shape.pp(part));
-          layerParts.push(part);
-          layer = MyTmam.deletePart(layer, part);
+        if (flat) {
+          console.log(">FLAT", Shape.pp(flat));
+          layerParts.push(flat);
         }
 
         quads = MyTmam.getQuads(layer);
@@ -1043,7 +971,7 @@ export class MyTmam {
 
         for (const quadNum of [0, 1, 2, 3]) {
           part = quads[quadNum];
-          if (!part) continue;
+          if (!part || (part & flat) != 0) continue;
 
           // If there is a passed part, stack it
           passedPart = prevPass[quadNum];

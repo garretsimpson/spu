@@ -2355,7 +2355,9 @@ E F G H
 
 F - Current corner
 P - Passed in part
-Q - Passed in direction
+Q - Passed in direction:
+  \ left
+  / right
 R - Current rule:
   | stack up
   \ float left (seat)
@@ -2424,3 +2426,282 @@ Try this...
       { rules: [RULE.RIGHT, RULE.LEFT_SEAT, RULE.RIGHT] },
 
 This works, but probably not helpful since it's probably easier if all the rules are the same type.
+
+Try this...
+      { rules: [RULE.LEFT, RULE.RIGHT_SEAT, RULE.LEFT] },
+      { rules: [RULE.RIGHT, RULE.LEFT_SEAT, RULE.RIGHT] },
+
+Unknowns: 56
+[1642,1643,16c3,16d2,1792,17c2,17c3,1c48,1c49,1c69,1c78,1d38,1d68,1d69,2981,2983,29c3,29e1,2b61,2bc1,2c84,2c86,2c96,2cb4,2e34,2e94,2e96,3fc3,4312,4316,4396,43d2,4792,47c2,4918,491c,493c,4978,4d38,4d3c,4d68,6f96,8321,8329,8369,83e1,8624,862c,863c,86b4,8b61,8bc1,8e34,8e94,9f69,cf3c]
+
+Try this...
+      { rules: [RULE.LEFT, RULE.RIGHT, RULE.LEFT] },
+      { rules: [RULE.RIGHT, RULE.LEFT, RULE.RIGHT] },
+
+Unknowns: 40
+[0361,0392,0634,06c2,0938,09c1,0c68,0c94,1361,1634,19c1,1b61,1bc1,1c94,2392,26c2,2792,27c2,2938,2c68,36c2,39c1,4361,4634,49c1,4c94,4e34,4e94,6392,6c94,8392,86c2,8938,8c68,8d38,8d68,9361,9c68,c634,c938]
+
+Building a circuit
+
+Notes
+- Need to keep a parts list.  Might need to be able to add to beginning and end of list.
+- Not clear yet what I want on the bus.  Could be corners or layers.
+- If corners, then adjacent quads would be offset in time.  Assuming serial design.
+- If layers, then adjacent quads would be rotations w/analyzer.
+- MyTmam uses layers, and handles all four sides with four modules in parallel.
+- layers are processed iteratively.  The output of each step is input to the next.  This lends well to a serial design.
+- The quads in each layer could be in parallel, or in serial.
+- parallel would be faster and bigger than serial.
+- I want to try to build one module that handles all 16 quads, so that would be serial.
+- There are 4 rule sets.  These would probably be done in parallel with different cores.
+- Could skip interations for shapes with fewer layers.
+- Could build a combinitorial / functional version first and then convert to serial.
+
+It would have to go something like...
+
+- setup working data
+- layer 1+2: flat, quad 1 2 3 4
+- layer 2+3: flat, quad 1 2 3 4
+- layer 3+4: flat, quad 1 2 3 4
+- layer 4  : flat, quad 1 2 3 4 - stacks parts, but always ejects
+- finalize parts
+- verification / stacking
+
+The flat logic...
+
+Inputs
+- above layer (shape)
+- below layer (shape)
+- passed in parts (boolean[4])
+
+Outputs
+- flat part (shape) - optional
+- supports (boolean)
+
+Method
+above   A B C D
+below   E F - -
+passed  X - - - 
+result  - F - -
+supports: yes
+
+Make a candidate part by taking below layer and removing the corners corresponding to the passed in parts.
+If the result supports the above layer (has any quad in common / stack makes 2 layers), then output the part.
+
+Notes
+- Could make a negative image of the passed part and have the corners of the below part fall in the holes, then take the top layer.
+- This step (finding the flat) has to be done before the floats because the quads in the flat part need to be skipped, or perhaps
+short circuit the float finding to always eject the corners in those quads.
+- Checking if it supports requires all 4 quads.  So either a layer operation, or aggregate the quads.
+- If I do the float checking in series (1 module) then the passed values are generated in series / stream.
+- Aggregate the result could just be a serial OR, check if any are true.  Like a SR latch.  would need a tick to reset between iterations.
+
+The float logic...
+
+quad 1 can pass a part to the next layer quad 2 or 4, and so forth.
+1 -> 4,2
+2 -> 1,3
+3 -> 2,4
+4 -> 3,1
+
+1 -> 4,2
+3 -> 2,4
+
+2 -> 1,3
+4 -> 3,1
+
+A B C D
+E F G H
+
+Rule: <
+1\4 E D A - - H
+1/2 E B A G C F
+2\1 F A B - - E
+2/3 F C B H D G
+3\2 G B C - - F
+3/4 G D C E A H
+4\3 H C D - - G
+4/1 H A D F B E
+
+pass logic
+  nextQuad &&
+  !topQuad &&
+  !(peerQuad && !topPeer) &&
+  !(passedPart && !((passedDir == prevDir) && !sideQuad))
+
+eject logic
+  !nextQuad ||
+  topQuad ||
+  !(!peerQuad || topPeer) ||
+  !(!passedPart || (!(passedDir == prevDir) || sideQuad))
+
+Inputs
+- 5 quads (boolean): nextQuad, topQuad, peerQuad, topPeer, sideQuad
+- value of the working quad (corner)
+- passed in part (shape)
+- passed in dir (might be the part on different wires)
+
+Outputs
+- Passed or ejected part (shape)
+- Passed direction (wire?)
+
+Method
+If there is a passed part, put the working corner on top of it, like a half-logo stacking.
+Perform the logic and either pass the part (left or right) or eject it (parts list or layer list).
+
+Notes
+- There are 4 quads, each quad has 2 directions.
+- Each quad has 4 outputs, 2 pass directions and 2 eject directions (layer list or part list).
+- Should probably handle left and right direction attempts in the same module.
+- One direction would have priority - that's the bias.
+- Probably don't need to handle strict and seat versions in the same module, as those would probably be different cores.
+- quad 4 may output a passed part to next layer quad 1.
+- So would need to delay quad 1 processing at least the time it takes to compute the passed data.
+- Layer parts seems to be at most 2 corners.  It seems to be the half the logo is not on.
+- Maybe not.  Might need to have the flat finder part as part of the layer parts.
+- Use shapes to compute the logic?
+- Do all 8 at the same time?
+
+- Flat checking takes 4 ticks.  Could take another 4 ticks to do float checking using the results of flat checking.
+
+Issues
+- When passing left  and the input order is 1-2-3-4, then the output order is 4-1-2-3. not okay?
+- When passing right and the input order is 1-2-3-4, then the output order is 2-3-4-1. okay?
+- Need to calc logic relative to the top layer quad?
+
+Finalize
+Make half logo parts.
+Combine lists of flats and floats.
+Sort by bottom layer.
+
+Verify / Stacking
+Determine the stacking order.
+
+-----
+21-Feb-2023
+
+Try working top down.
+
+changes
+- layerNum 3..0
+- nextLayer = layerNum-1
+- simpleStack - reverse the args
+- partList sorting (maybe?)
+- stacking (maybe?)
+
+Unknowns: 10694
+[0138,0178,0192,01d2...
+
+0138
+- - - -
+- - - -
+X - - -
+X X - -
+- - - X
+
+RULES <><
+LAYER 2 < 0001
+>FLAT 0001
+PASS  [0000,0000,0000,0000]
+DIR   [null,null,null,null]
+LAYER 1 > 0003
+>QUAD 0002
+PASS  [0000,0000,0000,0001]
+DIR   [null,null,null,"\\"]
+LAYER 0 < 0008
+>PART 0018
+PASS  [0000,0000,0000,0000]
+DIR   [null,null,null,null]
+PARTS [0018,0002,0001]
+...
+
+This is ejecting the flat on the top layer, which should be the start of a float.
+Maybe need to do floats before flats?
+
+Try taking out flat finding.
+That worked for these 4 shapes.
+
+Unknowns: 10822
+[0318,031c,0324,032c...
+
+That got a little worse.
+
+Deconstruct
+------Rr:Rg------:RbRb----:--------
+0318
+- - - -
+- - - -
+X X - -
+X - - -
+- - - X
+
+RULES <><
+LAYER 2 < 0003
+>QUAD 0001
+PASS  [0002,0000,0000,0000]
+DIR   ["\\",null,null,null]
+LAYER 1 > 0001
+>PART 0021
+PASS  [0000,0000,0000,0000]
+DIR   [null,null,null,null]
+LAYER 0 < 0008
+>QUAD 0008
+PASS  [0000,0000,0000,0000]
+DIR   [null,null,null,null]
+PARTS [0008,0021,0001]
+
+RULES ><>
+LAYER 2 > 0003
+>QUAD 0001
+PASS  [0002,0000,0000,0000]
+DIR   ["\\",null,null,null]
+LAYER 1 < 0001
+>PART 0021
+PASS  [0000,0000,0000,0000]
+DIR   [null,null,null,null]
+LAYER 0 > 0008
+>QUAD 0008
+PASS  [0000,0000,0000,0000]
+DIR   [null,null,null,null]
+PARTS [0008,0021,0001]
+
+RULES \/\
+LAYER 2 \ 0003
+>QUAD 0001
+PASS  [0002,0000,0000,0000]
+DIR   ["\\",null,null,null]
+LAYER 1 / 0001
+>PART 0021
+PASS  [0000,0000,0000,0000]
+DIR   [null,null,null,null]
+LAYER 0 \ 0008
+>QUAD 0008
+PASS  [0000,0000,0000,0000]
+DIR   [null,null,null,null]
+PARTS [0008,0021,0001]
+
+RULES /\/
+LAYER 2 / 0003
+>QUAD 0001
+PASS  [0002,0000,0000,0000]
+DIR   ["\\",null,null,null]
+LAYER 1 \ 0001
+>PART 0021
+PASS  [0000,0000,0000,0000]
+DIR   [null,null,null,null]
+LAYER 0 / 0008
+>QUAD 0008
+PASS  [0000,0000,0000,0000]
+DIR   [null,null,null,null]
+PARTS [0008,0021,0001]
+
+NOT FOUND 0318
+
+0318 [0018,0003] 01+
+
+This is making a 2-layer logo (21) on top.
+I don't think that should be grown in strict mode.
+What would be topQuad is now on the side.
+Maybe need to change topQuad to be the part on the working layer, above the nextQuad.
+But that's the same as sideQuad.
+No, pretty sure topQuad should be the same, nextQuads[quad].

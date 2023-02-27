@@ -74,7 +74,7 @@ export class Fileops {
    */
   static deleteFile(filename) {
     try {
-      rmSync(OPS_FILE_NAME, { force: true });
+      rmSync(filename, { force: true });
     } catch (err) {
       console.error(err);
       return false;

@@ -2487,6 +2487,7 @@ supports: yes
 
 Make a candidate part by taking below layer and removing the corners corresponding to the passed in parts.
 If the result supports the above layer (has any quad in common / stack makes 2 layers), then output the part.
+If found, then remove those corners from the float finding.
 
 Notes
 - Could make a negative image of the passed part and have the corners of the below part fall in the holes, then take the top layer.
@@ -2540,14 +2541,29 @@ Inputs
 - value of the working quad (corner)
 - passed in part (shape)
 - passed in dir (might be the part on different wires)
+- flat found (boolean)
+- flat corner (shape)?
 
 Outputs
-- Passed or ejected part (shape)
-- Passed direction (wire?)
+- Passed part (shape) and direction (wire?)
+- Eject to flat part (shape).
+- Eject to parts list (shape).
 
 Method
 If there is a passed part, put the working corner on top of it, like a half-logo stacking.
 Perform the logic and either pass the part (left or right) or eject it (parts list or layer list).
+
+Pass part
+- float found
+- not a flat part
+- prev passed does not matter
+Eject to layer list (flat part)
+- no prev passed part (current part is 1 layer)
+- flat part found by flat finder _or_
+- float not found
+Eject to parts list
+- prev passed part (current part is more than 1 layer)
+- float not found
 
 Notes
 - There are 4 quads, each quad has 2 directions.
@@ -2577,6 +2593,61 @@ Sort by bottom layer.
 Verify / Stacking
 Determine the stacking order.
 
+Summary
+
+Process layers in pairs starting with the bottom 2 layers.
+Floats are "grown" 1 layer at a time, bottom up.
+Each corner has 4 possible outputs.  Passed to the next layer (left or right), eject to flat part, or eject as a floating part.
+
+Layers are processed bottom up.
+Each layer may eject one flat part and up to two floating parts to the final parts list.
+Floats are "grown" by passing parts from one layer to the next.
+For each corner in the current layer:
+- Flat check
+  - If no passed in part and supports layer above, eject it to the layer's flat part.
+- Float check
+  - If passed in part, stack it with the current corner.
+  - If floating to layer above, pass the result to the next layer.
+  - Otherwise eject the passed in part as a floating part.
+- Otherwise
+  - Any corners left over are ejected to the layer's flat part.
+
+Supporting the layer above means any corner in the candidate flat part has a corner above it.
+
+Floating to the layer above is true only when the two "Laws of Logos" are obeyed.
+- Floating parts only occupy one side (2 adjacent quads) of a shape.
+- 3 and 4 layer floating parts have voids (empty spaces).
+
+Revise
+
+A fast deconstruction method
+A deconstuctor takes a shape as an input and outputs a list of primative shapes that can be used to build the input shape.
+This method is fast because each layer is handled only once and all the corners in a layer can be processed in parallel.
+
+Overview
+- Layers are processed bottom up.
+- Each layer may eject one flat part and zero or more floating parts to the final parts list.
+- Floats are "grown" by passing parts from one layer to the next.
+- First perform a flat check on the current layer, and then perform a float check for each corner not in the flat part.
+
+Flat check
+- Create a candidate flat part by taking the current layer and removing any corners claimed by floats growing from the layer below.
+- If the candidate flat part supports the layer above, eject the corners it contains to the layer's flat part.
+
+Float check
+- For each corner in the layer that is not in the flat part (if any)...
+- Perform floating logic and do one of the following based on the result and if a part was passed in:
+- Floating and no passed in part - Stack the current corner with the corner from the layer above and pass the result.
+- Floating and has passed in part - Stack passed in part with corner from layer above and pass the result.
+- Not floating and no passed in part - Eject the current corner to the layer's flat part.
+- Not floating and has passed in part - Eject the passed in part to the final parts list.
+
+Float logic
+- floating laws
+- rules and biases
+
+Stacking orders
+
 -----
 21-Feb-2023
 
@@ -2590,7 +2661,7 @@ changes
 - stacking (maybe?)
 
 Unknowns: 10694
-[0138,0178,0192,01d2...
+0138,0178,0192,01d2...
 
 0138
 - - - -
@@ -2622,7 +2693,7 @@ Try taking out flat finding.
 That worked for these 4 shapes.
 
 Unknowns: 10822
-[0318,031c,0324,032c...
+0318,031c,0324,032c...
 
 That got a little worse.
 
@@ -2705,3 +2776,24 @@ What would be topQuad is now on the side.
 Maybe need to change topQuad to be the part on the working layer, above the nextQuad.
 But that's the same as sideQuad.
 No, pretty sure topQuad should be the same, nextQuads[quad].
+
+5th layer shapes
+
+48432 - 44328 = 4104 5th layer shapes
+
+3422, 342c, 3431, 3443
+
+{0100:0100:0010:1100+struct}
+{0011:0100:0010:1100+struct}
+{1000:1100:0010:1100+struct}
+{1100:0010:0010:1100+struct}
+
+3422
+--Cr----:--Cg----:----Cb--:CyCy----
+
+a121
+Cr------:--Cg----:Cb------:--Cy--Cy
+
+3c11
+Cr------:Cg------:----CbCb:CyCy----
+

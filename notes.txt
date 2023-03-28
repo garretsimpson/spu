@@ -2635,18 +2635,44 @@ Flat check
 - If the candidate flat part supports the layer above, eject the corners it contains to the layer's flat part.
 
 Float check
-- For each corner in the layer that is not in the flat part (if any)...
+- For each corner in the current layer that is not in the flat part (if any)...
 - Perform floating logic and do one of the following based on the result and if a part was passed in:
 - Floating and no passed in part - Stack the current corner with the corner from the layer above and pass the result.
 - Floating and has passed in part - Stack passed in part with corner from layer above and pass the result.
 - Not floating and no passed in part - Eject the current corner to the layer's flat part.
 - Not floating and has passed in part - Eject the passed in part to the final parts list.
 
+Eject flat
+- Combine all corners ejected to the layer's flat part (if any) and eject it to the final parts list.
+
 Float logic
 - floating laws
-- rules and biases
+- biases and rules
+- pruning
 
-Stacking orders
+Example (logo):
+004b
+- - - -
+- - - -
+- - X -
+X X - X
+
+Rule: <><
+layer 1: bias < (left with pruning)
+- No flat part
+- quad 1: no float - eject corner 1 to flat part
+- quad 2: fails to float right (2>3) (peer conflict) - eject corner 2 to flat part
+- quad 4: float left (4<3), pass 0048 to quad 3.
+- flat: combine corners from quads 1 and 2, eject 0003.
+layer 2: bias > (right with pruning)
+- No flat part - quad 3 is claimed.
+- quad 3 - no float, has passed part - eject passed part 0048.
+- flat: none
+done
+
+Stacking order
+
+5th layer
 
 -----
 21-Feb-2023

@@ -238,60 +238,67 @@ export class Ops {
   }
 
   static runMultiOps() {
-    const CONFIGS123 = [
+    const CONFIGS_TEST = [
       {
-        name: "1-layer",
+        name: "1-flats",
+        shapes: Shape.FLAT_1,
+        // maxIter: 5000,
+      },
+      {
+        name: "2-float",
+        shapes: Shape.LOGO_2,
+        cost: 1,
+        // maxIter: 4000,
+      },
+    ];
+
+    const CONFIGS_123 = [
+      {
+        name: "1-flats",
         shapes: Shape.FLATS,
         maxIter: 500,
       },
       {
-        name: "2-logo ",
+        name: "2-float",
         shapes: Shape.LOGO_2,
         cost: 1,
         maxIter: 4000,
       },
       {
-        name: "3-logo ",
+        name: "3-float",
         shapes: Shape.LOGO_3,
         cost: 2,
         maxIter: 2500,
       },
       {
-        name: "4-logo ",
+        name: "4-float",
         shapes: Shape.LOGO_4,
         cost: 3,
       },
     ];
 
-    const CONFIGS2 = [
+    const CONFIGS_TRASHLESS = [
       {
-        name: "stacks ",
-        shapes: Shape.STACKS,
-        maxIter: 6500,
+        name: "1-flats",
+        shapes: Shape.FLAT_1,
+        maxIter: 5000,
       },
       {
-        name: "2-logo ",
+        name: "2-float",
         shapes: Shape.LOGO_2,
-        cost: 1,
-        maxIter: 9500,
-      },
-      {
-        name: "3-logo ",
-        shapes: Shape.LOGO_3,
         cost: 2,
-        maxIter: 2000,
+        // maxIter: 4000,
       },
       {
-        name: "4-logo ",
-        shapes: Shape.LOGO_4,
-        cost: 3,
-        maxIter: 500,
+        name: "2-stack",
+        shapes: Shape.STACK_2,
+        // maxIter: 4000,
       },
     ];
 
     const results = {};
     let shapes;
-    for (let config of CONFIGS123) {
+    for (let config of CONFIGS_123) {
       shapes = config.shapes.map((code) => {
         return {
           code,
@@ -388,17 +395,20 @@ export class Ops {
     Ops.saveAllBuilds();
     Ops.saveDB();
 
-    for (let code = 0x1; code <= 0xf; code++) {
-      Ops.findShape(code);
-    }
-    Ops.findShape(0xffff);
+    // for (let code = 0x1; code <= 0xf; code++) {
+    //   Ops.findShape(code);
+    // }
+    Ops.findShape(0x1);
+    Ops.findShape(0x11);
     Ops.findShape(0x12);
     Ops.findShape(0x121);
     Ops.findShape(0x1212);
+    Ops.findShape(0xffff);
+
     Ops.findShape(0x4b); // Logo
     Ops.findShape(0xfe1f); // Rocket
 
-    console.log("Rocket:", Ops.getBuildStr(0xfe1f));
+    // console.log("Rocket:", Ops.getBuildStr(0xfe1f));
   }
 
   /**

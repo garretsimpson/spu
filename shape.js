@@ -95,8 +95,6 @@ export class Shape {
 
   /** @type {Set<number>} */
   static allShapes;
-  /** @type {Map<number,object>} */
-  static keyShapes;
 
   /**
    * @param {number} code
@@ -115,12 +113,6 @@ export class Shape {
   static init() {
     Shape.allShapes = new Set();
     Shape.readShapeFile();
-
-    Shape.keyShapes = new Map();
-    for (let code = 0; code <= 0xffff; code++) {
-      const key = Shape.keyCode(code);
-      Shape.keyShapes.set(key, {});
-    }
   }
 
   static readShapeFile() {
@@ -545,10 +537,8 @@ export class Shape {
    * @returns {boolean}
    */
   static isPossible(code) {
-    if (Shape.allShapes == undefined || Shape.allShapes.length == 0) {
-      return false;
-    }
-    return Shape.allShapes.has(code);
+    const shapes = Shape.allShapes;
+    return shapes && shapes.has(code);
   }
 
   /**
@@ -883,24 +873,20 @@ export class Shape {
   }
 
   static testAllShapes() {
-    // Initialize
     Shape.init();
 
-    const allShapes = Shape.allShapes;
-    const keyShapes = Shape.keyShapes;
-    console.log("All shapes:", allShapes.size);
-    console.log("Key shapes:", keyShapes.size);
-
-    // Analyze each shape
-    console.log("");
     console.log("Analysis...");
-    for (const [code, value] of keyShapes) {
+    const shapes = new Map();
+    let value;
+    for (let code = 0; code <= 0xffff; code++) {
+      value = {};
       value.layers = Shape.layerCount(code);
       value.invalid = Shape.isInvalid(code);
       value.possible = Shape.isPossible(code);
       value.cuttable = Shape.canCut(code);
       value.stackAll = Shape.canStackAll(code);
       value.stackSome = Shape.canStackSome(code);
+      shapes.set(code, value);
     }
 
     const invalidShapes = [];
@@ -908,25 +894,39 @@ export class Shape {
     const complexShapes = [];
     const possibleShapes = [];
     const impossibleShapes = [];
-    for (const [code, value] of keyShapes) {
+    for (const [code, value] of shapes) {
       if (value.invalid) invalidShapes.push(code);
       if (value.stackAll) oneLayerStack.push(code);
       if (value.possible) possibleShapes.push(code);
       if (value.possible && !value.stackAll) complexShapes.push(code);
       if (!value.possible && !value.invalid) impossibleShapes.push(code);
     }
+    const keyShapes = possibleShapes.filter(
+      (code) => Shape.keyCode(code) == code
+    );
+
+    const layerCounts = [0, 0, 0, 0, 0];
+    for (const code of possibleShapes) {
+      let num = Shape.layerCount(code);
+      layerCounts[num]++;
+    }
 
     const TABLE_DATA = [
-      ["Total key shapes", keyShapes.size],
       ["Possible shapes", possibleShapes.length],
       ["Standard MAM shapes", oneLayerStack.length],
       ["Advanced MAM shapes", complexShapes.length],
       ["Invalid shapes", invalidShapes.length],
       ["Impossible shapes", impossibleShapes.length],
+      ["Key shapes", keyShapes.length],
+      ["1 layer", layerCounts[1]],
+      ["2 layer", layerCounts[2]],
+      ["3 layer", layerCounts[3]],
+      ["4 layer", layerCounts[4]],
     ];
     const WIDTH = 6;
-    for (let row of TABLE_DATA) {
-      console.log(row[1].toString().padStart(WIDTH, " "), row[0]);
+    for (let [name, value] of TABLE_DATA) {
+      value = value.toString().padStart(WIDTH, " ");
+      console.log(value, name);
     }
     console.log("");
   }

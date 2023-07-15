@@ -2659,13 +2659,13 @@ X X - X
 
 Rule: <><
 layer 1: bias < (left with pruning)
-- No flat part
-- quad 1: no float - eject corner 1 to flat part
-- quad 2: fails to float right (2>3) (peer conflict) - eject corner 2 to flat part
+- no flat part
+- quad 1: no float - eject 0001 to flat part
+- quad 2: fails to float right (2>3) (peer conflict) - eject 0002 to flat part
 - quad 4: float left (4<3), pass 0048 to quad 3.
 - flat: combine corners from quads 1 and 2, eject 0003.
 layer 2: bias > (right with pruning)
-- No flat part - quad 3 is claimed.
+- no flat part - quad 3 is claimed.
 - quad 3 - no float, has passed part - eject passed part 0048.
 - flat: none
 done
@@ -2823,3 +2823,122 @@ Cr------:--Cg----:Cb------:--Cy--Cy
 3c11
 Cr------:Cg------:----CbCb:CyCy----
 
+12-Jul-2023
+Looking for trashless
+
+Run the constructor with just 1-layer flats and 2-layer floats...
+
+Stats
+ToDo:  12308
+Total: 44420
+
+    Name   Shapes     Keys
+ 1-layer    28112     3885
+ 2-logo     44420     6143
+
+ffff ST 00ff 00ff (3,1,0)
+  00ff ST 000f 000f (1,1,0)
+    000f P            (0,1,0)
+    000f P            (0,1,0)
+  00ff ST 000f 000f (1,1,0)
+    000f P            (0,1,0)
+    000f P            (0,1,0)
+0012 P            (1,1,0)
+Shape not found: 0121
+Shape not found: 1212
+004b ST 0042 0009 (2,4,0)
+  0042 P            (1,1,0)
+  0009 P            (0,1,0)
+fe1f ST 00f6 081f (4,3,0)
+  00f6 ST 000f 0006 (1,1,0)
+    000f P            (0,1,0)
+    0006 P            (0,1,0)
+  081f ST 0081 000f (2,1,0)
+    0081 P            (1,1,0)
+    000f P            (0,1,0)
+Rocket: fe1f ST(00f6 ST(000f 0006) 081f ST(0081 000f))
+
+Turn off 5th layer...
+
+    Name   Shapes     Keys
+ 1-layer    28112     3885
+ 2-logo     42324     5855
+
+ffff  00ff 00ff (0,1,0)
+  00ff  000f 000f (0,79,0)
+    000f P            (0,15,0)
+    000f P            (0,15,0)
+  00ff  000f 000f (0,79,0)
+    000f P            (0,15,0)
+    000f P            (0,15,0)
+0012 P            (1,1,0)
+Shape not found: 0121
+Shape not found: 1212
+004b  0042 0009 (1,10,0)
+  0042 P            (1,1,0)
+  0009 P            (0,3,0)
+fe1f  00f6 081f (1,16,0)
+  00f6  000f 0006 (0,19,0)
+    000f P            (0,15,0)
+    0006 P            (0,3,0)
+  081f  0081 000f (1,11,0)
+    0081 P            (1,1,0)
+    000f P            (0,15,0)
+Rocket: fe1f undefined(00f6 undefined(000f 0006) 081f undefined(0081 000f))
+
+Add 2-layer corners...
+And change flats to only 1 corner...
+
+Stats
+ToDo:  0
+Total: 42324
+
+    Name   Shapes     Keys
+ 1-flats    28112     3885
+ 2-float    42324     5855
+ 2-stack    42324     5855
+
+0001 P            (0,1,0)
+0011 P            (0,1,0)
+0012 P            (2,1,0)
+Shape not found: 0121
+Shape not found: 1212
+ffff ST 00ff 00ff (7,79,0)
+  00ff ST 0099 0066 (3,14,0)
+    0099 ST 0088 0011 (1,2,0)
+      0088 P            (0,1,0)
+      0011 P            (0,1,0)
+    0066 ST 0044 0022 (1,2,0)
+      0044 P            (0,1,0)
+      0022 P            (0,1,0)
+  00ff ST 0099 0066 (3,14,0)
+    0099 ST 0088 0011 (1,2,0)
+      0088 P            (0,1,0)
+      0011 P            (0,1,0)
+    0066 ST 0044 0022 (1,2,0)
+      0044 P            (0,1,0)
+      0022 P            (0,1,0)
+004b ST 0042 0009 (4,10,0)
+  0042 P            (2,1,0)
+  0009 ST 0008 0001 (1,2,0)
+    0008 P            (0,1,0)
+    0001 P            (0,1,0)
+fe1f ST 00f6 081f (11,10,0)
+  00f6 ST 0022 00d4 (4,6,0)
+    0022 P            (0,1,0)
+    00d4 ST 000d 0004 (3,1,0)
+      000d ST 0005 0008 (2,6,0)
+        0005 ST 0004 0001 (1,2,0)
+          0004 P            (0,1,0)
+          0001 P            (0,1,0)
+        0008 P            (0,1,0)
+      0004 P            (0,1,0)
+  081f ST 0081 000f (6,11,0)
+    0081 P            (2,1,0)
+    000f ST 0009 0006 (3,14,0)
+      0009 ST 0008 0001 (1,2,0)
+        0008 P            (0,1,0)
+        0001 P            (0,1,0)
+      0006 ST 0004 0002 (1,2,0)
+        0004 P            (0,1,0)
+        0002 P            (0,1,0)

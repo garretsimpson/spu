@@ -1128,7 +1128,8 @@ export class MyTmam {
 
     const testShapes = [];
     // testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
-    // testShapes.push(0x000f, 0xffff, 0x004b, 0xfe1f); // classic shapes
+    // testShapes.push(0x000f, 0xffff); // test shapes
+    // testShapes.push(0x004b, 0xfe1f); // logo and rocket
     // testShapes.push(0x3444); // 5th layer shapes
     // testShapes.push(0x0178, 0x0361); // hat and seat
     // testShapes.push(0x3343, 0x334a, 0x334b); // stack order "10234++++"
@@ -1158,10 +1159,9 @@ export class MyTmam {
     console.log("Unknowns:", unknownShapes.size);
     console.log("");
 
-    let result;
     for (let shape of Array.from(unknownShapes.keys())) {
-      result = MyTmam.deconstruct3(shape);
-      // result = false;
+      // let result = false;
+      let result = MyTmam.deconstruct3(shape);
       if (!result) {
         console.log("NOT FOUND", Shape.pp(shape));
       } else {

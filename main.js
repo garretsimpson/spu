@@ -19,7 +19,7 @@ function main() {
   console.log("");
 
   // Shape.runTests();
-  // Shape.testAllShapes();
+  Shape.testAllShapes();
   // Shape.testPerf();
   // Shape.testLogo();
   // Shape.countParts();
@@ -28,7 +28,7 @@ function main() {
   // Ops.runMultiOps();
   // Ops.dbToText("data/db_no5.bin");
   // MyTmam.test();
-  MyTmam.run();
+  // MyTmam.run();
 }
 
 main();

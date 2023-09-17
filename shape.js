@@ -911,6 +911,12 @@ export class Shape {
       layerCounts[num]++;
     }
 
+    const pieceCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    for (const code of possibleShapes) {
+      let num = Shape.countPieces(code);
+      pieceCounts[num]++;
+    }
+
     const TABLE_DATA = [
       ["Possible shapes", possibleShapes.length],
       ["Standard MAM shapes", oneLayerStack.length],
@@ -929,6 +935,13 @@ export class Shape {
       console.log(value, name);
     }
     console.log("");
+
+    // All unique complex shapes with exactly 4 corners
+    const foundShapes = keyShapes.filter(
+      (code) => complexShapes.includes(code) && Shape.countPieces(code) == 4
+    );
+
+    Ops.saveChart(foundShapes);
   }
 
   /**

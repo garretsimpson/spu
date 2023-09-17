@@ -510,10 +510,8 @@ export class Ops {
    * @param {Array} shapes
    */
   static saveChart(shapes) {
-    const codes = new Map();
-    shapes.forEach((code) => codes.set(code, { code }));
     console.log("Saving shape chart");
-    Fileops.writeFile("data/chart.txt", Shape.chart(codes));
+    Fileops.writeFile("data/chart.txt", Shape.chart(shapes));
   }
 
   static saveAllShapes() {

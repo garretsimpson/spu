@@ -10,22 +10,23 @@ import { Fileops } from "./fileops.js";
 const RULE = {
   FLAT: "-",
   STACK: "|",
-  LEFT: "<",
-  RIGHT: ">",
-  LEFT_SEAT: "\\",
-  RIGHT_SEAT: "/",
+  LEFT: "\\",
+  RIGHT: "/",
+  LEFT_PRUNE: "<",
+  RIGHT_PRUNE: ">",
 };
 const OPS = { EJECT: "@", STACK: "|", LEFT: "\\", RIGHT: "/" };
 
 export class MyTmam {
   // Some TMAMs have analyzers that work in parallel.
   // In this TMAM simulator work is done serially, typically by interleaving the work of each analyzer.
-  // An iter is a unit of work.
-  // stats are per shape
+
+  // Stats are per shape
   // - combos - number of possible half-logo combinations.
   // - iters - sum of work done by all analyzers.
   // - logos - number of half-logos found.
   // - maxIters - work done by the analyzer that did the most work.
+  // An iter is a unit of work.
   static stats = { combos: [0], iters: [0], logos: [0], maxIters: [0] };
 
   static init() {
@@ -837,26 +838,26 @@ export class MyTmam {
     const onLeft = (quad + 3) % 4;
     const peer = (quad + 2) % 4;
     const onRight = (quad + 1) % 4;
-    const strict = rule == RULE.LEFT || rule == RULE.RIGHT;
+    const prune = rule == RULE.LEFT_PRUNE || rule == RULE.RIGHT_PRUNE;
 
     const passedDir = state.prevDir[quad];
     const passedPart = state.prevPass[quad];
-    const topQuad = strict && state.nextQuads[quad];
-    const topPeer = strict && state.nextQuads[peer];
+    const topQuad = prune && state.nextQuads[quad];
+    const topPeer = prune && state.nextQuads[peer];
 
     let nextQuad, peerQuad, sideQuad, prevDir;
     switch (dir) {
       case OPS.LEFT:
         nextQuad = state.nextQuads[onLeft];
         peerQuad =
-          (rule == RULE.RIGHT || rule == RULE.RIGHT_SEAT) && state.quads[peer];
+          (rule == RULE.RIGHT || rule == RULE.RIGHT_PRUNE) && state.quads[peer];
         sideQuad = state.quads[onLeft];
         prevDir = OPS.RIGHT;
         break;
       case OPS.RIGHT:
         nextQuad = state.nextQuads[onRight];
         peerQuad =
-          (rule == RULE.LEFT || rule == RULE.LEFT_SEAT) && state.quads[peer];
+          (rule == RULE.LEFT || rule == RULE.LEFT_PRUNE) && state.quads[peer];
         sideQuad = state.quads[onRight];
         prevDir = OPS.LEFT;
         break;
@@ -889,7 +890,7 @@ export class MyTmam {
         }
         break;
       case RULE.LEFT:
-      case RULE.LEFT_SEAT:
+      case RULE.LEFT_PRUNE:
         if (canFloat(rule, OPS.LEFT, state)) {
           result = OPS.LEFT;
         } else if (canFloat(rule, OPS.RIGHT, state)) {
@@ -897,7 +898,7 @@ export class MyTmam {
         }
         break;
       case RULE.RIGHT:
-      case RULE.RIGHT_SEAT:
+      case RULE.RIGHT_PRUNE:
         if (canFloat(rule, OPS.RIGHT, state)) {
           result = OPS.RIGHT;
         } else if (canFloat(rule, OPS.LEFT, state)) {
@@ -927,8 +928,8 @@ export class MyTmam {
       // { rules: [RULE.STACK, RULE.STACK, RULE.STACK] },
       { rules: [RULE.LEFT, RULE.RIGHT, RULE.LEFT] },
       { rules: [RULE.RIGHT, RULE.LEFT, RULE.RIGHT] },
-      { rules: [RULE.LEFT_SEAT, RULE.RIGHT_SEAT, RULE.LEFT_SEAT] },
-      { rules: [RULE.RIGHT_SEAT, RULE.LEFT_SEAT, RULE.RIGHT_SEAT] },
+      { rules: [RULE.LEFT, RULE.RIGHT_PRUNE, RULE.LEFT] },
+      { rules: [RULE.RIGHT, RULE.LEFT_PRUNE, RULE.RIGHT] },
     ];
 
     let result = null;

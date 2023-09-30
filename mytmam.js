@@ -874,6 +874,7 @@ export class MyTmam {
   /**
    * Run the rule for one quad.
    * Returns the direction the corner should be passed, or ejected.
+   * The direction specified by rule is tried first.  If that fails, the opposite direction is tried.
    */
   static runRule(rule, state) {
     let result = OPS.EJECT;
@@ -926,10 +927,14 @@ export class MyTmam {
     const CONFIGS = [
       // { rules: [RULE.FLAT, RULE.FLAT, RULE.FLAT] },
       // { rules: [RULE.STACK, RULE.STACK, RULE.STACK] },
-      { rules: [RULE.LEFT, RULE.RIGHT, RULE.LEFT] },
-      { rules: [RULE.RIGHT, RULE.LEFT, RULE.RIGHT] },
-      { rules: [RULE.LEFT, RULE.RIGHT_PRUNE, RULE.LEFT] },
-      { rules: [RULE.RIGHT, RULE.LEFT_PRUNE, RULE.RIGHT] },
+      // { rules: [RULE.LEFT, RULE.RIGHT, RULE.LEFT] },
+      // { rules: [RULE.RIGHT, RULE.LEFT, RULE.RIGHT] },
+      // { rules: [RULE.LEFT, RULE.RIGHT_PRUNE, RULE.LEFT] },
+      // { rules: [RULE.RIGHT, RULE.LEFT_PRUNE, RULE.RIGHT] },
+      { rules: [RULE.RIGHT_PRUNE, RULE.LEFT_PRUNE, RULE.RIGHT_PRUNE] },
+      { rules: [RULE.LEFT_PRUNE, RULE.RIGHT_PRUNE, RULE.LEFT_PRUNE] },
+      { rules: [RULE.RIGHT_PRUNE, RULE.LEFT, RULE.RIGHT_PRUNE] },
+      { rules: [RULE.LEFT_PRUNE, RULE.RIGHT, RULE.LEFT_PRUNE] },
     ];
 
     let result = null;
@@ -937,25 +942,25 @@ export class MyTmam {
     const layers = Shape.toLayers(targetShape);
     let layer, rule, layerParts, flat, pass, dir;
     let quads, nextLayer, nextQuads;
-    let passedPart, op, part;
+    let passedPart, op, part, num;
+
+    // passed part and direction per quad
     let prevPass = [0, 0, 0, 0];
     let prevDir = [null, null, null, null];
 
     for (const config of CONFIGS) {
       console.log("RULES", config.rules.join(""));
-      partList = [[], [], [], []];
+      partList = [[], [], [], []]; // ejected parts per layer
 
       for (const layerNum of [0, 1, 2, 3]) {
         layer = layers[layerNum];
         if (!layer) break;
         rule = config.rules[layerNum] || RULE.FLAT;
-        console.log("LAYER", layerNum, rule, Shape.pp(layer));
+        console.log("LAYER", layerNum + 1, rule, Shape.pp(layer));
         nextLayer = layers[layerNum + 1] || 0;
         layerParts = [];
 
         flat = MyTmam.findFlat({
-          targetShape,
-          layerNum,
           prevPass,
           layer,
           nextLayer,
@@ -972,7 +977,7 @@ export class MyTmam {
 
         for (const quadNum of [0, 1, 2, 3]) {
           part = quads[quadNum];
-          if (!part || (part & flat) != 0) continue;
+          if (part == 0 || (part & flat) != 0) continue;
 
           // If there is a passed part, stack it
           passedPart = prevPass[quadNum];
@@ -982,14 +987,11 @@ export class MyTmam {
 
           // Run rules
           op = MyTmam.runRule(rule, {
-            targetShape,
-            layerNum,
-            quadNum,
             prevPass,
             prevDir,
+            quadNum,
             quads,
             nextQuads,
-            config,
           });
           const onLeft = (quadNum + 3) % 4;
           const onRight = (quadNum + 1) % 4;
@@ -1008,11 +1010,13 @@ export class MyTmam {
               break;
             case OPS.EJECT:
               if (passedPart) {
+                // floating part
                 // Sort parts according to their bottom layer.
-                let num = Shape.layerCount(part);
+                num = Shape.layerCount(part);
                 partList[layerNum - num + 1].unshift(part);
                 console.log(">PART", Shape.pp(part));
               } else {
+                // single layer part (one corner)
                 layerParts.push(part);
                 console.log(">QUAD", Shape.pp(part));
               }
@@ -1130,7 +1134,7 @@ export class MyTmam {
     const testShapes = [];
     // testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
     // testShapes.push(0x000f, 0xffff); // test shapes
-    // testShapes.push(0x004b, 0xfe1f); // logo and rocket
+    testShapes.push(0x004b, 0xfe1f); // logo and rocket
     // testShapes.push(0x3444); // 5th layer shapes
     // testShapes.push(0x0178, 0x0361); // hat and seat
     // testShapes.push(0x3343, 0x334a, 0x334b); // stack order "10234++++"

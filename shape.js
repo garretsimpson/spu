@@ -941,6 +941,8 @@ export class Shape {
       (code) => complexShapes.includes(code) && Shape.countPieces(code) == 4
     );
 
+    console.log("Number of found shapes", foundShapes.length);
+
     Ops.saveChart(foundShapes);
   }
 

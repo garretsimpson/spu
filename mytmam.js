@@ -437,15 +437,12 @@ export class MyTmam {
    * @returns {boolean}
    */
   static tryBuild(targetShape, data) {
-    const ORDERS0 = [
-      [],
-      ["0"],
-      ["01+"],
-      ["012++", "102++"],
-      ["0123+++", "0213+++", "1023+++", "1032+++"],
-      ["01234++++", "01324++++", "02134++++", "10234++++", "10324++++"],
-    ];
-    const ORDERS1 = [
+    // bottom-up
+    const ORDERS1 = [[], ["0"], ["01+"], ["01+2+"], ["01+2+3+"], ["01+2+3+4+"]];
+    // top-down
+    const ORDERS2 = [[], ["0"], ["01+"], ["012++"], ["0123+++"], ["01234++++"]];
+    // fixed part order
+    const ORDERS3 = [
       [],
       ["0"],
       ["01+"],
@@ -453,16 +450,25 @@ export class MyTmam {
       ["0123+++", "012++3+", "01+23++"], // not used: 01+2+3+
       ["01234++++", "012++34++", "01+234+++"], // not used: 01+2+3+4+
     ];
-    // const ORDERS2 = [[], ["0"], ["01+"], ["01+2+"], ["01+2+3+"], ["01+2+3+4+"]];
-    const ORDERS = ORDERS1;
-    const num = data.build.length;
+    // top-down with various part orders
+    // Note: These are incomplete
+    const ORDERS4 = [
+      [],
+      ["0"],
+      ["01+"],
+      ["012++", "102++"],
+      ["0123+++", "0213+++", "1023+++", "1032+++"],
+      ["01234++++", "01324++++", "02134++++", "10234++++", "10324++++"],
+    ];
+    const ORDERS = ORDERS3;
+    const num = data.parts.length;
     if (num >= ORDERS.length) {
       // console.error("too many parts");
       return false;
     }
     let code;
     for (const order of ORDERS[num]) {
-      code = MyTmam.stackOrder(data.build, order);
+      code = MyTmam.stackOrder(data.parts, order);
       if (code == targetShape) {
         data.order = order;
         return true;
@@ -939,6 +945,7 @@ export class MyTmam {
 
     let result = null;
     let partList;
+    let offsets;
     const layers = Shape.toLayers(targetShape);
     let layer, rule, layerParts, flat, pass, dir;
     let quads, nextLayer, nextQuads;
@@ -1011,6 +1018,7 @@ export class MyTmam {
             case OPS.EJECT:
               if (passedPart) {
                 // floating part
+                // partList[layerNum].push(part);  // top layer
                 // Sort parts according to their bottom layer.
                 num = Shape.layerCount(part);
                 partList[layerNum - num + 1].unshift(part);
@@ -1039,15 +1047,18 @@ export class MyTmam {
         prevDir = dir;
       }
 
+      offsets = partList.map((a, i) => a.map((e) => i)).flat();
+      console.log("OFFS ", Shape.pp(offsets));
       partList = partList.flat();
       console.log("PARTS", Shape.pp(partList));
 
       // Find stacking order
-      const build = { build: partList };
+      const build = { parts: partList, offsets };
       let found = MyTmam.tryBuild(targetShape, build);
       // Try with 5th layer
       if (!found) {
         partList.push(...Shape.FLAT_4);
+        offsets.push(4); // 5th layer
         found = MyTmam.tryBuild(targetShape, build);
       }
       if (found) {
@@ -1124,11 +1135,11 @@ export class MyTmam {
     for (let code = 0; code <= 0xffff; ++code) {
       if (Shape.isPossible(code)) possibleShapes.push(code);
     }
-    const keyShapes = possibleShapes.filter(
-      (code) => Shape.keyCode(code) == code
-    );
     const complexShapes = possibleShapes.filter(
       (code) => !Shape.canStackAll(code)
+    );
+    const keyShapes = complexShapes.filter(
+      (code) => Shape.keyCode(code) == code
     );
 
     const testShapes = [];
@@ -1152,12 +1163,13 @@ export class MyTmam {
     // testShapes.push(0x1361, 0x1569, 0x15c3, 0x19c1); // problem for stacking ORDER0
     // testShapes.push(0x13c, 0x0162, 0x0163, 0x0164, 0x0165); // problem for stacking ORDER0
     // testShapes.push(0x1212, 0x2121); // problem for stacking ORDER0
+    // testShapes.push(0x0392, 0x0634, 0x0938, 0x0c68); // stacking order "10+"
     // testShapes.push(0x1578, 0x16d2, 0x1792); // working on Skim design
     // testShapes.push(0x35b4, 0x35e1, 0x3a78, 0x3ad2); // working on Skim design
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
-    // keyShapes.forEach((code) => unknownShapes.set(code, { code }));
-    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    keyShapes.forEach((code) => unknownShapes.set(code, { code }));
     // testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     console.log("Knowns:", knownShapes.size);
@@ -1173,9 +1185,10 @@ export class MyTmam {
         console.log(
           "FOUND",
           Shape.pp(shape),
-          Shape.pp(result.build),
+          Shape.pp(result.parts),
           result.order
         );
+        console.log(Shape.graphParts(result.parts, result.offsets));
         knownShapes.set(shape, result);
         unknownShapes.delete(shape);
       }
@@ -1198,15 +1211,22 @@ export class MyTmam {
       //         .length
       //   )
       //   .sort((a, b) => a - b);
-      data += `${Shape.pp(key)} ${Shape.pp(value.build)} ${value.order}`;
+      data += `${Shape.pp(key)} ${Shape.pp(value.parts)} ${value.order}`;
       // data += ` ${logoCount}`;
       data += "\n";
     }
     Fileops.writeFile("data/known.txt", data);
+    let codes = Array.from(knownShapes.keys());
+    const parts = [];
+    const offsets = [];
+    codes.forEach((code) => (parts[code] = knownShapes.get(code).parts));
+    codes.forEach((code) => (offsets[code] = knownShapes.get(code).offsets));
+    let chart = Shape.chart(codes, parts, offsets);
+    Fileops.writeFile("data/chart.txt", chart);
 
     // Log remaining unknowns
     console.log("Saving chart of unknowns");
-    const chart = Shape.chart(Array.from(unknownShapes.keys()));
+    chart = Shape.chart(Array.from(unknownShapes.keys()));
     Fileops.writeFile("data/unknown.txt", chart);
     console.log("");
 

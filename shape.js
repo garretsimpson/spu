@@ -946,11 +946,13 @@ export class Shape {
     Ops.saveChart(foundShapes);
   }
 
-  /**
+  /**0
    * @param {Array<number>} shapes
+   * @param {Array<any>} parts
+   * @param {Array<any>} offsets
    * @returns {string}
    */
-  static chart(shapes) {
+  static chart(shapes, parts, offsets) {
     const EOL = "\n";
     const SEP = "   ";
     const MAX_NUM = 8;
@@ -966,7 +968,14 @@ export class Shape {
       result += head;
       result += EOL;
 
-      const graphs = line.map((code) => Shape.graph(code));
+      let graphs;
+      if (!parts) {
+        graphs = line.map((code) => Shape.graph(code));
+      } else {
+        graphs = line.map((code) =>
+          Shape.graphParts(parts[code], offsets[code])
+        );
+      }
       for (let i = 0; i < 5; i++) {
         const row = graphs
           .map((v) => v.split(/\n/))
@@ -986,13 +995,53 @@ export class Shape {
    */
   static graph(code) {
     const bin = code.toString(2).padStart(20, "0");
-    const ICONS = ["- ", "X "];
+    const ICONS = ["- ", "O "];
+    let pos, bit;
     let result = "";
     for (let y = 0; y < 5; y++) {
       for (let x = 0; x < 4; x++) {
-        const pos = 4 * y + (3 - x);
-        const bit = bin[pos];
+        pos = 4 * y + (3 - x);
+        bit = bin[pos];
         result += ICONS[bit];
+      }
+      result += "\n";
+    }
+    return result;
+  }
+
+  /**
+   * @param {Array<number>} parts - array of shape codes
+   * @param {Array<number>} offsets - array of layer nums where part was found
+   * @returns {string}
+   */
+  static graphParts(parts, offsets) {
+    const ROWS = 5;
+    const COLS = 4;
+    const CHARS = "ABCDEF";
+    const EMPTY = "-";
+    let part, offset;
+    let bin, pos, bit, row;
+    let data = [];
+    for (let i = 0; i < parts.length; i++) {
+      part = parts[i];
+      offset = offsets[i];
+      // offset = offset - Shape.layerCount(part) + 1; // top of part
+      bin = (part << (offset * 4)).toString(2).padStart(ROWS * COLS, "0");
+      for (let y = 0; y < ROWS; y++) {
+        row = data[y] || [];
+        for (let x = 0; x < COLS; x++) {
+          pos = 4 * y + (3 - x);
+          bit = bin[pos];
+          if (bit == "1") row[x] = CHARS[i];
+        }
+        data[y] = row;
+      }
+    }
+    let result = "";
+    for (let y = 0; y < ROWS; y++) {
+      for (let x = 0; x < COLS; x++) {
+        result += data[y][x] || EMPTY;
+        result += " ";
       }
       result += "\n";
     }

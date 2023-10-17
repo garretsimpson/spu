@@ -14,6 +14,8 @@ const RULE = {
   RIGHT: "/",
   LEFT_PRUNE: "<",
   RIGHT_PRUNE: ">",
+  LEFT_2: "(",
+  RIGHT_2: ")",
 };
 const OPS = { EJECT: "@", STACK: "|", LEFT: "\\", RIGHT: "/" };
 
@@ -450,6 +452,14 @@ export class MyTmam {
       ["0123+++", "012++3+", "01+23++"], // not used: 01+2+3+
       ["01234++++", "012++34++", "01+234+++"], // not used: 01+2+3+4+
     ];
+    const ORDERS3_NEW = [
+      [],
+      ["0"],
+      ["01+"],
+      ["012++", "01+2+"], // both are needed
+      ["0123+++", "01+23++"], // not used: 01+2+3+
+      ["01234++++", "01+234+++"], // not used: 01+2+3+4+
+    ];
     // top-down with various part orders
     // Note: These are incomplete
     const ORDERS4 = [
@@ -845,35 +855,48 @@ export class MyTmam {
     const peer = (quad + 2) % 4;
     const onRight = (quad + 1) % 4;
     const prune = rule == RULE.LEFT_PRUNE || rule == RULE.RIGHT_PRUNE;
+    let ruleDir;
+    if (rule == RULE.LEFT || rule == RULE.LEFT_2 || rule == RULE.LEFT_PRUNE)
+      ruleDir = OPS.LEFT;
+    if (rule == RULE.RIGHT || rule == RULE.RIGHT_2 || rule == RULE.RIGHT_PRUNE)
+      ruleDir = OPS.RIGHT;
 
     const passedDir = state.prevDir[quad];
     const passedPart = state.prevPass[quad];
-    const topQuad = prune && state.nextQuads[quad];
-    const topPeer = prune && state.nextQuads[peer];
+    const topQuad = state.nextQuads[quad];
+    const topPeer = state.nextQuads[peer];
+    const passedSize = Shape.layerCount(passedPart);
+    const maxSize = (rule == RULE.LEFT_2) | (rule == RULE.RIGHT_2) ? 2 : 5;
+    if (passedSize + 1 > maxSize) return false;
 
-    let nextQuad, peerQuad, sideQuad, prevDir;
+    // console.log(`size: ${passedSize}, max: ${maxSize}`);
+
+    const myQuad = state.quads[quad];
+    let nextQuad, oppoQuad, peerQuad, sideQuad, prevDir;
     switch (dir) {
       case OPS.LEFT:
         nextQuad = state.nextQuads[onLeft];
-        peerQuad =
-          (rule == RULE.RIGHT || rule == RULE.RIGHT_PRUNE) && state.quads[peer];
+        oppoQuad = state.nextQuads[onRight];
+        peerQuad = state.quads[peer];
         sideQuad = state.quads[onLeft];
         prevDir = OPS.RIGHT;
         break;
       case OPS.RIGHT:
         nextQuad = state.nextQuads[onRight];
-        peerQuad =
-          (rule == RULE.LEFT || rule == RULE.LEFT_PRUNE) && state.quads[peer];
+        oppoQuad = state.nextQuads[onLeft];
+        peerQuad = state.quads[peer];
         sideQuad = state.quads[onRight];
         prevDir = OPS.LEFT;
         break;
     }
 
     return (
+      myQuad &&
       nextQuad &&
-      !topQuad &&
-      !(peerQuad && !topPeer) &&
-      (!passedPart || (passedDir == prevDir && !sideQuad))
+      !(prune && topQuad) &&
+      !(oppoQuad && ruleDir == prevDir) && // implements game logic
+      (!passedPart || (passedDir == prevDir && !sideQuad)) &&
+      !(peerQuad && ruleDir == prevDir && !(prune && topPeer))
     );
   }
 
@@ -897,6 +920,7 @@ export class MyTmam {
         }
         break;
       case RULE.LEFT:
+      case RULE.LEFT_2:
       case RULE.LEFT_PRUNE:
         if (canFloat(rule, OPS.LEFT, state)) {
           result = OPS.LEFT;
@@ -905,6 +929,7 @@ export class MyTmam {
         }
         break;
       case RULE.RIGHT:
+      case RULE.RIGHT_2:
       case RULE.RIGHT_PRUNE:
         if (canFloat(rule, OPS.RIGHT, state)) {
           result = OPS.RIGHT;
@@ -937,6 +962,8 @@ export class MyTmam {
       // { rules: [RULE.RIGHT, RULE.LEFT, RULE.RIGHT] },
       // { rules: [RULE.LEFT, RULE.RIGHT_PRUNE, RULE.LEFT] },
       // { rules: [RULE.RIGHT, RULE.LEFT_PRUNE, RULE.RIGHT] },
+      // { rules: [RULE.RIGHT_PRUNE, RULE.LEFT_2, RULE.RIGHT_PRUNE] },
+      // { rules: [RULE.LEFT_PRUNE, RULE.RIGHT_2, RULE.LEFT_PRUNE] },
       { rules: [RULE.RIGHT_PRUNE, RULE.LEFT_PRUNE, RULE.RIGHT_PRUNE] },
       { rules: [RULE.LEFT_PRUNE, RULE.RIGHT_PRUNE, RULE.LEFT_PRUNE] },
       { rules: [RULE.RIGHT_PRUNE, RULE.LEFT, RULE.RIGHT_PRUNE] },
@@ -946,6 +973,7 @@ export class MyTmam {
     let result = null;
     let partList;
     let offsets;
+    let flats;
     const layers = Shape.toLayers(targetShape);
     let layer, rule, layerParts, flat, pass, dir;
     let quads, nextLayer, nextQuads;
@@ -958,6 +986,7 @@ export class MyTmam {
     for (const config of CONFIGS) {
       console.log("RULES", config.rules.join(""));
       partList = [[], [], [], []]; // ejected parts per layer
+      flats = [null, null, null, null]; // flats per layer
 
       for (const layerNum of [0, 1, 2, 3]) {
         layer = layers[layerNum];
@@ -1018,10 +1047,10 @@ export class MyTmam {
             case OPS.EJECT:
               if (passedPart) {
                 // floating part
-                // partList[layerNum].push(part);  // top layer
+                // partList[layerNum].push(part); // top layer
                 // Sort parts according to their bottom layer.
                 num = Shape.layerCount(part);
-                partList[layerNum - num + 1].unshift(part);
+                partList[layerNum - num + 1].push(part);
                 console.log(">PART", Shape.pp(part));
               } else {
                 // single layer part (one corner)
@@ -1035,10 +1064,10 @@ export class MyTmam {
           }
         }
 
-        // Stack any leftover parts
+        // Stack flat parts
         if (layerParts.length != 0) {
           part = layerParts.reduce((a, b) => a | b);
-          partList[layerNum].push(part);
+          flats[layerNum] = part;
         }
 
         console.log("PASS ", Shape.pp(pass));
@@ -1047,6 +1076,12 @@ export class MyTmam {
         prevDir = dir;
       }
 
+      // insert flats
+      // adding to the end (push) is the way the game does it.
+      // adding to the start (unshift) improves stacking - makes most shapes work top-down.
+      flats.forEach((v, i) => {
+        if (v != null) partList[i].unshift(v);
+      });
       offsets = partList.map((a, i) => a.map((e) => i)).flat();
       console.log("OFFS ", Shape.pp(offsets));
       partList = partList.flat();
@@ -1145,7 +1180,7 @@ export class MyTmam {
     const testShapes = [];
     // testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
     // testShapes.push(0x000f, 0xffff); // test shapes
-    testShapes.push(0x004b, 0xfe1f); // logo and rocket
+    // testShapes.push(0x004b, 0xfe1f); // logo and rocket
     // testShapes.push(0x3444); // 5th layer shapes
     // testShapes.push(0x0178, 0x0361); // hat and seat
     // testShapes.push(0x3343, 0x334a, 0x334b); // stack order "10234++++"
@@ -1166,10 +1201,13 @@ export class MyTmam {
     // testShapes.push(0x0392, 0x0634, 0x0938, 0x0c68); // stacking order "10+"
     // testShapes.push(0x1578, 0x16d2, 0x1792); // working on Skim design
     // testShapes.push(0x35b4, 0x35e1, 0x3a78, 0x3ad2); // working on Skim design
+    // testShapes.push(0x0392, 0x0634, 0x0938, 0x0c68); // testing part order
+    // testShapes.push(0x1361, 0x8c68, 0x52c8); // testing part order
+    // testShapes.push(0x1569, 0x15c3); // testing part order
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
-    // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
-    keyShapes.forEach((code) => unknownShapes.set(code, { code }));
+    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // keyShapes.forEach((code) => unknownShapes.set(code, { code }));
     // testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     console.log("Knowns:", knownShapes.size);

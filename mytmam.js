@@ -457,8 +457,8 @@ export class MyTmam {
       ["0"],
       ["01+"],
       ["012++", "01+2+"], // both are needed
-      ["0123+++", "01+23++"], // not used: 01+2+3+
-      ["01234++++", "01+234+++"], // not used: 01+2+3+4+
+      ["0123+++", "012++3+", "01+23++"], // not used: 01+2+3+
+      ["01234++++", "01+234+++"], // not used: 01+2+3+4+, "012++34++"
     ];
     // top-down with various part orders
     // Note: These are incomplete
@@ -470,7 +470,16 @@ export class MyTmam {
       ["0123+++", "0213+++", "1023+++", "1032+++"],
       ["01234++++", "01324++++", "02134++++", "10234++++", "10324++++"],
     ];
-    const ORDERS = ORDERS3;
+    // Used by superparts
+    const ORDERS5 = [
+      [],
+      ["0"],
+      ["01+"],
+      ["012++", "01+2+"],
+      ["0123+++"],
+      ["01234++++"],
+    ];
+    const ORDERS = ORDERS3_NEW;
     const num = data.parts.length;
     if (num >= ORDERS.length) {
       // console.error("too many parts");
@@ -834,6 +843,17 @@ export class MyTmam {
     return result;
   }
 
+  static findFlatSimple(state) {
+    let part = state.layer & state.nextLayer;
+    const passLayer = state.prevPass.reduce(
+      (a, x, i) => a | (+(x > 0) << i),
+      0
+    );
+    part = MyTmam.deletePart(part, passLayer);
+
+    return part;
+  }
+
   /**
    * Check if part can be grown as a stack.
    */
@@ -872,13 +892,14 @@ export class MyTmam {
     // console.log(`size: ${passedSize}, max: ${maxSize}`);
 
     const myQuad = state.quads[quad];
-    let nextQuad, oppoQuad, peerQuad, sideQuad, prevDir;
+    let nextQuad, oppoQuad, peerQuad, sideQuad, prevDir, underPass;
     switch (dir) {
       case OPS.LEFT:
         nextQuad = state.nextQuads[onLeft];
         oppoQuad = state.nextQuads[onRight];
         peerQuad = state.quads[peer];
         sideQuad = state.quads[onLeft];
+        underPass = state.prevPass[onLeft];
         prevDir = OPS.RIGHT;
         break;
       case OPS.RIGHT:
@@ -886,6 +907,7 @@ export class MyTmam {
         oppoQuad = state.nextQuads[onLeft];
         peerQuad = state.quads[peer];
         sideQuad = state.quads[onRight];
+        underPass = state.prevPass[onRight];
         prevDir = OPS.LEFT;
         break;
     }
@@ -896,6 +918,7 @@ export class MyTmam {
       !(prune && topQuad) &&
       !(oppoQuad && ruleDir == prevDir) && // implements game logic
       (!passedPart || (passedDir == prevDir && !sideQuad)) &&
+      // !(sideQuad && !underPass) &&
       !(peerQuad && ruleDir == prevDir && !(prune && topPeer))
     );
   }
@@ -966,8 +989,8 @@ export class MyTmam {
       // { rules: [RULE.LEFT_PRUNE, RULE.RIGHT_2, RULE.LEFT_PRUNE] },
       { rules: [RULE.RIGHT_PRUNE, RULE.LEFT_PRUNE, RULE.RIGHT_PRUNE] },
       { rules: [RULE.LEFT_PRUNE, RULE.RIGHT_PRUNE, RULE.LEFT_PRUNE] },
-      { rules: [RULE.RIGHT_PRUNE, RULE.LEFT, RULE.RIGHT_PRUNE] },
-      { rules: [RULE.LEFT_PRUNE, RULE.RIGHT, RULE.LEFT_PRUNE] },
+      { rules: [RULE.RIGHT, RULE.LEFT, RULE.RIGHT] },
+      { rules: [RULE.LEFT, RULE.RIGHT, RULE.LEFT] },
     ];
 
     let result = null;
@@ -1011,7 +1034,8 @@ export class MyTmam {
         pass = [0, 0, 0, 0];
         dir = [null, null, null, null];
 
-        for (const quadNum of [0, 1, 2, 3]) {
+        // Use order 3012 to match game
+        for (const quadNum of [3, 0, 1, 2]) {
           part = quads[quadNum];
           if (part == 0 || (part & flat) != 0) continue;
 
@@ -1048,7 +1072,7 @@ export class MyTmam {
               if (passedPart) {
                 // floating part
                 // partList[layerNum].push(part); // top layer
-                // Sort parts according to their bottom layer.
+                // sort parts according to their bottom layer.
                 num = Shape.layerCount(part);
                 partList[layerNum - num + 1].push(part);
                 console.log(">PART", Shape.pp(part));
@@ -1064,7 +1088,7 @@ export class MyTmam {
           }
         }
 
-        // Stack flat parts
+        // stack flat parts
         if (layerParts.length != 0) {
           part = layerParts.reduce((a, b) => a | b);
           flats[layerNum] = part;
@@ -1077,23 +1101,35 @@ export class MyTmam {
       }
 
       // insert flats
-      // adding to the end (push) is the way the game does it.
       // adding to the start (unshift) improves stacking - makes most shapes work top-down.
       flats.forEach((v, i) => {
         if (v != null) partList[i].unshift(v);
       });
+
+      // make superparts
+      // partList = partList.map((parts) =>
+      //   parts.length > 0 ? [parts.reduce((a, b) => a | b)] : []
+      // );
+
+      // add 5th layer
+      // the game always adds 5th to 4 layer parts
+      // if (Shape.layerCount(targetShape) == 4) {
+      //   partList.push(Shape.FLAT_4);
+      // }
+
       offsets = partList.map((a, i) => a.map((e) => i)).flat();
       console.log("OFFS ", Shape.pp(offsets));
       partList = partList.flat();
       console.log("PARTS", Shape.pp(partList));
 
-      // Find stacking order
-      const build = { parts: partList, offsets };
+      // find stacking order
+      const build = { parts: partList, offsets, extra: false };
       let found = MyTmam.tryBuild(targetShape, build);
-      // Try with 5th layer
+      // try with 5th layer
       if (!found) {
         partList.push(...Shape.FLAT_4);
-        offsets.push(4); // 5th layer
+        offsets.push(4);
+        build.extra = true;
         found = MyTmam.tryBuild(targetShape, build);
       }
       if (found) {
@@ -1204,6 +1240,10 @@ export class MyTmam {
     // testShapes.push(0x0392, 0x0634, 0x0938, 0x0c68); // testing part order
     // testShapes.push(0x1361, 0x8c68, 0x52c8); // testing part order
     // testShapes.push(0x1569, 0x15c3); // testing part order
+    // testShapes.push(0x1e5a, 0x1e5b);
+    // testShapes.push(0x0126, 0x012e);
+    // testShapes.push(0x1165, 0x1265);
+    // testShapes.push(0x34c3);
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     complexShapes.forEach((code) => unknownShapes.set(code, { code }));
@@ -1249,7 +1289,9 @@ export class MyTmam {
       //         .length
       //   )
       //   .sort((a, b) => a - b);
-      data += `${Shape.pp(key)} ${Shape.pp(value.parts)} ${value.order}`;
+      data += `${Shape.pp(key)} ${Shape.pp(value.parts)} ${value.extra} ${
+        value.order
+      }`;
       // data += ` ${logoCount}`;
       data += "\n";
     }

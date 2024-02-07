@@ -1,12 +1,18 @@
 /***
- * Shape - Shape handling primitives
+ * Shape handling primitives
  *
  * - A shape 4 quadrants and 1 to 4 layers.
- * - A shape is represented internally by 16 bit integer (shape code), one bit for each possible position.
+ * - A shape is represented internally by 32 bit integer (shape code), two bits for each possible position.
+ * - shape string: A.B.C.D.:..., where ABCD are quads 1234
+ * - shape code(binary): ...:DCBA:dcba
+ * - two bits (Xx): 00 - gap(-), 01 - solid(O), 10 - pin(I), 11 - crystal(X)
+ * - Example: bowtie (Ru--Ru--) is 05, (P---P---) is 50, (cu--cu--) is 55
  * - The order of the bits is simply the reverse order of the game's shape string (constant value).
  * - Shape piece types (C, R, S, W) and colors are currently not used.
- * - The constructor takes a 16 bit integer (shape code).
- * - Basic shape operations: rotate (left, uturn, right), cut, stack, unstack.
+ * - The constructor takes a 32 bit integer (shape code).
+ * - Shapez1 operations: rotate (left, uturn, right), cut, stack
+ * - Shapez2 operations: rotate (left, uturn, right), cut, swap, stack, unstack.
+ * - Alt operations: screw, stack4, ...
  */
 
 import { Fileops } from "./fileops.js";
@@ -154,7 +160,23 @@ export class Shape {
    * @returns {string}
    */
   static codeToHex(code) {
-    return code.toString(16).padStart(4, "0");
+    const [code1, code2] = Shape.splitCode(code);
+    let result = "";
+    result = code1.toString(16).padStart(4, "0");
+    if (code2 != 0) {
+      result = code2.toString(16).padStart(4, "0") + ":" + result;
+    }
+    return result;
+  }
+
+  /**
+   * @param {number} code
+   * @returns {Array<number>}
+   */
+  static splitCode(code) {
+    const code1 = code & 0xffff;
+    const code2 = code >>> 16;
+    return [code1, code2];
   }
 
   /**
@@ -173,7 +195,6 @@ export class Shape {
    */
   static toShape(code) {
     const COLORS = ["r", "g", "b", "y"];
-    const COLOR = "u";
     const SHAPE = Shape.RECT;
     const EMPTY = "--";
     const SEP = ":";
@@ -745,6 +766,8 @@ export class Shape {
 
   static runTests() {
     const TESTS = [
+      ["codeToHex", [0x004b], "004b"],
+      ["codeToHex", [0x1234004b], "1234:004b"],
       ["toShape", [0x004b], "RrRr--Rr:----Rg--:--------:--------"],
       ["countPieces", [0x0], 0],
       ["countPieces", [0xf], 4],
@@ -946,7 +969,7 @@ export class Shape {
     Ops.saveChart(foundShapes);
   }
 
-  /**0
+  /**
    * @param {Array<number>} shapes
    * @param {Array<any>} parts
    * @param {Array<any>} offsets
@@ -954,27 +977,28 @@ export class Shape {
    */
   static chart(shapes, parts, offsets) {
     const EOL = "\n";
-    const SEP = "   ";
+    const SEP = "  ";
     const MAX_NUM = 8;
 
     let result = "";
-    const codes = shapes.slice().sort((a, b) => a - b);
+    // const codes = shapes.slice().sort((a, b) => a - b);
+    const codes = shapes.slice();
     const numLines = Math.floor(codes.length / MAX_NUM) + 1;
 
     for (let i = 0; i < numLines; i++) {
       const pos = MAX_NUM * i;
-      const line = codes.slice(pos, pos + MAX_NUM);
-      const head = line.map((code) => Shape.pp(code) + "    ").join(SEP);
-      result += head;
-      result += EOL;
+      const line = codes
+        .slice(pos, pos + MAX_NUM)
+        .map((code) => Shape.splitCode(code));
+      // result += line.map((v) => Shape.pp(v[1]) + "    ").join(SEP) + EOL;
+      // result += line.map((v) => Shape.pp(v[0]) + "    ").join(SEP) + EOL;
 
+      // TODO: Need a way to tell difference between S1 shape w/5th layer and a S2 shape.  Both are > 0xffff.
       let graphs;
       if (!parts) {
-        graphs = line.map((code) => Shape.graph(code));
+        graphs = line.map((v) => Shape.graphS2(v[0], v[1]));
       } else {
-        graphs = line.map((code) =>
-          Shape.graphParts(parts[code], offsets[code])
-        );
+        graphs = line.map((v) => Shape.graphParts(parts[v[0]], offsets[v[0]]));
       }
       for (let i = 0; i < 5; i++) {
         const row = graphs
@@ -990,10 +1014,12 @@ export class Shape {
   }
 
   /**
-   * @param {number} code
+   * Graph a Shapez 1 shape
+   * @param {number} code - 20 bit value (5 layers)
    * @returns {string}
    */
-  static graph(code) {
+  static graphS1(code) {
+    const EOL = "\n";
     const bin = code.toString(2).padStart(20, "0");
     const ICONS = ["- ", "O "];
     let pos, bit;
@@ -1004,7 +1030,34 @@ export class Shape {
         bit = bin[pos];
         result += ICONS[bit];
       }
-      result += "\n";
+      result += EOL;
+    }
+    return result;
+  }
+
+  /**
+   * Graph a Shapez 2 shape
+   * @param {number} code1 - 16 bit value - 4 layer S1 shape code
+   * @param {number} code2 - 32 bit value - 4 layer S2 shape code
+   * @returns {string}
+   */
+  static graphS2(code1, code2) {
+    const EOL = "\n";
+    const ICONS = { "00": "- ", "01": "O ", 10: "I ", 11: "X " };
+    const hex1 = code1.toString(16).padStart(4, "0");
+    const hex2 = code2.toString(16).padStart(4, "0");
+    const bin1 = code1.toString(2).padStart(16, "0");
+    const bin2 = code2.toString(2).padStart(16, "0");
+    let pos, bit;
+    let result = "";
+    for (let y = 0; y < 4; y++) {
+      result += hex2[y] + hex1[y] + " ";
+      for (let x = 0; x < 4; x++) {
+        pos = 4 * y + (3 - x);
+        bit = bin2[pos] + bin1[pos];
+        result += ICONS[bit];
+      }
+      result += EOL;
     }
     return result;
   }
@@ -1113,5 +1166,12 @@ export class Shape {
       total += val;
     }
     console.log("total:", total);
+  }
+
+  static testChart() {
+    const shapes = [
+      0x0001, 0x0c63, 0x0001001e, 0x08ce8421, 0x00fd0f0f, 0x639cffff,
+    ];
+    Ops.saveChart(shapes);
   }
 }

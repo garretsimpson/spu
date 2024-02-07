@@ -3019,3 +3019,74 @@ Knowns: 20272
 Unknowns: 48
 [1265,126d,16ca,16cb,18c5,18c7,1c6a,1c6b,219a,219e,24ca,24cb,29c5,29c7,2c95,2c97,34ca,34cb,38c5,38c7,4235,423d,439a,439e,4895,4897,493a,493e,619a,619e,6895,6897,813a,813e,8365,836d,846a,846b,8635,863d,9265,926d,946a,946b,c13a,c13e,c235,c23d]
 
+-----
+
+Shapez 2
+
+Ideas
+- find all possible shapes
+- but first, design encoding scheme and shape chart
+
+Blueprints
+# string                      code
+1 CuRuCuCu                    000f
+2 CuRuCuCu:CbCbCbCb           00ff
+3 CuRuCuCu:CcCcCcCc           00ff
+4 CwRwCwCw:P-P-P-P-:CcCcCcCc  xxxx:xxxx
+5 cwRwcwcw:P-P-P-P-:CcCcCcCc
+
+Blueprints 2 and 3 have the same structure, so only need to do 4.
+Blueprints may not be best as they have no quad key.
+
+Stacker
+Ru------
+0001
+
+180 Rotator
+RuRu----:--RuRu--:----RuRu
+0c63
+
+Platform Limit 4
+P-CwRuCw:Ru------
+0001:001e
+
+Color Mixing Speed 1
+RpP-P-P-:--WrP-P-:----CyP-:------Sg
+08ce:8421
+
+Blueprint Discount 5
+cwRwcwcw:P-P-P-P-:CcCcCcCc
+00fd:0f0f
+
+Wires
+CwRwcrcp:ccRwCwcb:cgcyCwRw:RwcrcpCw
+639c:ffff
+
+Ru------
+RuRu----:--RuRu--:----RuRu
+P-CwRuCw:Ru------
+RpP-P-P-:--WrP-P-:----CyP-:------Sg
+cwRwcwcw:P-P-P-P-:CcCcCcCc
+CwRwcrcp:ccRwCwcb:cgcyCwRw:RwcrcpCw
+
+First attempt (no code changes)
+
+                      0001       00fd:0f02  08ce:8421  639c:9c63
+0001       0c63       001e       00fd:0f02  08ce:8421  639c:9c63
+- - - -    - - - -    O - - -    O O O O    - - - O    - - O O 
+- - - -    - - - -    - - - -    O - O O    - - O O    O O O - 
+- - - -    - - O O    - - - -    - - - -    - O O O    O O - - 
+- - - -    - O O -    O - - -    O O O O    - - - O    O - - O 
+O - - -    O O - -    - O O O    - - - -    - - O -    O O - - 
+
+Second attempt
+
+0000       0000       0001       08ce       00fd       639c    
+0001       0c63       001e       8421       0f0f       ffff    
+- - - -    - - - -    - - - -    - - - O    - - - -    O X X O 
+- - - -    - - O O    - - - -    - - O I    O O O O    X X O O 
+- - - -    - O O -    O - - -    - O I I    I I I I    X O O X 
+O - - -    O O - -    I O O O    O I I I    X O X X    O O X X 
+
+Maybe put hex number on the side?
+

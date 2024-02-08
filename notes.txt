@@ -3090,3 +3090,8 @@ O - - -    O O - -    I O O O    O I I I    X O X X    O O X X
 
 Maybe put hex number on the side?
 
+00 - - - -   00 - - - -   00 - - - -   08 - - - O   00 - - - -   6f O X X O 
+00 - - - -   0c - - O O   00 - - - -   84 - - O I   0f O O O O   3f X X O O 
+00 - - - -   06 - O O -   01 O - - -   c2 - O I I   f0 I I I I   9f X O O X 
+01 O - - -   03 O O - -   1e I O O O   e1 O I I I   df X O X X   cf O O X X 
+

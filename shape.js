@@ -1,7 +1,7 @@
 /***
  * Shape handling primitives
  *
- * - A shape 4 quadrants and 1 to 4 layers.
+ * - A shape has 4 quadrants and 1 to 4 layers.
  * - A shape is represented internally by 32 bit integer (shape code), two bits for each possible position.
  * - shape string: A.B.C.D.:..., where ABCD are quads 1234
  * - shape code(binary): ...:DCBA:dcba
@@ -12,7 +12,7 @@
  * - The constructor takes a 32 bit integer (shape code).
  * - Shapez1 operations: rotate (left, uturn, right), cut, stack
  * - Shapez2 operations: rotate (left, uturn, right), cut, swap, stack, unstack.
- * - Alt operations: screw, stack4, ...
+ * - Alt operations: flip, screw, stack4, ...
  */
 
 import { Fileops } from "./fileops.js";
@@ -28,6 +28,8 @@ export class Shape {
   static RECT = "R";
   static STAR = "S";
   static WIND = "W";
+  static CRYS = "c";
+  static PIN = "P-";
 
   static FLAT_1 = [0x1, 0x2, 0x4, 0x8];
   static FLAT_2 = [0x3, 0x5, 0x6, 0x9, 0xa, 0xc];
@@ -194,19 +196,32 @@ export class Shape {
    * @returns {string}
    */
   static toShape(code) {
-    const COLORS = ["r", "g", "b", "y"];
-    const SHAPE = Shape.RECT;
+    const COLORS = ["r", "g", "b", "w"];
     const EMPTY = "--";
     const SEP = ":";
 
-    const bin = code.toString(2).padStart(16, "0");
+    const [code1, code2] = Shape.splitCode(code);
+    const bin1 = code1.toString(2).padStart(16, "0");
+    const bin2 = code2.toString(2).padStart(16, "0");
+    let num, val, layer, color;
     let result = "";
     for (let i = 0; i < 16; i++) {
-      let val = EMPTY;
-      if (bin[15 - i] == "1") {
-        const layer = Math.trunc(i / 4);
-        const color = COLORS[layer];
-        val = SHAPE + color;
+      num = bin2[15 - i] + bin1[15 - i];
+      layer = Math.trunc(i / 4);
+      color = COLORS[layer];
+      switch (num) {
+        case "00":
+          val = EMPTY;
+          break;
+        case "01":
+          val = Shape.RECT + color;
+          break;
+        case "10":
+          val = Shape.PIN;
+          break;
+        case "11":
+          val = Shape.CRYS + color;
+          break;
       }
       if (i == 4 || i == 8 || i == 12) {
         result += SEP;
@@ -240,9 +255,9 @@ export class Shape {
   static rotateCode(code, steps) {
     const lShift = steps & 0x3;
     const rShift = 4 - lShift;
-    const mask = (0xf >>> rShift) * 0x1111;
+    const mask = (0xf >>> rShift) * 0x11111111;
     const result =
-      ((code >>> rShift) & mask) | ((code << lShift) & ~mask & 0xffff);
+      ((code >>> rShift) & mask) | ((code << lShift) & ~mask & 0xffffffff);
     return result;
   }
 
@@ -298,7 +313,7 @@ export class Shape {
   static mirrorCode(code) {
     let result = 0;
     for (let i = 0; i < 4; i++) {
-      result = (result << 1) | (code & 0x1111);
+      result = (result << 1) | (code & 0x11111111);
       code >>>= 1;
     }
     return result;
@@ -312,11 +327,48 @@ export class Shape {
   }
 
   /**
+   * Drop a part on top of a shape.
+   * The part is assumed to be a single solid part that won't separate.
+   * @param {number} base
+   * @param {number} part
+   * @returns {number}
+   */
+  static dropPart(base, part) {
+    if (part == 0) return base;
+    const [code1, code2] = Shape.splitCode(base);
+    const code = code1 | code2;
+    for (let offset = 4; offset > 0; offset--) {
+      if (((part << ((offset - 1) * 4)) & code) != 0) {
+        return base | ((part << (offset * 4)) & 0xffff);
+      }
+    }
+    return base | part;
+  }
+
+  /**
+   * Drop a pin on top of a shape.
+   * @param {number} base
+   * @param {number} quad
+   * @returns {number}
+   */
+  static dropPin(base, quad) {
+    const pin = 1 << quad;
+    const [code1, code2] = Shape.splitCode(base);
+    const code = code1 | code2;
+    for (let offset = 4; offset > 0; offset--) {
+      if (((pin << ((offset - 1) * 4)) & code) != 0) {
+        return base | (pin << (16 + offset * 4));
+      }
+    }
+    return base | (pin << 16);
+  }
+
+  /**
    * Remove empty layers
    * @param {number} code
    * @returns {number}
    */
-  static collapse(code) {
+  static collapseS1(code) {
     let result = 0;
     for (let i = 0; i < 4; i++) {
       const val = code & 0xf000;
@@ -332,9 +384,9 @@ export class Shape {
    * @param {number} code
    * @returns {number}
    */
-  static cutCode(code) {
-    const left = Shape.cutLeftCode(code);
-    const right = Shape.cutRightCode(code);
+  static cutS1Code(code) {
+    const left = Shape.cutLeftS1Code(code);
+    const right = Shape.cutRightS1Code(code);
     return [left, right];
   }
 
@@ -342,23 +394,84 @@ export class Shape {
    * @param {number} code
    * @returns {number}
    */
-  static cutLeftCode(code) {
-    return Shape.collapse(code & 0xcccc);
+  static cutLeftS1Code(code) {
+    return Shape.collapseS1(code & 0xcccc);
   }
 
   /**
    * @param {number} code
    * @returns {number}
    */
-  static cutRightCode(code) {
-    return Shape.collapse(code & 0x3333);
+  static cutRightS1Code(code) {
+    return Shape.collapseS1(code & 0x3333);
+  }
+
+  /**
+   * @param {number} code
+   * @returns {number}
+   */
+  static cutS2Code(code) {
+    const left = code & 0xcccccccc;
+    const right = code & 0x33333333;
+    return [left, right];
+    const layers = Shape.toLayers(code);
+    let shape = layers.shift();
+    for (const layer of layers) {
+      code = part;
+      for (let quad = 0; quad < 4; quad++) {
+        val = code & 0x11;
+        if (val == 0x10) {
+          // drop pin
+          part &= ~(0x10 << quad);
+          bottom = Shape.dropPin(bottom, quad);
+        } else if (val == 0x11) {
+          // break crystal
+          part &= ~(0x11 << quad);
+        }
+        code >>>= 1;
+      }
+      // check only solids remain
+      if (part > 0xf) {
+        console.error("Stacking error.  Non solid part found.");
+        return 0;
+      }
+      // drop parts
+      if (part == 0x5) {
+        bottom = Shape.dropPart(bottom, 0x1);
+        bottom = Shape.dropPart(bottom, 0x4);
+      } else if (part == 0xa) {
+        bottom = Shape.dropPart(bottom, 0x2);
+        bottom = Shape.dropPart(bottom, 0x8);
+      } else {
+        bottom = Shape.dropPart(bottom, part);
+      }
+    }
+    return [left, right];
+  }
+
+  /**
+   * @param {number} code
+   * @returns {number}
+   */
+  static cutLeftS2Code(code) {
+    const [left, right] = Shape.cutS2Code(code);
+    return left;
+  }
+
+  /**
+   * @param {number} code
+   * @returns {number}
+   */
+  static cutRightS2Code(code) {
+    const [left, right] = Shape.cutS2Code(code);
+    return right;
   }
 
   /**
    * @returns {[Shape,Shape]}
    */
-  cut() {
-    const [left, right] = Shape.cutCode(this.code);
+  cutS1() {
+    const [left, right] = Shape.cutS1Code(this.code);
     return [new Shape(left), new Shape(right)];
   }
 
@@ -367,13 +480,54 @@ export class Shape {
    * @param {number} bottom
    * @returns {number}
    */
-  static stackCode(top, bottom) {
+  static stackS1Code(top, bottom) {
     for (let offset = 4; offset > 0; offset--) {
       if (((top << ((offset - 1) * 4)) & bottom) != 0) {
         return ((top << (offset * 4)) | bottom) & 0xffff;
       }
     }
     return top | bottom;
+  }
+
+  /**
+   * @param {number} top
+   * @param {number} bottom
+   * @returns {number}
+   */
+  static stackS2Code(top, bottom) {
+    let code, val;
+    const layers = Shape.toLayers(top);
+    for (let part of layers) {
+      code = part;
+      for (let quad = 0; quad < 4; quad++) {
+        val = code & 0x11;
+        if (val == 0x10) {
+          // drop pin
+          part &= ~(0x10 << quad);
+          bottom = Shape.dropPin(bottom, quad);
+        } else if (val == 0x11) {
+          // break crystal
+          part &= ~(0x11 << quad);
+        }
+        code >>>= 1;
+      }
+      // check only solids remain
+      if (part > 0xf) {
+        console.error("Stacking error.  Non solid part found.");
+        return 0;
+      }
+      // drop parts
+      if (part == 0x5) {
+        bottom = Shape.dropPart(bottom, 0x1);
+        bottom = Shape.dropPart(bottom, 0x4);
+      } else if (part == 0xa) {
+        bottom = Shape.dropPart(bottom, 0x2);
+        bottom = Shape.dropPart(bottom, 0x8);
+      } else {
+        bottom = Shape.dropPart(bottom, part);
+      }
+    }
+    return bottom;
   }
 
   /**
@@ -397,10 +551,10 @@ export class Shape {
    * @param {Shape} shape
    * @returns {Shape}
    */
-  stack(shape) {
+  stackS1(shape) {
     const top = shape.code;
     const bottom = this.code;
-    const result = Shape.stackCode(top, bottom);
+    const result = Shape.stackS1Code(top, bottom);
     return new Shape(result);
   }
 
@@ -578,17 +732,20 @@ export class Shape {
   }
 
   /**
+   * Returns an array of shapes, layers from bottom to top
    * @param {number} code
    * @returns {Array<number>}
    */
   static toLayers(code) {
     let result = [];
+    let [code1, code2] = Shape.splitCode(code);
     let value;
     for (let i = 0; i < 4; ++i) {
-      if (code == 0) break;
-      value = code & 0xf;
+      if ((code1 | code2) == 0) break;
+      value = ((code2 & 0xf) << 4) | (code1 & 0xf);
       result.push(value);
-      code >>>= 4;
+      code1 >>>= 4;
+      code2 >>>= 4;
     }
     return result;
   }
@@ -605,7 +762,7 @@ export class Shape {
     let result = layers[0];
     for (let i = 1; i < layers.length; i++) {
       const top = layers[i];
-      result = Shape.stackCode(top, result);
+      result = Shape.stackS1Code(top, result);
     }
     return result == code;
   }
@@ -626,7 +783,7 @@ export class Shape {
     for (let i = 1; i < numLayers; i++) {
       [bottom, tmp] = Shape.unstackCode(bottom);
       top = (top << 4) + tmp;
-      const result = Shape.stackCode(top, bottom);
+      const result = Shape.stackS1Code(top, bottom);
       if (result == code) return true;
     }
     return false;
@@ -686,14 +843,14 @@ export class Shape {
       return false;
     }
     // try cutting vertically
-    let [left, right] = Shape.cutCode(code);
-    if (Shape.stackCode(left, right) == code) {
+    let [left, right] = Shape.cutS1Code(code);
+    if (Shape.stackS1Code(left, right) == code) {
       return true;
     }
     // try cutting horizontally
     code = Shape.rightCode(code);
-    let [bottom, top] = Shape.cutCode(code);
-    if (Shape.stackCode(bottom, top) == code) {
+    let [bottom, top] = Shape.cutS1Code(code);
+    if (Shape.stackS1Code(bottom, top) == code) {
       return true;
     }
     return false;
@@ -769,22 +926,30 @@ export class Shape {
       ["codeToHex", [0x004b], "004b"],
       ["codeToHex", [0x1234004b], "1234:004b"],
       ["toShape", [0x004b], "RrRr--Rr:----Rg--:--------:--------"],
+      ["toShape", [0x00fd0f0f], "crRrcrcr:P-P-P-P-:RbRbRbRb:--------"],
       ["countPieces", [0x0], 0],
       ["countPieces", [0xf], 4],
       ["countPieces", [0xffff], 16],
       ["mirrorCode", [0x1234], 0x84c2],
+      ["mirrorCode", [0x12345678], 0x84c2a6e1],
       ["keyCode", [0x4321], 0x1624],
+      ["keyCode", [0x87654321], 0x87351624],
       ["leftCode", [0x0001], 0x0008],
       ["leftCode", [0x1248], 0x8124],
+      ["leftCode", [0x0001001e], 0x00080087],
       ["rightCode", [0x0001], 0x0002],
       ["uturnCode", [0x0001], 0x0004],
-      ["cutCode", [0x5aff], [0x48cc, 0x1233]],
-      ["cutCode", [0x936c], [0x084c, 0x0132]],
-      ["stackCode", [0x0000, 0x000f], 0x000f],
-      ["stackCode", [0x000f, 0x0000], 0x000f],
-      ["stackCode", [0x000f, 0x000f], 0x00ff],
-      ["stackCode", [0x1111, 0x2222], 0x3333],
-      ["stackCode", [0xfffa, 0x5111], 0xf111],
+      ["cutS1Code", [0x5aff], [0x48cc, 0x1233]],
+      ["cutS1Code", [0x936c], [0x084c, 0x0132]],
+      ["cutS2Code", [0x936c], [0x00cc, 0x0132]],
+      ["stackS1Code", [0x0000, 0x000f], 0x000f],
+      ["stackS1Code", [0x000f, 0x0000], 0x000f],
+      ["stackS1Code", [0x000f, 0x000f], 0x00ff],
+      ["stackS1Code", [0x1111, 0x2222], 0x3333],
+      ["stackS1Code", [0xfffa, 0x5111], 0xf111],
+      ["stackS2Code", [0xfffa, 0x5111], 0x511b],
+      ["stackS2Code", [0x000f, 0x00010000], 0x000100f0],
+      ["stackS2Code", [0x000f0000, 0x08ce], 0x842108ce],
       ["unstackCode", [0x000f], [0x0000, 0x000f]],
       ["unstackCode", [0x0234], [0x0034, 0x0002]],
       ["unstackCode", [0x1234], [0x0234, 0x0001]],
@@ -797,9 +962,10 @@ export class Shape {
       ["layerCount", [0x0001], 1],
       ["layerCount", [0x000f], 1],
       ["layerCount", [0xffff], 4],
-      ["toLayers", [0x0001], [0x0001]],
-      ["toLayers", [0x0120], [0x0000, 0x0002, 0x0001]],
-      ["toLayers", [0xabcd], [0x000d, 0x000c, 0x000b, 0x000a]],
+      ["toLayers", [0x0001], [0x1]],
+      ["toLayers", [0x0120], [0x0, 0x2, 0x1]],
+      ["toLayers", [0xabcd], [0xd, 0xc, 0xb, 0xa]],
+      ["toLayers", [0x12345678], [0x48, 0x37, 0x26, 0x15]],
       ["isInvalid", [0x0000], true],
       ["isInvalid", [0x0001], false],
       ["isInvalid", [0x0010], true],

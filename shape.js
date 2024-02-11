@@ -1244,7 +1244,7 @@ export class Shape {
       } else {
         graphs = line.map((v) => Shape.graphParts(parts[v[0]], offsets[v[0]]));
       }
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 4; i++) {
         const row = graphs
           .map((v) => v.split(/\n/))
           .map((v) => v[i])

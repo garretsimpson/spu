@@ -3095,3 +3095,70 @@ Maybe put hex number on the side?
 00 - - - -   06 - O O -   01 O - - -   c2 - O I I   f0 I I I I   9f X O O X 
 01 O - - -   03 O O - -   1e I O O O   e1 O I I I   df X O X X   cf O O X X 
 
+Testing S2 ops
+
+S1 shapes made from FLAT_1, stacking only
+1-flats  28112   3885
+
+S1 shapes made from FLAT_4, all ops
+1-flats  48432   6691
+
+S1 ops - FLAT_1, stacking only
+    Name   Shapes     Keys
+ 1-flats    28112     3885
+
+First attempt at S2 ops - FLAT_1, stacking only
+
+ToDo:  0
+Total: 21136
+
+    Name   Shapes     Keys
+ 1-flats    21136     2914
+
+Saving shape chart
+0001 P            (0,1,0)
+0011 ST 0001 0001 (0,1,0)
+  0001 P            (0,1,0)
+  0001 P            (0,1,0)
+Shape not found: 0012
+Shape not found: 0121
+Shape not found: 1212
+ffff ST 00ff 00ff (0,111238,0)
+  00ff ST 000f 000f (0,91,0)
+    000f ST 0009 0006 (0,14,0)
+      0009 ST 0008 0001 (0,2,0)
+        0008 P            (0,1,0)
+        0001 P            (0,1,0)
+      0006 ST 0004 0002 (0,2,0)
+        0004 P            (0,1,0)
+        0002 P            (0,1,0)
+    000f ST 0009 0006 (0,14,0)
+      0009 ST 0008 0001 (0,2,0)
+        0008 P            (0,1,0)
+        0001 P            (0,1,0)
+      0006 ST 0004 0002 (0,2,0)
+        0004 P            (0,1,0)
+        0002 P            (0,1,0)
+  00ff ST 000f 000f (0,91,0)
+    000f ST 0009 0006 (0,14,0)
+      0009 ST 0008 0001 (0,2,0)
+        0008 P            (0,1,0)
+        0001 P            (0,1,0)
+      0006 ST 0004 0002 (0,2,0)
+        0004 P            (0,1,0)
+        0002 P            (0,1,0)
+    000f ST 0009 0006 (0,14,0)
+      0009 ST 0008 0001 (0,2,0)
+        0008 P            (0,1,0)
+        0001 P            (0,1,0)
+      0006 ST 0004 0002 (0,2,0)
+        0004 P            (0,1,0)
+        0002 P            (0,1,0)
+
+Initial results
+Input: 1 quarter shape, no pins, no crystals
+Ops: stacking only
+
+Game      Shapes  Keys
+Shapez 1  28112   3885
+Shapez 2  21136   2914

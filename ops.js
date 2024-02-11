@@ -244,12 +244,12 @@ export class Ops {
         shapes: Shape.FLAT_1,
         maxIter: 5000,
       },
-      // {
-      //   name: "2-float",
-      //   shapes: Shape.LOGO_2,
-      //   cost: 1,
-      //   // maxIter: 4000,
-      // },
+      {
+        name: "2-float",
+        shapes: Shape.LOGO_2,
+        cost: 1,
+        // maxIter: 4000,
+      },
     ];
 
     const CONFIGS_123 = [
@@ -296,9 +296,17 @@ export class Ops {
       },
     ];
 
+    const CONFIGS_TEST_S2 = [
+      {
+        name: "1-flats",
+        shapes: Shape.FLAT_1,
+        maxIter: 5000,
+      },
+    ];
+
     const results = {};
     let shapes;
-    for (let config of CONFIGS_TEST) {
+    for (let config of CONFIGS_TEST_S2) {
       shapes = config.shapes.map((code) => {
         return {
           code,
@@ -393,7 +401,8 @@ export class Ops {
 
     Ops.saveAllShapes();
     Ops.saveAllBuilds();
-    Ops.saveDB();
+    Ops.chartAllShapes();
+    // Ops.saveDB();
 
     // for (let code = 0x1; code <= 0xf; code++) {
     //   Ops.findShape(code);
@@ -405,8 +414,8 @@ export class Ops {
     Ops.findShape(0x1212);
     Ops.findShape(0xffff);
 
-    Ops.findShape(0x4b); // Logo
-    Ops.findShape(0xfe1f); // Rocket
+    // Ops.findShape(0x4b); // Logo
+    // Ops.findShape(0xfe1f); // Rocket
 
     // console.log("Rocket:", Ops.getBuildStr(0xfe1f));
   }
@@ -451,11 +460,12 @@ export class Ops {
     left: "RL",
     uturn: "R2",
     right: "RR",
-    cutLeft: "CL",
-    cutRight: "CR",
-    stack: "ST",
-    stackS1: "S1",
-    stackS2: "S2",
+    cutLeftS1: "CL",
+    cutRightS1: "CR",
+    stackS1: "ST",
+    cutLeftS2: "CL",
+    cutRightS2: "CR",
+    stackS2: "ST",
   };
 
   /**
@@ -528,12 +538,9 @@ export class Ops {
     Fileops.writeFile(KEYS_FILE_NAME, data);
   }
 
-  static displayShapes() {
-    console.log("Shapes");
-    const codes = Array.from(allShapes.keys()).sort((a, b) => a - b);
-    for (let code of codes) {
-      Ops.displayShape(allShapes.get(code));
-    }
+  static chartAllShapes() {
+    const codes = Object.keys(allShapes).sort((a, b) => a - b);
+    Ops.saveChart(codes);
   }
 
   static saveAllBuilds() {

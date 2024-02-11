@@ -437,44 +437,18 @@ export class Shape {
   // TODO: Use spot number instead of layers and quads.
 
   /**
-   * @param {number} code
+   * @param {number} shape
+   * @param {Array<number>} quads
    * @returns {number}
    */
-  static cutLeftS2Code(shape) {
-    let layers = Shape.toLayers(shape);
-    // Step 1: break all cut crystals
-    // Check all 8 places that a crystal can span the cut
-    let layer;
-    const todo = [];
-    for (let layerNum = 0; layerNum < layers.length; ++layerNum) {
-      layer = layers[layerNum];
-      if ((layer & 0x99) == 0x99) todo.push(4 * layerNum + 3);
-      if ((layer & 0x66) == 0x66) todo.push(4 * layerNum + 2);
-    }
-    // Find all connected crystals
-    let num, val;
-    let found = 0;
-    for (let i = 0; i < todo.length; ++i) {
-      num = todo[i];
-      found |= Shape.CRYSTAL_MASK << num;
-      for (const spot of Shape.NEXT_SPOTS[num]) {
-        if (todo.includes(spot)) continue;
-        val = (shape >>> spot) & Shape.CRYSTAL_MASK;
-        if (val == Shape.CRYSTAL_MASK) todo.push(spot);
-      }
-    }
-    // Break all connected crystals
-    shape &= ~found;
-
-    // Step 2: Drop parts
-    shape &= 0xcccccccc;
-    layers = Shape.toLayers(shape);
+  static collapseS2(shape, quads) {
+    const layers = Shape.toLayers(shape);
     // First layer remains unchanged
     let result = shape & 0x000f000f;
-    let part, spot;
+    let part, spot, val;
     for (let layerNum = 1; layerNum < layers.length; ++layerNum) {
       part = layers[layerNum];
-      for (let quad of [2, 3]) {
+      for (let quad of quads) {
         spot = 4 * layerNum + quad;
         val = (part >>> quad) & 0x11;
         if (val == 0x10) {
@@ -500,11 +474,45 @@ export class Shape {
   }
 
   /**
-   * @param {number} code
+   * @param {number} shape
+   * @returns {number}
+   */
+  static cutLeftS2Code(shape) {
+    const layers = Shape.toLayers(shape);
+    // Step 1: break all cut crystals
+    // Check all 8 places that a crystal can span the cut
+    let layer;
+    const todo = [];
+    for (let layerNum = 0; layerNum < layers.length; ++layerNum) {
+      layer = layers[layerNum];
+      if ((layer & 0x99) == 0x99) todo.push(4 * layerNum + 3);
+      if ((layer & 0x66) == 0x66) todo.push(4 * layerNum + 2);
+    }
+    // Find all connected crystals
+    let num, val;
+    let found = 0;
+    for (let i = 0; i < todo.length; ++i) {
+      num = todo[i];
+      found |= Shape.CRYSTAL_MASK << num;
+      for (const spot of Shape.NEXT_SPOTS[num]) {
+        if (todo.includes(spot)) continue;
+        val = (shape >>> spot) & Shape.CRYSTAL_MASK;
+        if (val == Shape.CRYSTAL_MASK) todo.push(spot);
+      }
+    }
+    // Break all connected crystals
+    shape &= ~found;
+
+    // Step 2: Drop parts
+    return Shape.collapseS2(shape & 0xcccccccc, [2, 3]);
+  }
+
+  /**
+   * @param {number} shape
    * @returns {number}
    */
   static cutRightS2Code(shape) {
-    let layers = Shape.toLayers(shape);
+    const layers = Shape.toLayers(shape);
     // Step 1: break all cut crystals
     // Check all 8 places that a crystal can span the cut
     let layer;
@@ -530,36 +538,7 @@ export class Shape {
     shape &= ~found;
 
     // Step 2: Drop parts
-    shape &= 0x33333333;
-    layers = Shape.toLayers(shape);
-    // First layer remains unchanged
-    let result = shape & 0x000f000f;
-    let part, spot;
-    for (let layerNum = 1; layerNum < layers.length; ++layerNum) {
-      part = layers[layerNum];
-      for (let quad of [0, 1]) {
-        spot = 4 * layerNum + quad;
-        val = (part >>> quad) & 0x11;
-        if (val == 0x10) {
-          // drop pin
-          part &= ~(0x10 << quad);
-          result = Shape.dropPin(result, quad);
-        } else if (val == 0x11) {
-          part &= ~(0x11 << quad);
-          // break crystal, but only if it falls (gap under)
-          if ((result & (Shape.CRYSTAL_MASK << (spot - 4))) == 0) continue;
-          result |= Shape.CRYSTAL_MASK << spot;
-        }
-      }
-      // check only solids remain
-      if (part > 0xf) {
-        console.error("Cutting error.  Non solid part found.");
-        return 0;
-      }
-      // Drop parts
-      result = Shape.dropPart(result, part);
-    }
-    return result;
+    return Shape.collapseS2(shape & 0x33333333, [0, 1]);
   }
 
   /**
@@ -660,7 +639,7 @@ export class Shape {
    * @returns {number}
    */
   static stackTrash(top, bottom) {
-    const code = Shape.stackCode(top, bottom);
+    const code = Shape.stackS1Code(top, bottom);
     let result = 0;
     result += Shape.countPieces(top);
     result += Shape.countPieces(bottom);

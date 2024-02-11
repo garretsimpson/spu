@@ -68,9 +68,9 @@ const OPS = {
   left: "left",
   uturn: "uturn",
   right: "right",
-  cutLeft: "cutLeft",
-  cutRight: "cutRight",
-  stack: "stack",
+  cutLeft: "cutLeftS1",
+  cutRight: "cutRightS1",
+  stack: "stackS1",
   unstackBottom: "unstackBottom",
   unstackTop: "unstackTop",
   screwLeft: "screwLeft",
@@ -242,14 +242,14 @@ export class Ops {
       {
         name: "1-flats",
         shapes: Shape.FLAT_1,
-        // maxIter: 5000,
+        maxIter: 5000,
       },
-      {
-        name: "2-float",
-        shapes: Shape.LOGO_2,
-        cost: 1,
-        // maxIter: 4000,
-      },
+      // {
+      //   name: "2-float",
+      //   shapes: Shape.LOGO_2,
+      //   cost: 1,
+      //   // maxIter: 4000,
+      // },
     ];
 
     const CONFIGS_123 = [
@@ -298,7 +298,7 @@ export class Ops {
 
     const results = {};
     let shapes;
-    for (let config of CONFIGS_123) {
+    for (let config of CONFIGS_TEST) {
       shapes = config.shapes.map((code) => {
         return {
           code,
@@ -454,6 +454,8 @@ export class Ops {
     cutLeft: "CL",
     cutRight: "CR",
     stack: "ST",
+    stackS1: "S1",
+    stackS2: "S2",
   };
 
   /**

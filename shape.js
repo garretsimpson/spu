@@ -42,6 +42,8 @@ export class Shape {
     ...Shape.FLAT_4,
   ];
 
+  static PINS_1 = [0x10000, 0x20000, 0x40000, 0x80000];
+
   static STACK_1 = [0x1, 0x2, 0x4, 0x8];
   static STACK_2 = [0x11, 0x22, 0x44, 0x88];
   static STACK_3 = [0x111, 0x222, 0x444, 0x888];
@@ -345,6 +347,8 @@ export class Shape {
     return base | part;
   }
 
+  // TODO: Only need the quad/column of the pin.  Find top zero.
+
   /**
    * Drop a pin on top of a shape.
    * @param {number} base
@@ -357,7 +361,7 @@ export class Shape {
     const code = code1 | code2;
     for (let offset = 4; offset > 0; offset--) {
       if (((pin << ((offset - 1) * 4)) & code) != 0) {
-        return base | (pin << (16 + offset * 4));
+        return base | (((pin << (offset * 4)) & 0xffff) << 16);
       }
     }
     return base | (pin << 16);
@@ -542,13 +546,46 @@ export class Shape {
   }
 
   /**
-   * @param {number} code
+   * @param {number} shape
    * @returns {number}
    */
   static cutS2Code(shape) {
     const left = Shape.cutLeftS2Code(shape);
     const right = Shape.cutRightS2Code(shape);
     return [left, right];
+  }
+
+  /**
+   * @param {number} left
+   * @param {number} right
+   * @returns {number}
+   */
+  static swapLeftCode(left, right) {
+    const leftHalf = Shape.cutLeftS2Code(right);
+    const rightHalf = Shape.cutRightS2Code(left);
+    return leftHalf | rightHalf;
+  }
+
+  /**
+   * @param {number} left
+   * @param {number} right
+   * @returns {number}
+   */
+  static swapRightCode(left, right) {
+    const leftHalf = Shape.cutLeftS2Code(left);
+    const rightHalf = Shape.cutRightS2Code(right);
+    return leftHalf | rightHalf;
+  }
+
+  /**
+   * @param {number} left
+   * @param {number} right
+   * @returns {number}
+   */
+  static swapCode(left, right) {
+    const newLeft = Shape.swapLeftCode(left, right);
+    const newRight = Shape.swapRightCode(left, right);
+    return [newLeft, newRight];
   }
 
   /**
@@ -563,6 +600,17 @@ export class Shape {
       }
     }
     return top | bottom;
+  }
+
+  /**
+   * @param {Shape} shape
+   * @returns {Shape}
+   */
+  stackS1(shape) {
+    const top = shape.code;
+    const bottom = this.code;
+    const result = Shape.stackS1Code(top, bottom);
+    return new Shape(result);
   }
 
   /**
@@ -622,17 +670,6 @@ export class Shape {
   }
 
   /**
-   * @param {Shape} shape
-   * @returns {Shape}
-   */
-  stackS1(shape) {
-    const top = shape.code;
-    const bottom = this.code;
-    const result = Shape.stackS1Code(top, bottom);
-    return new Shape(result);
-  }
-
-  /**
    * Return the number trashed pieces cause by stack.
    * @param {number} top
    * @param {number} bottom
@@ -683,6 +720,22 @@ export class Shape {
   unstack(shape) {
     const [bottom, top] = unstackCode(shape.code);
     return [new Shape(bottom), new Shape(top)];
+  }
+
+  /**
+   * @param {number} code
+   * @returns {number}
+   */
+  static crystalCode(code) {
+    let result = code;
+    const layers = Shape.toLayers(code);
+    // pins and voids become crystals
+    let val;
+    for (let layerNum = 0; layerNum < layers.length; ++layerNum) {
+      val = 0xf - (layers[layerNum] & 0x0f);
+      result |= (val << (4 * layerNum)) * Shape.CRYSTAL_MASK;
+    }
+    return result;
   }
 
   /**
@@ -1020,6 +1073,8 @@ export class Shape {
       ["cutS2Code", [0x000f000f], [0x0000, 0x0000]],
       ["cutS2Code", [0xe8c4f8c4], [0x0000, 0x0001]],
       ["cutS2Code", [0x00500073], [0x0000, 0x00100033]],
+      ["swapCode", [0x000f, 0x000f], [0x000f, 0x000f]],
+      ["swapCode", [0x0009, 0x0006], [0x0005, 0x000a]],
       ["stackS1Code", [0x0000, 0x000f], 0x000f],
       ["stackS1Code", [0x000f, 0x0000], 0x000f],
       ["stackS1Code", [0x000f, 0x000f], 0x00ff],
@@ -1027,7 +1082,10 @@ export class Shape {
       ["stackS1Code", [0xfffa, 0x5111], 0xf111],
       ["stackS2Code", [0xfffa, 0x5111], 0x511b],
       ["stackS2Code", [0x000f, 0x00010000], 0x000100f0],
+      ["stackS2Code", [0x00100001, 0x00010110], 0x00011110],
       ["stackS2Code", [0x000f0000, 0x08ce], 0x842108ce],
+      ["crystalCode", [0x0001], 0x000e000f],
+      ["crystalCode", [0x00010010], 0x00ef00ff],
       ["unstackCode", [0x000f], [0x0000, 0x000f]],
       ["unstackCode", [0x0234], [0x0034, 0x0002]],
       ["unstackCode", [0x1234], [0x0234, 0x0001]],
@@ -1225,8 +1283,9 @@ export class Shape {
     const MAX_NUM = 8;
 
     let result = "";
-    // const codes = shapes.slice().sort((a, b) => a - b);
-    const codes = shapes.slice();
+    // const codes = shapes.slice();
+    shapes = shapes.map((v) => v >>> 0); // convert to positive number
+    const codes = shapes.slice().sort((a, b) => a - b);
     const numLines = Math.floor(codes.length / MAX_NUM) + 1;
 
     for (let i = 0; i < numLines; i++) {

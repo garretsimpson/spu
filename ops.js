@@ -68,9 +68,12 @@ const OPS = {
   left: "left",
   uturn: "uturn",
   right: "right",
-  cutLeft: "cutLeftS1",
-  cutRight: "cutRightS1",
-  stack: "stackS1",
+  cutLeft: "cutLeftS2",
+  cutRight: "cutRightS2",
+  swapLeft: "swapLeft",
+  swapRight: "swapRight",
+  stack: "stackS2",
+  crystal: "crystal",
   unstackBottom: "unstackBottom",
   unstackTop: "unstackTop",
   screwLeft: "screwLeft",
@@ -84,13 +87,26 @@ const OPS_COST = {
   left: 1,
   uturn: 1,
   right: 1,
-  cutLeft: 1,
-  cutRight: 1,
-  stack: 1,
+  cutLeftS1: 1,
+  cutRightS1: 1,
+  cutLeftS2: 1,
+  cutRightS2: 1,
+  swapLeft: 1,
+  swapRight: 1,
+  stackS1: 1,
+  stackS2: 1,
+  crystal: 1,
 };
 
-const ONE_OPS = [OPS.left, OPS.uturn, OPS.right, OPS.cutLeft, OPS.cutRight];
-const TWO_OPS = [OPS.stack];
+const ONE_OPS = [
+  OPS.left,
+  OPS.uturn,
+  OPS.right,
+  OPS.cutLeft,
+  OPS.cutRight,
+  OPS.crystal,
+];
+const TWO_OPS = [OPS.stack, OPS.swapLeft, OPS.swapRight];
 
 export class Ops {
   static logTable(...values) {
@@ -299,8 +315,8 @@ export class Ops {
     const CONFIGS_TEST_S2 = [
       {
         name: "1-flats",
-        shapes: Shape.FLAT_1,
-        maxIter: 5000,
+        shapes: [...Shape.FLAT_1, ...Shape.PINS_1],
+        maxIter: 1000,
       },
     ];
 
@@ -369,7 +385,7 @@ export class Ops {
         shape = shapes.shift();
 
         // do one input operations
-        // Ops.saveShapes(Ops.doOneOps(shape));
+        Ops.saveShapes(Ops.doOneOps(shape));
 
         // do two input operations
         seenShapes.push(shape);
@@ -413,6 +429,7 @@ export class Ops {
     Ops.findShape(0x121);
     Ops.findShape(0x1212);
     Ops.findShape(0xffff);
+    Ops.findShape(0x7777ffff);
 
     // Ops.findShape(0x4b); // Logo
     // Ops.findShape(0xfe1f); // Rocket
@@ -462,10 +479,13 @@ export class Ops {
     right: "RR",
     cutLeftS1: "CL",
     cutRightS1: "CR",
-    stackS1: "ST",
     cutLeftS2: "CL",
     cutRightS2: "CR",
+    swapLeft: "SL",
+    swapRight: "SR",
+    stackS1: "ST",
     stackS2: "ST",
+    crystal: "XX",
   };
 
   /**
@@ -528,7 +548,9 @@ export class Ops {
 
   static saveAllShapes() {
     let data;
-    const codes = Object.keys(allShapes);
+    let codes = Object.keys(allShapes);
+    // codes = codes.map((v) => v >>> 0); // convert to positive number
+    // codes.sort((a, b) => a - b);
     data = codes.map((code) => Ops.shapeToString(allShapes[code])).join(EOL);
     Fileops.writeFile(OPS_FILE_NAME, data);
     const keys = codes
@@ -539,7 +561,7 @@ export class Ops {
   }
 
   static chartAllShapes() {
-    const codes = Object.keys(allShapes).sort((a, b) => a - b);
+    const codes = Object.keys(allShapes);
     Ops.saveChart(codes);
   }
 

@@ -103,6 +103,9 @@ export class Shape {
     [0x2424, 0x4848, 0x8181, 0x1212, 0x4242, 0x8484, 0x1818, 0x2121],
   ];
 
+  static PIN_MASK = 0x00010000;
+  static CRYSTAL_MASK = 0x00010001;
+
   /** @type {Set<number>} */
   static allShapes;
 
@@ -258,9 +261,8 @@ export class Shape {
     const lShift = steps & 0x3;
     const rShift = 4 - lShift;
     const mask = (0xf >>> rShift) * 0x11111111;
-    const result =
-      ((code >>> rShift) & mask) | ((code << lShift) & ~mask & 0xffffffff);
-    return result;
+    const result = ((code >>> rShift) & mask) | ((code << lShift) & ~mask);
+    return result >>> 0; // force result to be positive
   }
 
   /**
@@ -318,7 +320,7 @@ export class Shape {
       result = (result << 1) | (code & 0x11111111);
       code >>>= 1;
     }
-    return result;
+    return result >>> 0;
   }
 
   /**
@@ -361,10 +363,10 @@ export class Shape {
     const code = code1 | code2;
     for (let offset = 4; offset > 0; offset--) {
       if (((pin << ((offset - 1) * 4)) & code) != 0) {
-        return base | (((pin << (offset * 4)) & 0xffff) << 16);
+        return base | (Shape.PIN_MASK << (4 * offset + quad));
       }
     }
-    return base | (pin << 16);
+    return base | (Shape.PIN_MASK << quad);
   }
 
   /**
@@ -418,7 +420,6 @@ export class Shape {
     return Shape.collapseS1(code & 0x3333);
   }
 
-  static CRYSTAL_MASK = 0x00010001;
   static NEXT_SPOTS = [
     [1, 4],
     [0, 5],
@@ -508,7 +509,7 @@ export class Shape {
     shape &= ~found;
 
     // Step 2: Drop parts
-    return Shape.collapseS2(shape & 0xcccccccc, [2, 3]);
+    return Shape.collapseS2(shape & 0xcccccccc, [2, 3]) >>> 0;
   }
 
   /**
@@ -542,7 +543,7 @@ export class Shape {
     shape &= ~found;
 
     // Step 2: Drop parts
-    return Shape.collapseS2(shape & 0x33333333, [0, 1]);
+    return Shape.collapseS2(shape & 0x33333333, [0, 1]) >>> 0;
   }
 
   /**
@@ -563,7 +564,7 @@ export class Shape {
   static swapLeftCode(left, right) {
     const leftHalf = Shape.cutLeftS2Code(right);
     const rightHalf = Shape.cutRightS2Code(left);
-    return leftHalf | rightHalf;
+    return (leftHalf | rightHalf) >>> 0;
   }
 
   /**
@@ -574,7 +575,7 @@ export class Shape {
   static swapRightCode(left, right) {
     const leftHalf = Shape.cutLeftS2Code(left);
     const rightHalf = Shape.cutRightS2Code(right);
-    return leftHalf | rightHalf;
+    return (leftHalf | rightHalf) >>> 0;
   }
 
   /**
@@ -619,6 +620,7 @@ export class Shape {
    * @returns {number}
    */
   static stackS2Code(top, bottom) {
+    const obo = bottom;
     let val;
     const layers = Shape.toLayers(top);
     for (let part of layers) {
@@ -649,7 +651,7 @@ export class Shape {
         bottom = Shape.dropPart(bottom, part);
       }
     }
-    return bottom;
+    return bottom >>> 0;
   }
 
   /**
@@ -735,7 +737,7 @@ export class Shape {
       val = 0xf - (layers[layerNum] & 0x0f);
       result |= (val << (4 * layerNum)) * Shape.CRYSTAL_MASK;
     }
-    return result;
+    return result >>> 0;
   }
 
   /**
@@ -1060,7 +1062,8 @@ export class Shape {
       ["mirrorCode", [0x1234], 0x84c2],
       ["mirrorCode", [0x12345678], 0x84c2a6e1],
       ["keyCode", [0x4321], 0x1624],
-      ["keyCode", [0x87654321], 0x87351624],
+      ["keyCode", [0x10000000], 0x10000000],
+      ["keyCode", [0x87654321], 0x1e6a2c48],
       ["leftCode", [0x0001], 0x0008],
       ["leftCode", [0x1248], 0x8124],
       ["leftCode", [0x0001001e], 0x00080087],
@@ -1283,8 +1286,6 @@ export class Shape {
     const MAX_NUM = 8;
 
     let result = "";
-    // const codes = shapes.slice();
-    shapes = shapes.map((v) => v >>> 0); // convert to positive number
     const codes = shapes.slice().sort((a, b) => a - b);
     const numLines = Math.floor(codes.length / MAX_NUM) + 1;
 

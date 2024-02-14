@@ -3162,3 +3162,35 @@ Ops: stacking only
 Game      Shapes  Keys
 Shapez 1  28112   3885
 Shapez 2  21136   2914
+
+Ran all ops for 10000 iters...
+
+Remaining shapes:
+0 0
+1 0
+2 0
+3 0
+4 0
+5 21051
+6 75537
+7 205412
+8 477256
+9 925324
+10 698408
+11 64991
+
+Stats
+ToDo:  2467979
+Total: 2477979
+
+    Name   Shapes     Keys
+ 1-flats  2477979   318082
+
+It figured out how to put a crystal on the 2nd layer...
+
+00 - - - -   00 - - - -   00 - - - -   00 - - - -
+00 - - - -   00 - - - -   00 - - - -   00 - - - -
+11 X - - -   11 X - - -   11 X - - -   11 X - - -
+03 O O - -   07 O O O -   0b O O - O   0f O O O O
+
+0010:001f SL(005e:00ff XX(000e:00af ST(000a ST(0008 0002) 000e:000f XX(0001))) 000c ST(0008 0004))

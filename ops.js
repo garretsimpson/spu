@@ -333,9 +333,7 @@ export class Ops {
       Ops.runOps(shapes, config.maxIter);
 
       shapes = Object.keys(allShapes);
-      const keys = shapes
-        .map((v) => Shape.keyCode(v))
-        .filter((v, i, a) => a.indexOf(v) === i);
+      const keys = shapes.filter((v) => Shape.keyCode(v) == v);
       results[config.name] = { shapes, keys };
     }
 
@@ -414,6 +412,14 @@ export class Ops {
   static processShapes() {
     // Ops.displayShapes();
     // Ops.normalize();
+
+    // Check shape codes
+    let codes = Object.keys(allShapes);
+    for (const code of codes) {
+      if (code < 0) {
+        console.error("Found negative code: ", code, Shape.pp(+code));
+      }
+    }
 
     Ops.saveAllShapes();
     Ops.saveAllBuilds();
@@ -494,6 +500,7 @@ export class Ops {
    */
   static getBuildStr(code) {
     const shape = allShapes[code];
+    // code >>>= 0; // convert to postive number
     if (shape === undefined) return "";
     const op = shape.op;
     if (op === OPS.prim) return Shape.pp(code);
@@ -548,28 +555,26 @@ export class Ops {
 
   static saveAllShapes() {
     let data;
-    let codes = Object.keys(allShapes);
-    // codes = codes.map((v) => v >>> 0); // convert to positive number
-    // codes.sort((a, b) => a - b);
+    let codes = Object.keys(allShapes).map((v) => +v);
+    codes.sort((a, b) => a - b);
     data = codes.map((code) => Ops.shapeToString(allShapes[code])).join(EOL);
     Fileops.writeFile(OPS_FILE_NAME, data);
-    const keys = codes
-      .map((v) => Shape.keyCode(v))
-      .filter((v, i, a) => a.indexOf(v) === i);
+    const keys = codes.filter((v) => Shape.keyCode(v) == v);
+    keys.sort((a, b) => a - b);
     data = keys.map((code) => Ops.shapeToString(allShapes[code])).join(EOL);
     Fileops.writeFile(KEYS_FILE_NAME, data);
   }
 
   static chartAllShapes() {
-    const codes = Object.keys(allShapes);
+    const codes = Object.keys(allShapes).map((v) => +v);
     Ops.saveChart(codes);
   }
 
   static saveAllBuilds() {
-    const codes = Object.keys(allShapes)
-      .map((v) => Number(v))
-      .filter((code) => code === Shape.keyCode(code));
-    const data = codes.map((code) => Ops.getBuildStr(code)).join(EOL);
+    const codes = Object.keys(allShapes).map((v) => +v); // convert codes to numbers
+    const keys = codes.filter((v) => Shape.keyCode(v) == v);
+    keys.sort((a, b) => a - b);
+    const data = keys.map((code) => Ops.getBuildStr(code)).join(EOL);
     Fileops.writeFile(BUILDS_FILE_NAME, data);
   }
 

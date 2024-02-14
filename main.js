@@ -25,10 +25,10 @@ function main() {
   // Shape.testPerf();
   // Shape.testLogo();
   // Shape.countParts();
-  Shape.testChart();
+  // Shape.testChart();
   // Spu.runTests();
   // Spu.runSearch();
-  // Ops.runMultiOps();
+  Ops.runMultiOps();
   // Ops.dbToText("data/db_no5.bin");
   // MyTmam.test();
   // MyTmam.run();

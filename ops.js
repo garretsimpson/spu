@@ -74,6 +74,7 @@ const OPS = {
   swapRight: "swapRight",
   stack: "stackS2",
   crystal: "crystal",
+  pinPush: "pinPush",
   unstackBottom: "unstackBottom",
   unstackTop: "unstackTop",
   screwLeft: "screwLeft",
@@ -96,6 +97,7 @@ const OPS_COST = {
   stackS1: 1,
   stackS2: 1,
   crystal: 1,
+  pinPush: 1,
 };
 
 const ONE_OPS = [
@@ -105,8 +107,10 @@ const ONE_OPS = [
   OPS.cutLeft,
   OPS.cutRight,
   OPS.crystal,
+  OPS.pinPush,
 ];
-const TWO_OPS = [OPS.stack, OPS.swapLeft, OPS.swapRight];
+const TWO_OPS = [OPS.swapLeft, OPS.swapRight];
+// const TWO_OPS = [OPS.stack, OPS.swapLeft, OPS.swapRight];
 
 export class Ops {
   static logTable(...values) {
@@ -320,9 +324,17 @@ export class Ops {
       },
     ];
 
+    const CONFIGS_TEST_S2_2 = [
+      {
+        name: "4-flats",
+        shapes: [...Shape.FLAT_4],
+        // maxIter: 1000,
+      },
+    ];
+
     const results = {};
     let shapes;
-    for (let config of CONFIGS_TEST_S2) {
+    for (let config of CONFIGS_TEST_S2_2) {
       shapes = config.shapes.map((code) => {
         return {
           code,
@@ -492,6 +504,7 @@ export class Ops {
     stackS1: "ST",
     stackS2: "ST",
     crystal: "XX",
+    pinPush: "PP",
   };
 
   /**
@@ -572,9 +585,9 @@ export class Ops {
 
   static saveAllBuilds() {
     const codes = Object.keys(allShapes).map((v) => +v); // convert codes to numbers
-    const keys = codes.filter((v) => Shape.keyCode(v) == v);
-    keys.sort((a, b) => a - b);
-    const data = keys.map((code) => Ops.getBuildStr(code)).join(EOL);
+    // const keys = codes.filter((v) => Shape.keyCode(v) == v);
+    // keys.sort((a, b) => a - b);
+    const data = codes.map((code) => Ops.getBuildStr(code)).join(EOL);
     Fileops.writeFile(BUILDS_FILE_NAME, data);
   }
 

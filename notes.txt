@@ -3194,3 +3194,28 @@ It figured out how to put a crystal on the 2nd layer...
 03 O O - -   07 O O O -   0b O O - O   0f O O O O
 
 0010:001f SL(005e:00ff XX(000e:00af ST(000a ST(0008 0002) 000e:000f XX(0001))) 000c ST(0008 0004))
+
+Problem: SL(005e:00ff 000c) should be 0010:002d.
+looks like collapseS2 is not sticking solids crystals together.
+
+Find all possible shapes, no stacking
+
+ToDo:  0
+Total: 255
+
+    Name   Shapes     Keys
+ 4-flats      255       54
+
+Saving shape chart
+0001 CR 0009      (3,1,0)
+  0009 RR 000c      (2,2,0)
+    000c CL 000f      (1,1,0)
+      000f P            (0,1,0)
+
+0005:0005 SL(0001:0009 RR(0008:000c CL(0008:000f XX(0007 SR(0006 RL(000c CL(000f)) 000f)))) 0004:0006 RL(0008:000c CL(0008:000f XX(0007 SR(0006 RL(000c CL(000f)) 000f)))))
+0007:0005 SL(0007:0009 RR(000b:000c SR(0008:000f XX(0007 SR(0006 RL(000c CL(000f)) 000f)) 000f:0000)) 0004:0006 RL(0008:000c CL(0008:000f XX(0007 SR(0006 RL(000c CL(000f)) 000f)))))
+000f:0005 SL(0007:0009 RR(000b:000c SR(0008:000f XX(0007 SR(0006 RL(000c CL(000f)) 000f)) 000f:0000)) 000d:0006 RL(000b:000c SR(0008:000f XX(0007 SR(0006 RL(000c CL(000f)) 000f)) 000f:0000)))
+
+13
+13
+13

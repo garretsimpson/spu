@@ -43,6 +43,7 @@ export class Shape {
   ];
 
   static PINS_1 = [0x10000, 0x20000, 0x40000, 0x80000];
+  static PINS_4 = [0xf0000];
 
   static STACK_1 = [0x1, 0x2, 0x4, 0x8];
   static STACK_2 = [0x11, 0x22, 0x44, 0x88];
@@ -104,7 +105,9 @@ export class Shape {
   ];
 
   static PIN_MASK = 0x00010000;
+  static SOLID_MASK = 0x00000001;
   static CRYSTAL_MASK = 0x00010001;
+  static LAYER_MASK = 0x000f000f;
 
   /** @type {Set<number>} */
   static allShapes;
@@ -341,7 +344,7 @@ export class Shape {
     if (part == 0) return base;
     const [code1, code2] = Shape.splitCode(base);
     const code = code1 | code2;
-    for (let offset = 4; offset > 0; offset--) {
+    for (let offset of [4, 3, 2, 1]) {
       if (((part << ((offset - 1) * 4)) & code) != 0) {
         return base | ((part << (offset * 4)) & 0xffff);
       }
@@ -361,7 +364,7 @@ export class Shape {
     const pin = 1 << quad;
     const [code1, code2] = Shape.splitCode(base);
     const code = code1 | code2;
-    for (let offset = 4; offset > 0; offset--) {
+    for (let offset of [4, 3, 2, 1]) {
       if (((pin << ((offset - 1) * 4)) & code) != 0) {
         return base | (Shape.PIN_MASK << (4 * offset + quad));
       }
@@ -420,7 +423,7 @@ export class Shape {
     return Shape.collapseS1(code & 0x3333);
   }
 
-  static NEXT_SPOTS = [
+  static NEXT_SPOTS2 = [
     [1, 4],
     [0, 5],
     [3, 6],
@@ -439,6 +442,24 @@ export class Shape {
     [11, 14],
   ];
 
+  static NEXT_SPOTS3 = [
+    [],
+    [2, 5],
+    [1, 3, 6],
+    [2, 7],
+    [],
+    [1, 6, 9],
+    [2, 5, 7, 10],
+    [3, 6, 11],
+    [],
+    [5, 10, 13],
+    [6, 9, 11, 14],
+    [7, 10, 15],
+    [],
+    [9, 14],
+    [10, 13, 15],
+    [11, 14],
+  ];
   // TODO: Use spot number instead of layers and quads.
 
   /**
@@ -447,33 +468,38 @@ export class Shape {
    * @returns {number}
    */
   static collapseS2(shape, quads) {
-    const layers = Shape.toLayers(shape);
+    let layer = shape & Shape.LAYER_MASK;
+    let part, val;
+    let code1, code2, supported;
     // First layer remains unchanged
-    let result = shape & 0x000f000f;
-    let part, spot, val;
-    for (let layerNum = 1; layerNum < layers.length; ++layerNum) {
-      part = layers[layerNum];
+    let result = layer;
+    let prevLayer = layer;
+    for (let layerNum of [1, 2, 3]) {
+      layer = (shape >>> (4 * layerNum)) & Shape.LAYER_MASK;
+      part = layer;
       for (let quad of quads) {
-        spot = 4 * layerNum + quad;
-        val = (part >>> quad) & 0x11;
-        if (val == 0x10) {
+        val = (part >>> quad) & Shape.CRYSTAL_MASK;
+        if (val == Shape.PIN_MASK) {
           // drop pin
-          part &= ~(0x10 << quad);
+          part &= ~(Shape.PIN_MASK << quad);
           result = Shape.dropPin(result, quad);
-        } else if (val == 0x11) {
-          part &= ~(0x11 << quad);
-          // break crystal, but only if it falls (gap under)
-          if ((result & (Shape.CRYSTAL_MASK << (spot - 4))) == 0) continue;
-          result |= Shape.CRYSTAL_MASK << spot;
         }
       }
-      // check only solids remain
-      if (part > 0xf) {
-        console.error("Cutting error.  Non solid part found.");
-        return 0;
+      // Check if part is supported
+      [code1, code2] = Shape.splitCode(prevLayer);
+      supported = (part & 0xffff & (code1 | code2)) != 0;
+      if (supported) {
+        // copy part
+        result |= part << (4 * layerNum);
+        prevLayer = layer;
+      } else {
+        // break crystals
+        [code1, code2] = Shape.splitCode(part);
+        part &= ~(code2 * Shape.CRYSTAL_MASK);
+        // drop part
+        result = Shape.dropPart(result, part);
+        prevLayer = 0;
       }
-      // Drop parts
-      result = Shape.dropPart(result, part);
     }
     return result;
   }
@@ -499,7 +525,7 @@ export class Shape {
     for (let i = 0; i < todo.length; ++i) {
       num = todo[i];
       found |= Shape.CRYSTAL_MASK << num;
-      for (const spot of Shape.NEXT_SPOTS[num]) {
+      for (const spot of Shape.NEXT_SPOTS2[num]) {
         if (todo.includes(spot)) continue;
         val = (shape >>> spot) & Shape.CRYSTAL_MASK;
         if (val == Shape.CRYSTAL_MASK) todo.push(spot);
@@ -508,7 +534,7 @@ export class Shape {
     // Break all connected crystals
     shape &= ~found;
 
-    // Step 2: Drop parts
+    // Step 2: COllapse parts
     return Shape.collapseS2(shape & 0xcccccccc, [2, 3]) >>> 0;
   }
 
@@ -533,7 +559,7 @@ export class Shape {
     for (let i = 0; i < todo.length; ++i) {
       num = todo[i];
       found |= Shape.CRYSTAL_MASK << num;
-      for (const spot of Shape.NEXT_SPOTS[num]) {
+      for (const spot of Shape.NEXT_SPOTS2[num]) {
         if (todo.includes(spot)) continue;
         val = (shape >>> spot) & Shape.CRYSTAL_MASK;
         if (val == Shape.CRYSTAL_MASK) todo.push(spot);
@@ -542,7 +568,7 @@ export class Shape {
     // Break all connected crystals
     shape &= ~found;
 
-    // Step 2: Drop parts
+    // Step 2: Collapse parts
     return Shape.collapseS2(shape & 0x33333333, [0, 1]) >>> 0;
   }
 
@@ -738,6 +764,43 @@ export class Shape {
       result |= (val << (4 * layerNum)) * Shape.CRYSTAL_MASK;
     }
     return result >>> 0;
+  }
+
+  /**
+   * @param {number} shape
+   * @returns {number}
+   */
+  static pinPushCode(shape) {
+    // Step 1: break all cut crystals
+    // Check all 8 places that a crystal can span the cut
+    const layers = Shape.toLayers(shape);
+    let layer;
+    const todo = [];
+    for (let layerNum = 0; layerNum < layers.length; ++layerNum) {
+      layer = layers[layerNum];
+      if ((layer & 0x99) == 0x99) todo.push(4 * layerNum + 3);
+      if ((layer & 0x33) == 0x33) todo.push(4 * layerNum + 1);
+    }
+    // Find all connected crystals
+    let num, val;
+    let found = 0;
+    for (let i = 0; i < todo.length; ++i) {
+      num = todo[i];
+      found |= Shape.CRYSTAL_MASK << num;
+      for (const spot of Shape.NEXT_SPOTS3[num]) {
+        if (todo.includes(spot)) continue;
+        val = (shape >>> spot) & Shape.CRYSTAL_MASK;
+        if (val == Shape.CRYSTAL_MASK) todo.push(spot);
+      }
+    }
+    // Break all connected crystals
+    shape &= ~found;
+
+    // Step 2: COllapse parts
+    shape = Shape.collapseS2(shape & 0xeeeeeeee, [1, 2, 3]);
+    // Add a pin
+    shape |= Shape.PIN_MASK;
+    return shape >>> 0;
   }
 
   /**
@@ -1076,6 +1139,7 @@ export class Shape {
       ["cutS2Code", [0x000f000f], [0x0000, 0x0000]],
       ["cutS2Code", [0xe8c4f8c4], [0x0000, 0x0001]],
       ["cutS2Code", [0x00500073], [0x0000, 0x00100033]],
+      ["cutS2Code", [0x005e00ff], [0x0008, 0x00100031]],
       ["swapCode", [0x000f, 0x000f], [0x000f, 0x000f]],
       ["swapCode", [0x0009, 0x0006], [0x0005, 0x000a]],
       ["stackS1Code", [0x0000, 0x000f], 0x000f],
@@ -1089,6 +1153,8 @@ export class Shape {
       ["stackS2Code", [0x000f0000, 0x08ce], 0x842108ce],
       ["crystalCode", [0x0001], 0x000e000f],
       ["crystalCode", [0x00010010], 0x00ef00ff],
+      ["pinPushCode", [0xffff], 0x0001eeee],
+      ["pinPushCode", [0x86a3e6bf], 0x008100ec],
       ["unstackCode", [0x000f], [0x0000, 0x000f]],
       ["unstackCode", [0x0234], [0x0034, 0x0002]],
       ["unstackCode", [0x1234], [0x0234, 0x0001]],

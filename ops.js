@@ -100,17 +100,10 @@ const OPS_COST = {
   pinPush: 1,
 };
 
-const ONE_OPS = [
-  OPS.left,
-  OPS.uturn,
-  OPS.right,
-  OPS.cutLeft,
-  OPS.cutRight,
-  OPS.crystal,
-  OPS.pinPush,
-];
-const TWO_OPS = [OPS.swapLeft, OPS.swapRight];
-// const TWO_OPS = [OPS.stack, OPS.swapLeft, OPS.swapRight];
+const ONE_OPS = [OPS.right, OPS.left, OPS.uturn, OPS.cutRight, OPS.cutLeft, OPS.pinPush, OPS.crystal];
+
+// const TWO_OPS = [OPS.swapLeft, OPS.swapRight];
+const TWO_OPS = [OPS.swapLeft, OPS.swapRight, OPS.stack];
 
 export class Ops {
   static logTable(...values) {
@@ -320,13 +313,13 @@ export class Ops {
       {
         name: "1-flats",
         shapes: [...Shape.FLAT_1, ...Shape.PINS_1],
-        maxIter: 1000,
+        // maxIter: 1000,
       },
     ];
 
     const CONFIGS_TEST_S2_2 = [
       {
-        name: "4-flats",
+        name: "4-flat",
         shapes: [...Shape.FLAT_4],
         // maxIter: 1000,
       },
@@ -670,12 +663,7 @@ export class Ops {
     const result = [];
     let line;
     for (const shape of shapes) {
-      line = [
-        Shape.pp(shape.code),
-        shape.op,
-        Shape.pp(shape.code1),
-        Shape.pp(shape.code2),
-      ].join(" ");
+      line = [Shape.pp(shape.code), shape.op, Shape.pp(shape.code1), Shape.pp(shape.code2)].join(" ");
       result.push(line);
     }
     console.log("Save DB text:", TEXT_FILE_NAME);

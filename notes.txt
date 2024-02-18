@@ -3216,6 +3216,87 @@ Saving shape chart
 0007:0005 SL(0007:0009 RR(000b:000c SR(0008:000f XX(0007 SR(0006 RL(000c CL(000f)) 000f)) 000f:0000)) 0004:0006 RL(0008:000c CL(0008:000f XX(0007 SR(0006 RL(000c CL(000f)) 000f)))))
 000f:0005 SL(0007:0009 RR(000b:000c SR(0008:000f XX(0007 SR(0006 RL(000c CL(000f)) 000f)) 000f:0000)) 000d:0006 RL(000b:000c SR(0008:000f XX(0007 SR(0006 RL(000c CL(000f)) 000f)) 000f:0000)))
 
-13
-13
-13
+Find all 2-layer shapes, using FLAT_1 and PINS_1
+
+    Name   Shapes     Keys
+ 1-flats    26237     3828
+
+00 - - - -
+00 - - - -
+11 X - - -
+01 O - - -
+
+0010:0011 CR 0010:0091      (7,27,0)
+0010:0011 CR(0010:0091 RL(0020:0032 CR(00ad:00ff XX(000d:005f ST(0005 SR(0004 0001) 000d:000f XX(0002))))))
+
+It first made a full flat with one quarter and crystal, so that it could stack a bowtie on top and crystal that.
+Then it cut>rotate>cut to make it one quad.
+
+Idea: make crystal more expense - because it uses 2 parts?
+
+Try it again, but with only FLAT_4
+
+  4-flat    26237     3828
+
+Well, at least it found the the same number of shapes.
+Charts are the same.
+
+0010:0011 CR 0010:0099      (7,3,0)
+0010:0011 CR(0010:0099 RL(0020:0033 CR(0020:00ff XX(0020:00df ST(0002:000d RR(0001:000e PP(000f)) 000f)))))
+
+Cost is still 7, but only one crystal step this time.
+
+
+0013:0013 CR(0013:009f RR(0089:00cf SR(0088:00ff XX(0008:0077 RL(0001:00ee PP(00ff ST(000f 000f)))) 0001:000f XX(0001:000e PP(000f)))))
+0007:0025 SL(0003:006d RR(0009:003e SR(0008:000f XX(0008:0007 RL(0001:000e PP(000f))) 0001:00fe ST(000f 0001:000e PP(000f)))) 0004:0006 RR(0002:0003 CR(0002:000f XX(0002:000d RR(0001:000e PP(000f))))))
+
+One of the 12 shapes with the most steps:
+00ba:007b RL 0075:00e7      (21,2,0)
+00ba:007b RL(0075:00e7 SL(0031:006f ST(0001:000e PP(000f) 0021:006f RR(0018:003f SL(0010:00ff XX(0010:00ef ST(0001:000e PP(000f) 00cccc0f)) 0008:000f XX(0008:0007 RL(0001:000e PP(000f)))))) 0044:00f7 RR(0022:00fb SL(0022:00ff XX(0002:00dd RR(0001:00ee PP(00ff ST(000f 000f)))) 00f9 ST(000f 0009 RL(0003 CR(000f)))))))
+
+00 - - - -
+00 - - - -
+b7 X X O I
+ab O X - X
+
+Rucr--cr:crcrRuP-
+
+Bug? 0031:006f ST(0001:000e 0021:006f)
+Looks like it's not dropping the part 000e on top?
+Probably the way I'm currently forcing 2-layer parts.  Stack is just truncating the value.
+The fix is to check if the result is more than 2 layers, and return nothing.
+
+One of the 18 shapes with the most steps:
+00ba:0053 RL 0075:00a6      (21,1,0)
+00ba:0053 RL(0075:00a6 ST(0005:0000 PP(0004:0000 CL(0004:0003 R2(0001:000c PP(000c CL(000f))))) a RR(0012:00db SL(0012:009f RR(0081:00cf SR(0080:00ff XX(0080:007f ST(0008:0007 RL(0001:000e PP(000f)) 000f)) 0001:000f XX(0001:000e PP(000f)))) 00f9 ST(000f 0009 RL(0003 CR(000f))))))))
+
+00 - - - -
+00 - - - -
+b5 X I O I
+a3 O X - I
+
+Rucr--P-:crP-RuP-
+
+Bug? 0025:00a6 PP(0024:00b7)
+should be: 0025:002e
+
+Quad 4 should fall
+PinPush collapse should check for 2 parts that fall.
+Fixed by making a parts list when part is 0x5 or 0xa.
+
+Reran the layer 2 shape finding, and it found fewer shapes...
+    Name   Shapes     Keys
+  4-flat    25757     3763
+
+There are now 12 shapes with cost=21.
+The first one happens to be the same as the first one it found before the bugs were fixed...
+
+00ba:007b RL 0075:00e7      (21,2,0)
+00ba:007b RL(0075:00e7 SL(0031:00ef RR(0098:00C7f SR(0088:007f RL(0011:00ef ST(0001:000e PP(000f) 0001:000f XX(0001:000e PP(000f)))) 0010:00ff XX(0010:00ef ST(0001:000ce PP(000f) 000f)))) 0044:00f7 RR(0022:00fb SL(0022:00ff XX(0002:00dd RR(0001:00ee PP(00ff ST(000f 000f)))) 00f9 ST(000f 0009 RL(0003 CR(000f)))))))
+
+00 - - - -
+00 - - - -
+b7 X X O I
+ab O X - X
+
+Rucr--cr:crcrRuP-

@@ -35,12 +35,7 @@ export class Shape {
   static FLAT_2 = [0x3, 0x5, 0x6, 0x9, 0xa, 0xc];
   static FLAT_3 = [0x7, 0xb, 0xd, 0xe];
   static FLAT_4 = [0xf];
-  static FLATS = [
-    ...Shape.FLAT_1,
-    ...Shape.FLAT_2,
-    ...Shape.FLAT_3,
-    ...Shape.FLAT_4,
-  ];
+  static FLATS = [...Shape.FLAT_1, ...Shape.FLAT_2, ...Shape.FLAT_3, ...Shape.FLAT_4];
 
   static PINS_1 = [0x10000, 0x20000, 0x40000, 0x80000];
   static PINS_4 = [0xf0000];
@@ -49,12 +44,7 @@ export class Shape {
   static STACK_2 = [0x11, 0x22, 0x44, 0x88];
   static STACK_3 = [0x111, 0x222, 0x444, 0x888];
   static STACK_4 = [0x1111, 0x2222, 0x4444, 0x8888];
-  static STACKS = [
-    ...Shape.STACK_1,
-    ...Shape.STACK_2,
-    ...Shape.STACK_3,
-    ...Shape.STACK_4,
-  ];
+  static STACKS = [...Shape.STACK_1, ...Shape.STACK_2, ...Shape.STACK_3, ...Shape.STACK_4];
 
   static MASKS = {
     E: [0, 0x3, 0x33, 0x333, 0x3333],
@@ -65,9 +55,7 @@ export class Shape {
 
   static LOGO_2 = [0x81, 0x21, 0x12, 0x42, 0x24, 0x84, 0x48, 0x18];
   static LOGO_3 = [0x181, 0x121, 0x212, 0x242, 0x424, 0x484, 0x848, 0x818];
-  static LOGO_4 = [
-    0x8181, 0x2121, 0x1212, 0x4242, 0x2424, 0x8484, 0x4848, 0x1818,
-  ];
+  static LOGO_4 = [0x8181, 0x2121, 0x1212, 0x4242, 0x2424, 0x8484, 0x4848, 0x1818];
 
   static LOGO_A = [
     [],
@@ -108,6 +96,8 @@ export class Shape {
   static SOLID_MASK = 0x00000001;
   static CRYSTAL_MASK = 0x00010001;
   static LAYER_MASK = 0x000f000f;
+
+  static MAX_LAYERS = 2;
 
   /** @type {Set<number>} */
   static allShapes;
@@ -338,34 +328,35 @@ export class Shape {
    * The part is assumed to be a single solid part that won't separate.
    * @param {number} base
    * @param {number} part
+   * @param {number} layerNum starting layer number
    * @returns {number}
    */
-  static dropPart(base, part) {
+  static dropPart(base, part, layerNum = 4) {
     if (part == 0) return base;
     const [code1, code2] = Shape.splitCode(base);
     const code = code1 | code2;
-    for (let offset of [4, 3, 2, 1]) {
-      if (((part << ((offset - 1) * 4)) & code) != 0) {
-        return base | ((part << (offset * 4)) & 0xffff);
+    for (let offset = layerNum; offset > 0; --offset) {
+      if (((part << (4 * (offset - 1))) & code) != 0) {
+        return base | ((part << (4 * offset)) & 0xffff);
       }
     }
     return base | part;
   }
 
-  // TODO: Only need the quad/column of the pin.  Find top zero.
-
   /**
    * Drop a pin on top of a shape.
+   * TODO: Only need the quad/column of the pin.  Find top zero.
    * @param {number} base
    * @param {number} quad
+   * @param {number} layerNum starting layer number
    * @returns {number}
    */
-  static dropPin(base, quad) {
+  static dropPin(base, quad, layerNum = 4) {
     const pin = 1 << quad;
     const [code1, code2] = Shape.splitCode(base);
     const code = code1 | code2;
-    for (let offset of [4, 3, 2, 1]) {
-      if (((pin << ((offset - 1) * 4)) & code) != 0) {
+    for (let offset = layerNum; offset > 0; --offset) {
+      if (((pin << (4 * (offset - 1))) & code) != 0) {
         return base | (Shape.PIN_MASK << (4 * offset + quad));
       }
     }
@@ -460,45 +451,76 @@ export class Shape {
     [10, 13, 15],
     [11, 14],
   ];
-  // TODO: Use spot number instead of layers and quads.
+
+  /**
+   * @param {number} shape
+   * @param {Array<number>} todo
+   * @param {Array<Array<number>>} mesh
+   * @returns {number}
+   */
+  static findCrystals(shape, todo, mesh) {
+    let result = 0;
+    let num, val;
+    for (let i = 0; i < todo.length; ++i) {
+      num = todo[i];
+      result |= Shape.CRYSTAL_MASK << num;
+      for (const spot of mesh[num]) {
+        if (todo.includes(spot)) continue;
+        val = (shape >>> spot) & Shape.CRYSTAL_MASK;
+        if (val == Shape.CRYSTAL_MASK) todo.push(spot);
+      }
+    }
+    return result;
+  }
 
   /**
    * @param {number} shape
    * @param {Array<number>} quads
    * @returns {number}
+   * TODO: Use spot number instead of layers and quads.
    */
   static collapseS2(shape, quads) {
-    let layer = shape & Shape.LAYER_MASK;
     let part, val;
-    let code1, code2, supported;
+    let parts, code1, code2;
+    let prevLayer, supported;
     // First layer remains unchanged
-    let result = layer;
-    let prevLayer = layer;
+    let result = shape & Shape.LAYER_MASK;
     for (let layerNum of [1, 2, 3]) {
-      layer = (shape >>> (4 * layerNum)) & Shape.LAYER_MASK;
-      part = layer;
+      part = (shape >>> (4 * layerNum)) & Shape.LAYER_MASK;
+      if (part == 0) continue;
+      // Drop all pins
       for (let quad of quads) {
         val = (part >>> quad) & Shape.CRYSTAL_MASK;
         if (val == Shape.PIN_MASK) {
-          // drop pin
           part &= ~(Shape.PIN_MASK << quad);
-          result = Shape.dropPin(result, quad);
+          result = Shape.dropPin(result, quad, layerNum);
         }
       }
-      // Check if part is supported
-      [code1, code2] = Shape.splitCode(prevLayer);
-      supported = (part & 0xffff & (code1 | code2)) != 0;
-      if (supported) {
-        // copy part
-        result |= part << (4 * layerNum);
-        prevLayer = layer;
+
+      // Find all parts
+      [code1, code2] = Shape.splitCode(part);
+      if (code1 == 0x5) {
+        parts = [part & (Shape.CRYSTAL_MASK << 0), part & (Shape.CRYSTAL_MASK << 2)];
+      } else if (code1 == 0xa) {
+        parts = [part & (Shape.CRYSTAL_MASK << 1), part & (Shape.CRYSTAL_MASK << 3)];
       } else {
-        // break crystals
-        [code1, code2] = Shape.splitCode(part);
-        part &= ~(code2 * Shape.CRYSTAL_MASK);
-        // drop part
-        result = Shape.dropPart(result, part);
-        prevLayer = 0;
+        parts = [part];
+      }
+      for (part of parts) {
+        // Check if part is supported
+        prevLayer = (result >>> (4 * (layerNum - 1))) & Shape.LAYER_MASK;
+        [code1, code2] = Shape.splitCode(prevLayer);
+        supported = (part & 0xffff & (code1 | code2)) != 0;
+        if (supported) {
+          // copy part
+          result |= part << (4 * layerNum);
+        } else {
+          // break crystals
+          [code1, code2] = Shape.splitCode(part);
+          part &= ~(code2 * Shape.CRYSTAL_MASK);
+          // drop part
+          result = Shape.dropPart(result, part, layerNum);
+        }
       }
     }
     return result;
@@ -520,17 +542,7 @@ export class Shape {
       if ((layer & 0x66) == 0x66) todo.push(4 * layerNum + 2);
     }
     // Find all connected crystals
-    let num, val;
-    let found = 0;
-    for (let i = 0; i < todo.length; ++i) {
-      num = todo[i];
-      found |= Shape.CRYSTAL_MASK << num;
-      for (const spot of Shape.NEXT_SPOTS2[num]) {
-        if (todo.includes(spot)) continue;
-        val = (shape >>> spot) & Shape.CRYSTAL_MASK;
-        if (val == Shape.CRYSTAL_MASK) todo.push(spot);
-      }
-    }
+    const found = Shape.findCrystals(shape, todo, Shape.NEXT_SPOTS2);
     // Break all connected crystals
     shape &= ~found;
 
@@ -554,17 +566,7 @@ export class Shape {
       if ((layer & 0x66) == 0x66) todo.push(4 * layerNum + 1);
     }
     // Find all connected crystals
-    let num, val;
-    let found = 0;
-    for (let i = 0; i < todo.length; ++i) {
-      num = todo[i];
-      found |= Shape.CRYSTAL_MASK << num;
-      for (const spot of Shape.NEXT_SPOTS2[num]) {
-        if (todo.includes(spot)) continue;
-        val = (shape >>> spot) & Shape.CRYSTAL_MASK;
-        if (val == Shape.CRYSTAL_MASK) todo.push(spot);
-      }
-    }
+    const found = Shape.findCrystals(shape, todo, Shape.NEXT_SPOTS2);
     // Break all connected crystals
     shape &= ~found;
 
@@ -644,10 +646,12 @@ export class Shape {
    * @param {number} top
    * @param {number} bottom
    * @returns {number}
+   * TODO: Use spot number instead of layers and quads.
    */
   static stackS2Code(top, bottom) {
     const obo = bottom;
-    let val;
+    let val, parts;
+    let code1, code2;
     const layers = Shape.toLayers(top);
     for (let part of layers) {
       for (let quad of [0, 1, 2, 3]) {
@@ -666,16 +670,22 @@ export class Shape {
         console.error("Stacking error.  Non solid part found.");
         return 0;
       }
-      // drop parts
+      // find all parts
       if (part == 0x5) {
-        bottom = Shape.dropPart(bottom, 0x1);
-        bottom = Shape.dropPart(bottom, 0x4);
+        parts = [0x1, 0x4];
       } else if (part == 0xa) {
-        bottom = Shape.dropPart(bottom, 0x2);
-        bottom = Shape.dropPart(bottom, 0x8);
+        parts = [0x2, 0x8];
       } else {
+        parts = [part];
+      }
+      // drop parts
+      for (part of parts) {
         bottom = Shape.dropPart(bottom, part);
       }
+    }
+    if (Shape.MAX_LAYERS != undefined) {
+      [code1, code2] = Shape.splitCode(bottom);
+      if ((code1 | code2) > (1 << (4 * Shape.MAX_LAYERS)) - 1) return 0;
     }
     return bottom >>> 0;
   }
@@ -782,17 +792,7 @@ export class Shape {
       if ((layer & 0x33) == 0x33) todo.push(4 * layerNum + 1);
     }
     // Find all connected crystals
-    let num, val;
-    let found = 0;
-    for (let i = 0; i < todo.length; ++i) {
-      num = todo[i];
-      found |= Shape.CRYSTAL_MASK << num;
-      for (const spot of Shape.NEXT_SPOTS3[num]) {
-        if (todo.includes(spot)) continue;
-        val = (shape >>> spot) & Shape.CRYSTAL_MASK;
-        if (val == Shape.CRYSTAL_MASK) todo.push(spot);
-      }
-    }
+    const found = Shape.findCrystals(shape, todo, Shape.NEXT_SPOTS3);
     // Break all connected crystals
     shape &= ~found;
 
@@ -1148,6 +1148,7 @@ export class Shape {
       ["stackS1Code", [0x1111, 0x2222], 0x3333],
       ["stackS1Code", [0xfffa, 0x5111], 0xf111],
       ["stackS2Code", [0xfffa, 0x5111], 0x511b],
+      ["stackS2Code", [0x00010000, 0x1111], 0x1111],
       ["stackS2Code", [0x000f, 0x00010000], 0x000100f0],
       ["stackS2Code", [0x00100001, 0x00010110], 0x00011110],
       ["stackS2Code", [0x000f0000, 0x08ce], 0x842108ce],
@@ -1155,6 +1156,7 @@ export class Shape {
       ["crystalCode", [0x00010010], 0x00ef00ff],
       ["pinPushCode", [0xffff], 0x0001eeee],
       ["pinPushCode", [0x86a3e6bf], 0x008100ec],
+      ["pinPushCode", [0x00a000b3], 0x00210022],
       ["unstackCode", [0x000f], [0x0000, 0x000f]],
       ["unstackCode", [0x0234], [0x0034, 0x0002]],
       ["unstackCode", [0x1234], [0x0234, 0x0001]],
@@ -1295,9 +1297,7 @@ export class Shape {
       if (value.possible && !value.stackAll) complexShapes.push(code);
       if (!value.possible && !value.invalid) impossibleShapes.push(code);
     }
-    const keyShapes = possibleShapes.filter(
-      (code) => Shape.keyCode(code) == code
-    );
+    const keyShapes = possibleShapes.filter((code) => Shape.keyCode(code) == code);
 
     const layerCounts = [0, 0, 0, 0, 0];
     for (const code of possibleShapes) {
@@ -1331,9 +1331,7 @@ export class Shape {
     console.log("");
 
     // All unique complex shapes with exactly 4 corners
-    const foundShapes = keyShapes.filter(
-      (code) => complexShapes.includes(code) && Shape.countPieces(code) == 4
-    );
+    const foundShapes = keyShapes.filter((code) => complexShapes.includes(code) && Shape.countPieces(code) == 4);
 
     console.log("Number of found shapes", foundShapes.length);
 
@@ -1357,9 +1355,7 @@ export class Shape {
 
     for (let i = 0; i < numLines; i++) {
       const pos = MAX_NUM * i;
-      const line = codes
-        .slice(pos, pos + MAX_NUM)
-        .map((code) => Shape.splitCode(code));
+      const line = codes.slice(pos, pos + MAX_NUM).map((code) => Shape.splitCode(code));
       // result += line.map((v) => Shape.pp(v[1]) + "    ").join(SEP) + EOL;
       // result += line.map((v) => Shape.pp(v[0]) + "    ").join(SEP) + EOL;
 
@@ -1529,19 +1525,14 @@ export class Shape {
     let total = 0;
     for (const num of Object.keys(counts).sort((a, b) => a - b)) {
       val = counts[num];
-      console.log(
-        num.toString().padStart(2, " "),
-        val.toString().padStart(6, " ")
-      );
+      console.log(num.toString().padStart(2, " "), val.toString().padStart(6, " "));
       total += val;
     }
     console.log("total:", total);
   }
 
   static testChart() {
-    const shapes = [
-      0x0001, 0x0c63, 0x0001001e, 0x08ce8421, 0x00fd0f0f, 0x639cffff,
-    ];
+    const shapes = [0x0001, 0x0c63, 0x0001001e, 0x08ce8421, 0x00fd0f0f, 0x639cffff];
     Ops.saveChart(shapes);
   }
 }

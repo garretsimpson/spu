@@ -27,17 +27,25 @@ export class Shape2 {
       .join("");
   }
 
-  static pp(code) {
-    let result = code.toString();
+  static pp(value) {
+    let result;
+    if (typeof value === "number") {
+      result = Shape2.toString(value);
+    } else {
+      result = JSON.stringify(value);
+    }
     return result;
   }
 
+  static fromNumber(value) {
+    return Number.parseInt(value, Shape2.NUM_TYPES);
+  }
+
   static fromString(string) {
-    return Number.parseInt(
+    return Shape2.fromNumber(
       Array.from(string)
-        .map((v) => Shape2.SHAPE_TYPES.indexOf(v))
-        .join(""),
-      Shape2.NUM_TYPES
+        .map((v) => Shape2.SHAPE_TYPES.indexOf(v).toString(Shape2.NUM_TYPES))
+        .join("")
     );
   }
 
@@ -75,11 +83,34 @@ export class Shape2 {
    */
   static keyCode(code) {
     let result = code;
+
     for (const i of [1, 2, 3]) {
       code = Shape2.rotateLeft(code);
       result = Math.min(result, code);
     }
     return result;
+  }
+
+  static keyCodeWithMirror(code) {
+    let mcode = Shape2.mirror(code);
+    let result = Math.min(code, mcode);
+
+    for (const i of [1, 2, 3]) {
+      code = Shape2.rotateLeft(code);
+      mcode = Shape2.rotateLeft(mcode);
+      result = Math.min(result, code, mcode);
+    }
+    return result;
+  }
+
+  /**
+   * Mirror the shape
+   * TODO: use math, not strings
+   * @param {Number} code
+   * @returns {Number}
+   */
+  static mirror(code) {
+    return Shape2.fromNumber(Array.from(Shape2.toNumber(code)).reverse().join(""));
   }
 
   /**
@@ -103,11 +134,10 @@ export class Shape2 {
    */
   static findKeys() {
     const keys = [];
+    // const filter = (code) => code == Shape2.keyCodeWithMirror(code);
+    const filter = (code) => code == Shape2.keyCode(code) && Shape2.isOmni(code);
     for (let code = 1; code <= Shape2.MAX_VALUE; ++code) {
-      if (code == Shape2.keyCode(code) && Shape2.isOmni(code)) {
-        // if (code == Shape2.keyCode(code)) {
-        keys.push(code);
-      }
+      if (filter(code)) keys.push(code);
     }
     console.log("Key shapes");
     console.log("Number of types:", Shape2.NUM_TYPES);
@@ -131,6 +161,7 @@ export class Shape2 {
       ["fromString", ["CCCC"], 125 + 25 + 5 + 1],
       ["rotateLeft", [Shape2.fromString("CRSW")], Shape2.fromString("RSWC")],
       ["rotateRight", [Shape2.fromString("CRSW")], Shape2.fromString("WCRS")],
+      ["mirror", [Shape2.fromString("CRSW")], Shape2.fromString("WSRC")],
       ["keyCode", [Shape2.fromString("CRSW")], Shape2.fromString("CRSW")],
       ["keyCode", [Shape2.fromString("SWCR")], Shape2.fromString("CRSW")],
       ["isOmni", [Shape2.fromString("CRSW")], true],

@@ -452,6 +452,25 @@ export class Shape {
     [11, 14],
   ];
 
+  static NEXT_SPOTS4 = [
+    [1, 3, 4],
+    [0, 2, 5],
+    [1, 3, 6],
+    [0, 2, 7],
+    [0, 5, 7, 8],
+    [1, 4, 6, 9],
+    [2, 5, 7, 10],
+    [3, 4, 6, 11],
+    [4, 9, 11, 12],
+    [5, 8, 10, 13],
+    [6, 9, 11, 14],
+    [7, 8, 10, 15],
+    [],
+    [],
+    [],
+    [],
+  ];
+
   /**
    * @param {number} shape
    * @param {Array<number>} todo
@@ -685,7 +704,7 @@ export class Shape {
     }
     if (Shape.MAX_LAYERS != undefined) {
       [code1, code2] = Shape.splitCode(bottom);
-      if ((code1 | code2) > (1 << (4 * Shape.MAX_LAYERS)) - 1) return 0;
+      if ((code1 | code2) >= 1 << (4 * Shape.MAX_LAYERS)) return 0;
     }
     return bottom >>> 0;
   }
@@ -782,6 +801,43 @@ export class Shape {
    */
   static pinPushCode(shape) {
     // Step 1: break all cut crystals
+    // Check all 4 places that a crystal can span the cut
+    const todo = [];
+    let spot1, spot2;
+    for (let spot = 8; spot < 12; ++spot) {
+      // check for crystal at spot and the spot directly above it
+      spot1 = (shape >>> spot) & Shape.CRYSTAL_MASK;
+      spot2 = (shape >>> (spot + 4)) & Shape.CRYSTAL_MASK;
+      if (spot1 == Shape.CRYSTAL_MASK && spot2 == Shape.CRYSTAL_MASK) {
+        todo.push(spot);
+      }
+    }
+    // Find all connected crystals
+    const found = Shape.findCrystals(shape, todo, Shape.NEXT_SPOTS4);
+    // Break all connected crystals
+    shape &= ~found;
+
+    // Step 2: Raise shape and add pins
+    let [code1, code2] = Shape.splitCode(shape);
+    shape = ((code1 | code2) & 0xf) * Shape.PIN_MASK;
+    shape |= (code2 << 20) | ((code1 & 0x0fff) << 4);
+
+    // Step 3: Collapse parts
+    shape = Shape.collapseS2(shape, [0, 1, 2, 3]);
+
+    if (Shape.MAX_LAYERS != undefined) {
+      [code1, code2] = Shape.splitCode(shape);
+      if ((code1 | code2) >= 1 << (4 * Shape.MAX_LAYERS)) return 0;
+    }
+    return shape >>> 0;
+  }
+
+  /**
+   * @param {number} shape
+   * @returns {number}
+   */
+  static pinPushOldCode(shape) {
+    // Step 1: break all cut crystals
     // Check all 8 places that a crystal can span the cut
     const layers = Shape.toLayers(shape);
     let layer;
@@ -796,8 +852,9 @@ export class Shape {
     // Break all connected crystals
     shape &= ~found;
 
-    // Step 2: COllapse parts
+    // Step 2: Collapse parts
     shape = Shape.collapseS2(shape & 0xeeeeeeee, [1, 2, 3]);
+
     // Add a pin
     shape |= Shape.PIN_MASK;
     return shape >>> 0;
@@ -1154,9 +1211,13 @@ export class Shape {
       ["stackS2Code", [0x000f0000, 0x08ce], 0x842108ce],
       ["crystalCode", [0x0001], 0x000e000f],
       ["crystalCode", [0x00010010], 0x00ef00ff],
-      ["pinPushCode", [0xffff], 0x0001eeee],
-      ["pinPushCode", [0x86a3e6bf], 0x008100ec],
-      ["pinPushCode", [0x00a000b3], 0x00210022],
+      ["pinPushCode", [0x0001], 0x00010010],
+      ["pinPushCode", [0x00030030], 0x00330300],
+      ["pinPushCode", [0xf931], 0x00019310],
+      ["pinPushCode", [0x11701571], 0x00010014],
+      ["pinPushOldCode", [0xffff], 0x0001eeee],
+      ["pinPushOldCode", [0x86a3e6bf], 0x008100ec],
+      ["pinPushOldCode", [0x00a000b3], 0x00210022],
       ["unstackCode", [0x000f], [0x0000, 0x000f]],
       ["unstackCode", [0x0234], [0x0034, 0x0002]],
       ["unstackCode", [0x1234], [0x0234, 0x0001]],

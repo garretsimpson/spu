@@ -7,6 +7,7 @@
  */
 
 import { Shape } from "./shape.js";
+import { Shape2 } from "./shape2.js";
 import { Spu } from "./spu.js";
 import { Ops } from "./ops.js";
 import { MyTmam } from "./mytmam.js";
@@ -31,6 +32,8 @@ function main() {
   // Ops.dbToText("data/db_no5.bin");
   // MyTmam.test();
   // MyTmam.run();
+  // Shape2.test();
+  // Shape2.findKeys();
 }
 
 main();

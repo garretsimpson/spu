@@ -100,9 +100,10 @@ const OPS_COST = {
   pinPush: 1,
 };
 
+// const ONE_OPS = [OPS.right, OPS.left, OPS.uturn, OPS.cutRight, OPS.cutLeft, OPS.pinPush]; // no crystal
 const ONE_OPS = [OPS.right, OPS.left, OPS.uturn, OPS.cutRight, OPS.cutLeft, OPS.pinPush, OPS.crystal];
 
-// const TWO_OPS = [OPS.swapLeft, OPS.swapRight];
+// const TWO_OPS = [OPS.swapLeft, OPS.swapRight];  // no stack
 const TWO_OPS = [OPS.swapLeft, OPS.swapRight, OPS.stack];
 
 export class Ops {
@@ -188,7 +189,7 @@ export class Ops {
 
     const lowerCost = newShape.cost < oldShape.cost;
     if (lowerCost) {
-      console.debug("#### Lower cost found ####");
+      // console.debug("#### Lower cost found ####");
       allShapes[code] = newShape;
       newShape.alt = 1;
       result = [newShape, oldShape];
@@ -321,7 +322,7 @@ export class Ops {
       {
         name: "4-flat",
         shapes: [...Shape.FLAT_4],
-        // maxIter: 1000,
+        // maxIter: 10000,
       },
     ];
 
@@ -357,6 +358,8 @@ export class Ops {
     Ops.processShapes();
   }
 
+  static MAX_SHAPES = 1000000;
+
   static runOps(startShapes, maxIters) {
     if (!startShapes) {
       startShapes = Shape.FLAT_4.map((code) => {
@@ -384,6 +387,7 @@ export class Ops {
           Ops.logTable(iters, level, shapes.length, total);
         }
         if (maxIters && iters > maxIters) break;
+        // if (Ops.MAX_SHAPES && seenShapes.length >= Ops.MAX_SHAPES) break;
 
         shape = shapes.shift();
 

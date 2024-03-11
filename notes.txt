@@ -3019,6 +3019,18 @@ Knowns: 20272
 Unknowns: 48
 [1265,126d,16ca,16cb,18c5,18c7,1c6a,1c6b,219a,219e,24ca,24cb,29c5,29c7,2c95,2c97,34ca,34cb,38c5,38c7,4235,423d,439a,439e,4895,4897,493a,493e,619a,619e,6895,6897,813a,813e,8365,836d,846a,846b,8635,863d,9265,926d,946a,946b,c13a,c13e,c235,c23d]
 
+Shapes 1
+ 48432 Possible shapes
+ 28112 Standard MAM shapes
+ 20320 Advanced MAM shapes
+ 11296 Invalid shapes
+  5808 Impossible shapes
+  6691 Key shapes
+    15 1 layer
+   205 2 layer
+  2891 3 layer
+ 45321 4 layer
+
 -----
 
 Shapez 2
@@ -3300,3 +3312,210 @@ b7 X X O I
 ab O X - X
 
 Rucr--cr:crcrRuP-
+
+00ff:00af SR 00cc:00bf 0033:00ef (21,2,15)
+
+Ran 3-layer for 10,000 iters...
+
+ToDo:  392272
+Total: 402272
+
+00 - - - -
+13 X O - -
+03 O O - -
+02 - O - -
+
+0100:0332 CR(0109:0fff XX(0100:0ef6 ST(0010:00ef ST(0001:000e PP(000f) 000f) 0006 RR(0003 CR(000f)))))
+0100:0ffe SL(0109:0fff XX(0100:0ef6 ST(0010:00ef ST(0001:000e PP(000f) 000f) 0006 RR(0003 CR(000f)))) 0fff ST(00ff ST(000f 000f) 000f))
+
+I see a lot of lower cost founds.
+Here's one with 22 alternates...
+
+0089:0237 SL 0001:06ff 0088:0017 (12,22,13)
+0089:0237 SL(0001:06ff ST(006f ST(0006 RR(0003 CR(000f)) 000f) 0001:000f XX(0001:000e PP(000f))) 0088:0017 RL(0011:002e ST(0001:0002 PP(0003 CR(000f)) 0001:000e PP(000f))))
+
+00 - - - -
+02 - O - -
+83 O O - I
+97 X O O I
+
+Not sure why lower cost found so much.
+Maybe pin pusher is an easy way to delete quarters on higher layers?
+Or it's just the swapper gets more efficient with more layers?
+
+Ran all layers for 5,000 iters...
+
+Remaining shapes:
+0 0
+1 0
+2 0
+3 0
+4 0
+5 0
+6 3485
+7 16553
+8 38134
+9 103226
+10 217350
+11 359102
+12 360661
+13 143670
+
+Stats
+ToDo:  1242181
+Total: 1247181
+
+    Name   Shapes     Keys
+  4-flat  1247181   231777
+
+f000:ffff XX(1000:0fff ST(0001:000c PP(000c CL(000f)) 03ff ST(0003 CR(000f) 00ff ST(000f 000f))))
+0f00:ffff XX(0100:f0ff ST(0001:00fc ST(000f 0001:000c PP(000c CL(000f))) 003f ST(0003 CR(000f) 000f)))
+
+1-quarter  4
+2-quarter 18
+3-quarter 24
+4-quarter  6
+total     52
+
+
+Shapes 1
+ 48432 Possible shapes
+ 28112 Standard MAM shapes
+ 20320 Advanced MAM shapes
+ 11296 Invalid shapes
+  5808 Impossible shapes
+  6691 Key shapes
+    15 1 layer
+   205 2 layer
+  2891 3 layer
+ 45321 4 layer
+
+
+Shapes 2
+  255 1 layer
+25757 2 layer
+
+-----
+
+Test shape: ----Cu--:Cu--Cu--:------Cu:Cu------
+
+1854    
+- - - - 
+B - - - 
+- - - B 
+B - C - 
+- - A - 
+
+-----
+
+Implemented the new pin pusher.
+
+Found 35260 shapes, 5091 keys
+Max cost: 25
+
+First different shape:
+
+00 - - - -
+00 - - - -
+11 X - - -
+10 I - - -
+
+0011:0010 PP(0001:0001 CR(0001:0009 RR(0008:000c CL(0008:000f XX(0007 SR(0006 RR(0003 CR(000f)) 000f))))))
+
+Crystal on pin!
+
+First pin push build:
+0001:0000 CR(0099:0090 PP(0009:0009 RR(000c:000c CL(000c:000f XX(0003 CR(000f))))))
+Just one pin
+
+Most complex: there are 2 with cost 35
+
+00ff:005f SL 0073:009f 00dc:006f (35,2,16)
+00ff:00af SR 00ec:009f 00b3:006f (35,2,16)
+
+00 - - - -
+00 - - - -
+f5 X I X I
+ff X X X X
+
+00ff:005f SL(0073:009f RL(00e6:003f SR(00c4:000f ST(00cc:00c0 PP(000c:000c CL(000c:000f XX(0003 CR(000f)))) 0004:000f a(000b SR(0009 RL(0003 CR(000f)) 000f))) 0022:00ff XX(00dd SL(0099 RL(0033 CR(00ff ST(000f 000f))) 00ff ST(000f 000f))))) 00dc:006f RR(00e6:003f SR(00c4:000f ST(00cc:00c0 PP(000c:000c CL(000c:000f XX(0003 CR(000f)))) 0004:000f XX(000b SR(0009 RL(0003 CR(000f)) 000f))) 0022:00ff XX(00dd SL(0099 RL(0033 CR(00ff ST(000f 000f))) 00ff ST(000f 000f))))))
+
+How about 1-layer of pins?
+
+000f:0000 SL(00bf:00f0 PP(000b:000f XX(0004 CL(0006 RR(0003 CR(000f))))) 00df:00f0 PP(000d:000f XX(0002 CR(0006 RR(0003 CR(000f))))))
+
+Ran ops without crystals for 10,000 iters...
+Remaining shapes:
+0 0
+1 0
+2 0
+3 0
+4 0
+5 0
+6 0
+7 5374
+8 21200
+9 38504
+10 89167
+11 162884
+12 260355
+13 313952
+14 236016
+15 86161
+
+Stats
+ToDo:  1213613
+Total: 1223613
+
+000f:0000 SL(c0cf:0c00 ST(000f:00f0 PP(000f) 00cc:0c00 PP(000c:00c0 PP(000c CL(000f)))) 302f:0300 ST(000f:00f0 PP(000f) 0023:0300 PP(0003:0030 PP(0003 CR(000f)))))
+
+Bug?
+
+0023:0300 PP(0003:0030 PP(0003 CR(000f)))
+
+This is pins pushing pins.  Should be:
+0033:0300
+
+Fix: Pin push function was using quads 1..4, should be 0..3.
+
+Reran 10,000 iters. Found more shapes...
+
+Remaining shapes:
+0 0
+1 0
+2 0
+3 0
+4 0
+5 0
+6 0
+7 2037
+8 19330
+9 32683
+10 71885
+11 135312
+12 226184
+13 319506
+14 337293
+15 218344
+
+Stats
+ToDo:  1362574
+Total: 1372574
+
+    Name   Shapes     Keys
+  4-flat  1372574   186112
+
+All pins
+000f:0000 SL(c0cf:0c00 ST(000f:00f0 PP(000f) 00cc:0c00 PP(000c:00c0 PP(000c CL(000f)))) 303f:0300 ST(000f:00f0 PP(000f) 0033:0300 PP(0003:0030 PP(0003 CR(000f)))))
+
+Reran 2-layers
+Same total numbers, same charts
+different builds
+
+    Name   Shapes     Keys
+  4-flat    35280     5091
+
+What about a shape that has to be broken to be made?
+
+0100:0ffe - did not find it.
+

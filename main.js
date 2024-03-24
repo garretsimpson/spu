@@ -28,10 +28,10 @@ function main() {
   // Shape.testChart();
   // Spu.runTests();
   // Spu.runSearch();
-  Ops.runMultiOps();
+  // Ops.runMultiOps();
   // Ops.dbToText("data/db_no5.bin");
   // MyTmam.test();
-  // MyTmam.run();
+  MyTmam.run();
   // Shape2.test();
   // Shape2.findKeys();
 }

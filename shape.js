@@ -97,7 +97,7 @@ export class Shape {
   static CRYSTAL_MASK = 0x00010001;
   static LAYER_MASK = 0x000f000f;
 
-  static MAX_LAYERS = 2;
+  // static MAX_LAYERS = 3;
 
   /** @type {Set<number>} */
   static allShapes;

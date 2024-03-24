@@ -2241,7 +2241,7 @@ A B C D E F G H M N O P Q R
 1 0 0 1 1 1 . . 1 0 . . . >   >A
 1 0 0 1 0 1 . . . 1 . . > >  S>A
 
-Trying to simplify 5 part soliutions
+Trying to simplify 5 part solutions
 
 Deconstruct
 ------Rr:RgRgRg--:Rb--Rb--:Ry------
@@ -3519,3 +3519,62 @@ What about a shape that has to be broken to be made?
 
 0100:0ffe - did not find it.
 
+Looking for pin between crystal layers.
+Which would be 0111:0101 or some variant.
+-
+X
+I
+X
+
+Ran 3-layer shapes for 50,000 iters.
+
+0111:0100 PP 0011:0010      (9,2,0)
+0111:0102 CR 0199:0906      (9,1,0)
+0111:0104 SL 0199:0900 0006 (11,2,0)
+0111:0106 RL 0222:020c      (10,2,0)
+0111:0108 RL 0222:0201      (10,2,0)
+0111:010a SL 0199:0906 0009 (11,2,0)
+0111:010c SL 0199:0900 000f (9,2,0)
+0111:010e SL 0199:0906 000f (9,2,5)
+
+All of these are even numbers (have pin on bottom layer).
+
+00 - - - -   00 - - - -   00 - - - -   00 - - - -   00 - - - -   00 - - - -   00 - - - -   00 - - - - 
+11 X - - -   11 X - - -   11 X - - -   11 X - - -   11 X - - -   11 X - - -   11 X - - -   11 X - - - 
+10 I - - -   10 I - - -   10 I - - -   10 I - - -   10 I - - -   10 I - - -   10 I - - -   11 X - - - 
+12 I O - -   14 I - O -   16 I O O -   18 I - - O   1a I O - O   1c I - O O   1e I O O O   10 I - - - 
+
+TMAM test shapes
+
+--Cw----:----CbCb:CgCgCg--:--Cr----
+--Cw----:----CbCb:CgCg--Cg:--Cr----
+
+27c2   
+- - - -
+- C - -
+C A B -
+- - A B
+- A - -
+
+2bc2   
+- - - -
+- D - -
+D A - C
+- - A B
+- A - -
+
+FOUND 27c2 [0242,0048,0021] 01+2+
+- - - - 
+- C - - 
+C A B - 
+- - A B 
+- A - - 
+
+FOUND 2bc2 [0242,0008,0008,0021] 0123+++
+- - - - 
+- D - - 
+D A - C 
+- - A B 
+- A - - 
+
+16d2

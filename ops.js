@@ -322,7 +322,7 @@ export class Ops {
       {
         name: "4-flat",
         shapes: [...Shape.FLAT_4],
-        // maxIter: 10000,
+        maxIter: 10000,
       },
     ];
 

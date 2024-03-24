@@ -304,8 +304,7 @@ export class MyTmam {
     }
     // if (config.pad === true)
     //   result = result.filter((part) => MyTmam.hasPad(shape, part, size));
-    if (config.hat === true)
-      result = result.filter((part) => MyTmam.hasHat(shape, part, size));
+    if (config.hat === true) result = result.filter((part) => MyTmam.hasHat(shape, part, size));
     return result;
   }
 
@@ -471,14 +470,7 @@ export class MyTmam {
       ["01234++++", "01324++++", "02134++++", "10234++++", "10324++++"],
     ];
     // Used by superparts
-    const ORDERS5 = [
-      [],
-      ["0"],
-      ["01+"],
-      ["012++", "01+2+"],
-      ["0123+++"],
-      ["01234++++"],
-    ];
+    const ORDERS5 = [[], ["0"], ["01+"], ["012++", "01+2+"], ["0123+++"], ["01234++++"]];
     const ORDERS = ORDERS3_NEW;
     const num = data.parts.length;
     if (num >= ORDERS.length) {
@@ -507,7 +499,7 @@ export class MyTmam {
     let code;
     for (const i of order) {
       if (i == "+") {
-        code = Shape.stackCode(stack.pop(), stack.pop());
+        code = Shape.stackS1Code(stack.pop(), stack.pop());
       } else {
         code = codes[i];
       }
@@ -533,17 +525,10 @@ export class MyTmam {
     const P1_KEYS = [0x1bc1, 0x2792, 0x4e94, 0x8d68]; // one 3-pad, then two 2-logo, picks the wrong one.
     const P2_KEYS = [0x35a1, 0x3a52, 0x65a4, 0xca58]; // two 3-hat, picks the wrong one
 
-    const LOGO_CONFIG = [
-      { size: 2, hat: true },
-      { size: 3, hat: true },
-      { size: 4 },
-      { size: 3 },
-      { size: 2 },
-    ];
+    const LOGO_CONFIG = [{ size: 2, hat: true }, { size: 3, hat: true }, { size: 4 }, { size: 3 }, { size: 2 }];
     const SEAT_CONFIG = [{ size: 3, pad: true }, { size: 2 }];
 
-    const hasSeat =
-      SEAT_KEYS.indexOf(Shape.keyCode(targetShape)) == -1 ? false : true;
+    const hasSeat = SEAT_KEYS.indexOf(Shape.keyCode(targetShape)) == -1 ? false : true;
     const CONFIGS = hasSeat ? SEAT_CONFIG : LOGO_CONFIG;
 
     let shape, part, seats, logos;
@@ -574,9 +559,7 @@ export class MyTmam {
             ">LOGO",
             Shape.pp(shape),
             Shape.pp(logos),
-            `(${config.size}${config.pad == true ? ",pad" : ""}${
-              config.hat == true ? ",hat" : ""
-            })`
+            `(${config.size}${config.pad == true ? ",pad" : ""}${config.hat == true ? ",hat" : ""})`
           );
           if (logos.length > 0) {
             part = logos[0];
@@ -831,10 +814,7 @@ export class MyTmam {
   static findFlat(state) {
     let result;
 
-    const passLayer = state.prevPass.reduce(
-      (a, x, i) => a | (+(x > 0) << i),
-      0
-    );
+    const passLayer = state.prevPass.reduce((a, x, i) => a | (+(x > 0) << i), 0);
     const part = MyTmam.deletePart(state.layer, passLayer);
     if (MyTmam.isStable(state.nextLayer, part)) {
       result = part;
@@ -845,10 +825,7 @@ export class MyTmam {
 
   static findFlatSimple(state) {
     let part = state.layer & state.nextLayer;
-    const passLayer = state.prevPass.reduce(
-      (a, x, i) => a | (+(x > 0) << i),
-      0
-    );
+    const passLayer = state.prevPass.reduce((a, x, i) => a | (+(x > 0) << i), 0);
     part = MyTmam.deletePart(part, passLayer);
 
     return part;
@@ -876,10 +853,8 @@ export class MyTmam {
     const onRight = (quad + 1) % 4;
     const prune = rule == RULE.LEFT_PRUNE || rule == RULE.RIGHT_PRUNE;
     let ruleDir;
-    if (rule == RULE.LEFT || rule == RULE.LEFT_2 || rule == RULE.LEFT_PRUNE)
-      ruleDir = OPS.LEFT;
-    if (rule == RULE.RIGHT || rule == RULE.RIGHT_2 || rule == RULE.RIGHT_PRUNE)
-      ruleDir = OPS.RIGHT;
+    if (rule == RULE.LEFT || rule == RULE.LEFT_2 || rule == RULE.LEFT_PRUNE) ruleDir = OPS.LEFT;
+    if (rule == RULE.RIGHT || rule == RULE.RIGHT_2 || rule == RULE.RIGHT_PRUNE) ruleDir = OPS.RIGHT;
 
     const passedDir = state.prevDir[quad];
     const passedPart = state.prevPass[quad];
@@ -976,7 +951,7 @@ export class MyTmam {
     console.log("Deconstruct");
     console.log(Shape.toShape(targetShape));
     console.log(Shape.pp(targetShape));
-    console.log(Shape.graph(targetShape));
+    console.log(Shape.graphS1(targetShape));
 
     const CONFIGS = [
       // { rules: [RULE.FLAT, RULE.FLAT, RULE.FLAT] },
@@ -1172,13 +1147,9 @@ export class MyTmam {
     for (let i = 1; i < 5; ++i) {
       a1.push(...MyTmam.hammingCombos1(size, i));
     }
-    console.log(
-      `hammingCombos1(${size}, ${bits}) returns ${a1.length} ${Shape.pp(a1)}`
-    );
+    console.log(`hammingCombos1(${size}, ${bits}) returns ${a1.length} ${Shape.pp(a1)}`);
     const a2 = MyTmam.hammingCombos2(size, bits);
-    console.log(
-      `hammingCombos2(${size}, ${bits}) returns ${a2.length} ${Shape.pp(a2)}`
-    );
+    console.log(`hammingCombos2(${size}, ${bits}) returns ${a2.length} ${Shape.pp(a2)}`);
 
     // const a = MyTmam.hammingCombos(size, bits);
     // console.log(
@@ -1206,12 +1177,8 @@ export class MyTmam {
     for (let code = 0; code <= 0xffff; ++code) {
       if (Shape.isPossible(code)) possibleShapes.push(code);
     }
-    const complexShapes = possibleShapes.filter(
-      (code) => !Shape.canStackAll(code)
-    );
-    const keyShapes = complexShapes.filter(
-      (code) => Shape.keyCode(code) == code
-    );
+    const complexShapes = possibleShapes.filter((code) => !Shape.canStackAll(code));
+    const keyShapes = complexShapes.filter((code) => Shape.keyCode(code) == code);
 
     const testShapes = [];
     // testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
@@ -1244,6 +1211,7 @@ export class MyTmam {
     // testShapes.push(0x0126, 0x012e);
     // testShapes.push(0x1165, 0x1265);
     // testShapes.push(0x34c3);
+    // testShapes.push(0x27c2, 0x2bc2);
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     complexShapes.forEach((code) => unknownShapes.set(code, { code }));
@@ -1260,12 +1228,7 @@ export class MyTmam {
       if (!result) {
         console.log("NOT FOUND", Shape.pp(shape));
       } else {
-        console.log(
-          "FOUND",
-          Shape.pp(shape),
-          Shape.pp(result.parts),
-          result.order
-        );
+        console.log("FOUND", Shape.pp(shape), Shape.pp(result.parts), result.order);
         console.log(Shape.graphParts(result.parts, result.offsets));
         knownShapes.set(shape, result);
         unknownShapes.delete(shape);
@@ -1289,9 +1252,7 @@ export class MyTmam {
       //         .length
       //   )
       //   .sort((a, b) => a - b);
-      data += `${Shape.pp(key)} ${Shape.pp(value.parts)} ${value.extra} ${
-        value.order
-      }`;
+      data += `${Shape.pp(key)} ${Shape.pp(value.parts)} ${value.extra} ${value.order}`;
       // data += ` ${logoCount}`;
       data += "\n";
     }

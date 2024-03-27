@@ -17,7 +17,12 @@ const RULE = {
   LEFT_2: "(",
   RIGHT_2: ")",
 };
-const OPS = { EJECT: "@", STACK: "|", LEFT: "\\", RIGHT: "/" };
+
+const ARULE = {
+  FLAT: "-",
+};
+
+const OPS = { EJECT: "@", FLAT: "-", STACK: "|", LEFT: "\\", RIGHT: "/", FIFTH: "+" };
 
 export class MyTmam {
   // Some TMAMs have analyzers that work in parallel.
@@ -1133,7 +1138,155 @@ export class MyTmam {
     }
   }
 
+  /**
+   * Deconstructor by Andrei
+   * This deconstructor is functional (does not iterate).
+   * Instead of finding a list of parts, it identifies each quad as flat/float-left/float-right.
+   * Stacking defaults to top-down but will stack out of order when top-down is not possible.
+   * Works on 3 sets of layer pairs.
+   * each layer pair has a different set of rules.
+   * Each rule uses positions of quarters and info from lower layer pairs.
+   * Rules have priority (or decisions) to determine which one wins. ?
+   * @param {number} goalShape
+   */
+  static deconstruct5(goalShape) {
+    console.log("Deconstruct");
+    console.log(Shape.pp(goalShape));
+
+    const result = [];
+
+    const CONFIGS = [[ARULE.FLAT], [ARULE.FLAT], [ARULE.FLAT]];
+
+    const layers = Shape.toLayers(goalShape);
+    let spot;
+    // 3 layer pairs
+    for (const layerNum of [0, 1, 2]) {
+      const below = layers[layerNum];
+      const above = layers[layerNum + 1];
+      for (const rule of CONFIGS[layerNum]) {
+        switch (rule) {
+          case ARULE.FLAT:
+            for (const quad of [0, 1, 2, 3]) {
+              spot = 4 * layerNum + quad;
+              result[spot] = OPS.FLAT;
+            }
+            break;
+        }
+      }
+    }
+    // 5th layer
+    for (const quad of [0, 1, 2, 3]) {
+      spot = 12 + quad;
+      result[spot] = OPS.FLAT;
+    }
+
+    console.log("Result");
+    let line, pos;
+    for (const layerNum of [3, 2, 1, 0]) {
+      pos = 4 * layerNum;
+      line = result.slice(pos, pos + 4).join(" ");
+      console.log(line);
+    }
+  }
+
+  static NEXT_LEFT = [, , , , 1, 2, 3, 0, 5, 6, 7, 4, 9, 10, 11, 8];
+  static NEXT_RIGHT = [, , , , 3, 0, 1, 2, 7, 4, 5, 6, 11, 8, 9, 10];
+
+  /**
+   * Construct a shape according to the build operations.
+   * There are 3 rows of operations and a 4th row that indicates if a 5th layer is needed.
+   * Floats are stacked with a scaffold (skipped in this code) and then passed down a layer.
+   * After all the floats are passed down to their bottom layer,
+   * all parts on each layer are stacked together (superparts).
+   * Then all layers are stacked top-down (unless it can't).
+   * @param {number} goalShape
+   * @param {Array<*>} ops
+   */
+  static makeShape(goalShape, ops) {
+    let result = 0;
+    const parts = [];
+    const layers = [];
+    for (let i = 0; i < 16; ++i) {
+      parts[i] = ((goalShape >>> i) & 1) << i % 4;
+    }
+    // console.log(Shape.pp(parts));
+    // Check for 5th layer
+    if (ops[12] == OPS.FIFTH) {
+      layers.push(...Shape.FLAT_4);
+    }
+    // Stack parts on each layer
+    let part, pos, op, layerPart, next;
+    for (const layerNum of [3, 2, 1, 0]) {
+      layerPart = 0;
+      for (const quad of [0, 1, 2, 3]) {
+        pos = 4 * layerNum + quad;
+        part = parts[pos];
+        if (part == 0) continue;
+        op = layerNum > 0 ? ops[pos - 4] : OPS.FLAT;
+        // If flat, stack layer part.
+        // If float, stack with next part and pass down.
+        switch (op) {
+          case OPS.FLAT:
+            layerPart |= part;
+            break;
+          case OPS.LEFT:
+            next = MyTmam.NEXT_LEFT[pos];
+            parts[next] = MyTmam.simpleStack(part, parts[next]);
+            break;
+          case OPS.RIGHT:
+            next = MyTmam.NEXT_RIGHT[pos];
+            parts[next] = MyTmam.simpleStack(part, parts[next]);
+            break;
+        }
+      }
+      layers.push(layerPart);
+    }
+    // Stack layers
+    // TODO: reorder parts if top-down stack does not work
+    console.log("Layers:", Shape.pp(layers));
+    result = layers.shift();
+    while (layers.length > 0) {
+      part = layers.shift();
+      result = Shape.stackS1Code(result, part);
+    }
+    return result;
+  }
+
   static test() {
+    const ALL_FLAT = [];
+    for (let i = 0; i < 16; ++i) {
+      ALL_FLAT[i] = OPS.FLAT;
+    }
+
+    const ROCKET = 0xfe1f;
+    let ops1 = ALL_FLAT.slice();
+    ops1[5] = OPS.RIGHT;
+    let ops2 = ALL_FLAT.slice();
+    ops2[7] = OPS.LEFT;
+
+    const TESTS = [
+      [ROCKET, ops1],
+      [ROCKET, ops2],
+    ];
+    let result, pass;
+    for (let [shape, ops] of TESTS) {
+      console.log("Goal shape");
+      console.log(Shape.graphS1(shape));
+
+      console.log("Build ops");
+      const opChart = [3, 2, 1, 0].map((i) => ops.slice(4 * i, 4 * i + 4).join(" ")).join("\n") + "\n";
+      console.log(opChart);
+
+      result = MyTmam.makeShape(shape, ops);
+      console.log("Result shape");
+      console.log(Shape.graphS1(result));
+
+      pass = shape == result;
+      console.log(pass ? "PASS" : "FAIL");
+    }
+  }
+
+  static testCombos() {
     const values = [0, 0x0001, 0x0012, 0x0120, 0x1200];
     let result;
     for (const value of values) {
@@ -1183,7 +1336,7 @@ export class MyTmam {
     const testShapes = [];
     // testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
     // testShapes.push(0x000f, 0xffff); // test shapes
-    // testShapes.push(0x004b, 0xfe1f); // logo and rocket
+    testShapes.push(0x004b, 0xfe1f); // logo and rocket
     // testShapes.push(0x3444); // 5th layer shapes
     // testShapes.push(0x0178, 0x0361); // hat and seat
     // testShapes.push(0x3343, 0x334a, 0x334b); // stack order "10234++++"
@@ -1214,9 +1367,9 @@ export class MyTmam {
     // testShapes.push(0x27c2, 0x2bc2);
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
-    complexShapes.forEach((code) => unknownShapes.set(code, { code }));
+    // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
     // keyShapes.forEach((code) => unknownShapes.set(code, { code }));
-    // testShapes.forEach((code) => unknownShapes.set(code, { code }));
+    testShapes.forEach((code) => unknownShapes.set(code, { code }));
 
     console.log("Knowns:", knownShapes.size);
     console.log("Unknowns:", unknownShapes.size);
@@ -1224,7 +1377,7 @@ export class MyTmam {
 
     for (let shape of Array.from(unknownShapes.keys())) {
       // let result = false;
-      let result = MyTmam.deconstruct3(shape);
+      let result = MyTmam.deconstruct5(shape);
       if (!result) {
         console.log("NOT FOUND", Shape.pp(shape));
       } else {

@@ -19,7 +19,7 @@ function main() {
   console.log(Date());
   console.log("");
 
-  Shape.runTests();
+  // Shape.runTests();
   // Shape2.runTests();
   // Shape.testAllShapes();
   // Shape.testPerf();
@@ -30,8 +30,8 @@ function main() {
   // Spu.runSearch();
   // Ops.runMultiOps();
   // Ops.dbToText("data/db_no5.bin");
-  // MyTmam.test();
-  MyTmam.run();
+  MyTmam.test();
+  // MyTmam.run();
   // Shape2.test();
   // Shape2.findKeys();
 }

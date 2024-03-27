@@ -3578,3 +3578,28 @@ D A - C
 - A - - 
 
 16d2
+
+Ops for rocket fe1f
+RuRuRuRu:CuRuRuRu:RuRuRuRu:RuRuRuRu
+
+fe1f    
+D D D D 
+- B C C 
+B - - - 
+A A A A 
+
+- - - -  5th layer
+- - - -  3-4
+- / - -  2-3
+- - - -  1-2
+
+fe1f    
+D D D D 
+- C C B 
+B - - - 
+A A A A 
+
+- - - -  5th layer
+- - - -  3-4
+- - - \  2-3
+- - - -  1-2

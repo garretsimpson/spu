@@ -3603,3 +3603,23 @@ A A A A
 - - - -  3-4
 - - - \  2-3
 - - - -  1-2
+
+Rules
+
+Layer pair #1 (layers 1-2)
+FLAT - If any of the corners are supported, then the skip the remaining rules.
+FLOAT_V - Find floats on E/W halves.
+FLOAT_H - Find floats on N/S halves.
+<exceptions - look at layer 3>
+
+Layer pair #2 (layers 2-3)
+Note: Flat is not a rule for pair #2. ?
+
+Layer pair #3 (layers 3-4)
+
+Layer #5
+<if there are corners on layer 4>
+
+
+LOGOS
+There are four positions 0..3 (ESWN), three sizes 2..4, and two orientations (left/right handed)

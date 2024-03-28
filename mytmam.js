@@ -20,6 +20,8 @@ const RULE = {
 
 const ARULE = {
   FLAT: "-",
+  FLOAT_V: "V",
+  FLOAT_H: "H",
 };
 
 const OPS = { EJECT: "@", FLAT: "-", STACK: "|", LEFT: "\\", RIGHT: "/", FIFTH: "+" };
@@ -42,7 +44,7 @@ export class MyTmam {
 
   /**
    * Make logo and mask constants.
-   * There are four positions 0..3 (ESWN), three sizes 2..4, and two orientations (left/right handed)
+   * There are four positions 0..3 (ESWN), three sizes 2..4, and two orientations (right/left handed)
    */
   static makeLogos() {
     const LOGO = [[], [], [0x21, 0x12], [0x121, 0x212], [0x2121, 0x1212]];
@@ -62,6 +64,7 @@ export class MyTmam {
    * @returns {number[][][]}
    */
   static makeLogoCodes(logos, masks) {
+    const DIR = [OPS.RIGHT, OPS.LEFT];
     const codes = [];
     let sizes, values;
     for (const pos of [0, 1, 2, 3]) {
@@ -72,6 +75,7 @@ export class MyTmam {
           values.push({
             logo: Shape.rotateCode(logos[size][num], pos),
             mask: Shape.rotateCode(masks[size][num], pos),
+            dir: DIR[num],
           });
         }
         sizes[size] = values;
@@ -949,7 +953,7 @@ export class MyTmam {
   }
 
   /**
-   * Deconstructor - Skim method
+   * Deconstructor - FASTMAM (Skim's method)
    * @param {number} targetShape
    */
   static deconstruct3(targetShape) {
@@ -1138,55 +1142,103 @@ export class MyTmam {
     }
   }
 
+  static findFloats(shape, positions) {
+    const result = [];
+    const FLOATS = [];
+    const SIZE = 2;
+    positions.forEach((pos) => FLOATS.push(...MyTmam.LOGOS_X[pos][SIZE]));
+    for (const { logo, mask, dir } of FLOATS) {
+      if ((shape & mask) == logo) result.push({ code: logo, dir });
+    }
+    return result;
+  }
+
   /**
    * Deconstructor by Andrei
    * This deconstructor is functional (does not iterate).
    * Instead of finding a list of parts, it identifies each quad as flat/float-left/float-right.
    * Stacking defaults to top-down but will stack out of order when top-down is not possible.
-   * Works on 3 sets of layer pairs.
-   * each layer pair has a different set of rules.
+   * Works on 3 sets of layer pairs, bottom-up.
+   * Each layer pair has a different set of rules.
    * Each rule uses positions of quarters and info from lower layer pairs.
    * Rules have priority (or decisions) to determine which one wins. ?
+   * The output is 16 op codes, one for each quad.
+   * The bottom 3 rows are for the layer pairs (1-2, 2-3, 3-4) and the top row is for the 5th layer.
    * @param {number} goalShape
    */
   static deconstruct5(goalShape) {
     console.log("Deconstruct");
     console.log(Shape.pp(goalShape));
+    console.log(Shape.graphS1(goalShape));
 
-    const result = [];
+    let result = null;
+    const ops = [];
+    for (let i = 0; i < 16; ++i) {
+      ops[i] = OPS.FLAT;
+    }
 
-    const CONFIGS = [[ARULE.FLAT], [ARULE.FLAT], [ARULE.FLAT]];
+    const CONFIGS = [
+      [ARULE.FLAT, ARULE.FLOAT_V, ARULE.FLOAT_H],
+      [ARULE.FLOAT_V, ARULE.FLOAT_H],
+      [ARULE.FLOAT_V, ARULE.FLOAT_H],
+    ];
 
     const layers = Shape.toLayers(goalShape);
-    let spot;
-    // 3 layer pairs
-    for (const layerNum of [0, 1, 2]) {
-      const below = layers[layerNum];
-      const above = layers[layerNum + 1];
-      for (const rule of CONFIGS[layerNum]) {
+    let above, below, pair, op;
+    let floats = [];
+    let done;
+    for (const pairNum of [0, 1, 2]) {
+      below = layers[pairNum] || 0;
+      if (below == 0) break;
+      above = layers[pairNum + 1] || 0;
+      pair = MyTmam.simpleStack(above, below);
+      floats.length = 0;
+      done = false;
+      for (const rule of CONFIGS[pairNum]) {
         switch (rule) {
           case ARULE.FLAT:
-            for (const quad of [0, 1, 2, 3]) {
-              spot = 4 * layerNum + quad;
-              result[spot] = OPS.FLAT;
-            }
+            if (MyTmam.isStable(above, below)) done = true;
+            break;
+          case ARULE.FLOAT_V:
+            floats = MyTmam.findFloats(pair, [0, 2]);
+            break;
+          case ARULE.FLOAT_H:
+            floats = MyTmam.findFloats(pair, [1, 3]);
             break;
         }
+
+        if (floats.length > 0) {
+          console.log("Floats:", Shape.pp(floats.map((i) => i.code)));
+          // Update ops
+          for (let { code, dir } of floats) {
+            code >>>= 4;
+            for (let quad of [0, 1, 2, 3]) {
+              if ((code & 1) == 1) ops[4 * pairNum + quad] = dir;
+              code >>>= 1;
+            }
+          }
+          done = true;
+        }
+        if (done) break;
       }
     }
     // 5th layer
-    for (const quad of [0, 1, 2, 3]) {
-      spot = 12 + quad;
-      result[spot] = OPS.FLAT;
-    }
+    // TODO: Add 5th layer when needed
 
-    console.log("Result");
-    let line, pos;
-    for (const layerNum of [3, 2, 1, 0]) {
+    const found = MyTmam.makeShape(goalShape, ops) == goalShape;
+    if (found) result = { ops };
+    return result;
+  }
+
+  static opsChart(ops) {
+    let result = "";
+    let pos, line;
+    for (let layerNum of [3, 2, 1, 0]) {
       pos = 4 * layerNum;
-      line = result.slice(pos, pos + 4).join(" ");
-      console.log(line);
+      line = ops.slice(pos, pos + 4).join(" ");
+      result += line + "\n";
     }
+    return result;
   }
 
   static NEXT_LEFT = [, , , , 1, 2, 3, 0, 5, 6, 7, 4, 9, 10, 11, 8];
@@ -1274,8 +1326,7 @@ export class MyTmam {
       console.log(Shape.graphS1(shape));
 
       console.log("Build ops");
-      const opChart = [3, 2, 1, 0].map((i) => ops.slice(4 * i, 4 * i + 4).join(" ")).join("\n") + "\n";
-      console.log(opChart);
+      console.log(MyTmam.opsChart(ops));
 
       result = MyTmam.makeShape(shape, ops);
       console.log("Result shape");
@@ -1336,7 +1387,7 @@ export class MyTmam {
     const testShapes = [];
     // testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
     // testShapes.push(0x000f, 0xffff); // test shapes
-    testShapes.push(0x004b, 0xfe1f); // logo and rocket
+    // testShapes.push(0x004b, 0xfe1f); // logo and rocket
     // testShapes.push(0x3444); // 5th layer shapes
     // testShapes.push(0x0178, 0x0361); // hat and seat
     // testShapes.push(0x3343, 0x334a, 0x334b); // stack order "10234++++"
@@ -1365,6 +1416,7 @@ export class MyTmam {
     // testShapes.push(0x1165, 0x1265);
     // testShapes.push(0x34c3);
     // testShapes.push(0x27c2, 0x2bc2);
+    testShapes.push(0x0138, 0x0178, 0x0192, 0x01d2);
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
@@ -1381,8 +1433,14 @@ export class MyTmam {
       if (!result) {
         console.log("NOT FOUND", Shape.pp(shape));
       } else {
-        console.log("FOUND", Shape.pp(shape), Shape.pp(result.parts), result.order);
-        console.log(Shape.graphParts(result.parts, result.offsets));
+        if (result.parts != undefined) {
+          console.log("FOUND", Shape.pp(shape), Shape.pp(result.parts), result.order);
+          console.log(Shape.graphParts(result.parts, result.offsets));
+        }
+        if (result.ops != undefined) {
+          console.log("FOUND", Shape.pp(shape));
+          console.log(MyTmam.opsChart(result.ops));
+        }
         knownShapes.set(shape, result);
         unknownShapes.delete(shape);
       }
@@ -1394,29 +1452,34 @@ export class MyTmam {
     console.log(Shape.pp([...unknownShapes.keys()]));
     console.log("");
 
-    // Log known builds
-    console.log("Saving known builds");
-    let data = "";
-    for (const [key, value] of knownShapes) {
-      // const logoCount = value.logos
-      //   .map(
-      //     (code) =>
-      //       Shape.toLayers(MyTmam.dropLayers(code, MyTmam.bottomLayerNum(code)))
-      //         .length
-      //   )
-      //   .sort((a, b) => a - b);
-      data += `${Shape.pp(key)} ${Shape.pp(value.parts)} ${value.extra} ${value.order}`;
-      // data += ` ${logoCount}`;
-      data += "\n";
+    let chart;
+    const logKnown = false;
+    if (logKnown) {
+      // Log known builds
+      console.log("Saving known builds");
+      let data = "";
+      for (const [key, value] of knownShapes) {
+        // const logoCount = value.logos
+        //   .map(
+        //     (code) =>
+        //       Shape.toLayers(MyTmam.dropLayers(code, MyTmam.bottomLayerNum(code)))
+        //         .length
+        //   )
+        //   .sort((a, b) => a - b);
+        data += `${Shape.pp(key)} ${Shape.pp(value.parts)} ${value.extra} ${value.order}`;
+        // data += ` ${logoCount}`;
+        data += "\n";
+      }
+      Fileops.writeFile("data/known.txt", data);
+
+      let codes = Array.from(knownShapes.keys());
+      const parts = [];
+      const offsets = [];
+      codes.forEach((code) => (parts[code] = knownShapes.get(code).parts));
+      codes.forEach((code) => (offsets[code] = knownShapes.get(code).offsets));
+      chart = Shape.chart(codes, parts, offsets);
+      Fileops.writeFile("data/chart.txt", chart);
     }
-    Fileops.writeFile("data/known.txt", data);
-    let codes = Array.from(knownShapes.keys());
-    const parts = [];
-    const offsets = [];
-    codes.forEach((code) => (parts[code] = knownShapes.get(code).parts));
-    codes.forEach((code) => (offsets[code] = knownShapes.get(code).offsets));
-    let chart = Shape.chart(codes, parts, offsets);
-    Fileops.writeFile("data/chart.txt", chart);
 
     // Log remaining unknowns
     console.log("Saving chart of unknowns");
@@ -1424,29 +1487,32 @@ export class MyTmam {
     Fileops.writeFile("data/unknown.txt", chart);
     console.log("");
 
-    console.log("Saving stats");
-    let statData = "";
-    for (let code = 0; code <= 0xffff; ++code) {
-      let logos = MyTmam.stats.logos[code];
-      let iters = MyTmam.stats.maxIters[code];
-      if (!iters) continue;
-      if (iters <= 100) continue;
-      statData += `${Shape.pp(code)} ${logos} ${iters}`;
-      statData += "\n";
-    }
-    Fileops.writeFile("data/stats.txt", statData);
+    const logStats = false;
+    if (logStats) {
+      console.log("Saving stats");
+      let statData = "";
+      for (let code = 0; code <= 0xffff; ++code) {
+        let logos = MyTmam.stats.logos[code];
+        let iters = MyTmam.stats.maxIters[code];
+        if (!iters) continue;
+        if (iters <= 100) continue;
+        statData += `${Shape.pp(code)} ${logos} ${iters}`;
+        statData += "\n";
+      }
+      Fileops.writeFile("data/stats.txt", statData);
 
-    console.log("Stats");
-    const maxLogos = MyTmam.stats.logos.reduce((a, v) => Math.max(a, v));
-    const maxIters = MyTmam.stats.maxIters.reduce((a, v) => Math.max(a, v));
-    const totalMaxIters = MyTmam.stats.maxIters.reduce((a, v) => a + v);
-    const aveIters = Number(totalMaxIters / knownShapes.size).toFixed(2);
-    const totalIters = MyTmam.stats.iters.reduce((a, v) => a + v);
-    const totalCombos = MyTmam.stats.combos.reduce((a, v) => a + v);
-    console.log("Max logos:", maxLogos);
-    console.log("Max iters:", maxIters);
-    console.log("Ave iters:", aveIters);
-    console.log("Total max iters:", totalMaxIters);
-    console.log("Total iters:", `${totalIters} of ${totalCombos}`);
+      console.log("Stats");
+      const maxLogos = MyTmam.stats.logos.reduce((a, v) => Math.max(a, v));
+      const maxIters = MyTmam.stats.maxIters.reduce((a, v) => Math.max(a, v));
+      const totalMaxIters = MyTmam.stats.maxIters.reduce((a, v) => a + v);
+      const aveIters = Number(totalMaxIters / knownShapes.size).toFixed(2);
+      const totalIters = MyTmam.stats.iters.reduce((a, v) => a + v);
+      const totalCombos = MyTmam.stats.combos.reduce((a, v) => a + v);
+      console.log("Max logos:", maxLogos);
+      console.log("Max iters:", maxIters);
+      console.log("Ave iters:", aveIters);
+      console.log("Total max iters:", totalMaxIters);
+      console.log("Total iters:", `${totalIters} of ${totalCombos}`);
+    }
   }
 }

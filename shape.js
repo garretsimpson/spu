@@ -1405,7 +1405,7 @@ export class Shape {
    * @param {Array<any>} offsets
    * @returns {string}
    */
-  static chart(shapes, parts, offsets) {
+  static chart(shapes, parts = null, offsets = null) {
     const EOL = "\n";
     const SEP = "  ";
     const MAX_NUM = 8;

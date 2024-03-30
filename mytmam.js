@@ -19,9 +19,8 @@ const RULE = {
 };
 
 const ARULE = {
-  FLAT: "-",
-  FLOAT_V: "V",
-  FLOAT_H: "H",
+  FLAT: "--",
+  NO_V: "XV",
 };
 
 const OPS = { EJECT: "@", FLAT: "-", STACK: "|", LEFT: "\\", RIGHT: "/", FIFTH: "+" };
@@ -76,6 +75,7 @@ export class MyTmam {
             logo: Shape.rotateCode(logos[size][num], pos),
             mask: Shape.rotateCode(masks[size][num], pos),
             dir: DIR[num],
+            pos,
           });
         }
         sizes[size] = values;
@@ -1146,9 +1146,10 @@ export class MyTmam {
     const result = [];
     const FLOATS = [];
     const SIZE = 2;
+    // TODO: Use simple floats where mask = float (only the 2 corners)
     positions.forEach((pos) => FLOATS.push(...MyTmam.LOGOS_X[pos][SIZE]));
-    for (const { logo, mask, dir } of FLOATS) {
-      if ((shape & mask) == logo) result.push({ code: logo, dir });
+    for (const { logo, mask, dir, pos } of FLOATS) {
+      if ((shape & mask) == logo) result.push({ code: logo, dir, pos });
     }
     return result;
   }
@@ -1178,50 +1179,63 @@ export class MyTmam {
     }
 
     const CONFIGS = [
-      [ARULE.FLAT, ARULE.FLOAT_V, ARULE.FLOAT_H],
-      [ARULE.FLOAT_V, ARULE.FLOAT_H],
-      [ARULE.FLOAT_V, ARULE.FLOAT_H],
+      [ARULE.FLAT, ARULE.NO_V],
+      [ARULE.FLAT, ARULE.NO_V],
+      [ARULE.FLAT, ARULE.NO_V],
     ];
 
     const layers = Shape.toLayers(goalShape);
-    let above, below, pair, op;
-    let floats = [];
-    let done;
+    let above, below, pair, pair_V, pair_H, part, done, use_H;
+    let passedFloat = { code: 0 };
+    let floats,
+      floats_V = [],
+      floats_H = [];
+
     for (const pairNum of [0, 1, 2]) {
       below = layers[pairNum] || 0;
       if (below == 0) break;
       above = layers[pairNum + 1] || 0;
+      // console.log("Above:", Shape.pp(above));
+      // console.log("Below:", Shape.pp(below));
       pair = MyTmam.simpleStack(above, below);
-      floats.length = 0;
+
+      // Exclude the corner from the passed float
+      console.log("Passed:", Shape.pp(passedFloat.code));
+      part = passedFloat.code >>> 4;
+      pair_V = passedFloat.pos == 1 || passedFloat.pos == 3 ? MyTmam.deletePart(pair, part) : pair;
+      pair_H = passedFloat.pos == 0 || passedFloat.pos == 2 ? MyTmam.deletePart(pair, part) : pair;
+      passedFloat.code = 0;
+
+      // Find float parts
+      floats_V = MyTmam.findFloats(pair_V, [0, 2]);
+      floats_H = MyTmam.findFloats(pair_H, [1, 3]);
+
+      // Run the rules
+      use_H = false;
       done = false;
       for (const rule of CONFIGS[pairNum]) {
         switch (rule) {
           case ARULE.FLAT:
             if (MyTmam.isStable(above, below)) done = true;
             break;
-          case ARULE.FLOAT_V:
-            floats = MyTmam.findFloats(pair, [0, 2]);
-            break;
-          case ARULE.FLOAT_H:
-            floats = MyTmam.findFloats(pair, [1, 3]);
+          case ARULE.NO_V:
+            use_H = floats_V.length == 0;
             break;
         }
-
-        if (floats.length > 0) {
-          console.log("Floats:", Shape.pp(floats.map((i) => i.code)));
-          // Update ops
-          for (let { code, dir } of floats) {
-            code >>>= 4;
-            for (let quad of [0, 1, 2, 3]) {
-              if ((code & 1) == 1) ops[4 * pairNum + quad] = dir;
-              code >>>= 1;
-            }
-          }
-          done = true;
-        }
+        if (use_H) done = true;
         if (done) break;
       }
+
+      // Update ops
+      floats = use_H ? floats_H : floats_V;
+      if (floats.length == 0) continue;
+      console.log("Floats:", Shape.pp(floats.map((i) => i.code)));
+      if (floats.length == 1) passedFloat = floats[0];
+      for (let float of floats) {
+        ops[4 * pairNum + float.pos] = float.dir;
+      }
     }
+
     // 5th layer
     // TODO: Add 5th layer when needed
 
@@ -1241,8 +1255,34 @@ export class MyTmam {
     return result;
   }
 
-  static NEXT_LEFT = [, , , , 1, 2, 3, 0, 5, 6, 7, 4, 9, 10, 11, 8];
-  static NEXT_RIGHT = [, , , , 3, 0, 1, 2, 7, 4, 5, 6, 11, 8, 9, 10];
+  static FLOAT_LEFT = [
+    [1, 4],
+    [2, 5],
+    [3, 6],
+    [0, 7],
+    [5, 8],
+    [6, 9],
+    [7, 10],
+    [4, 11],
+    [9, 12],
+    [10, 13],
+    [11, 14],
+    [8, 15],
+  ];
+  static FLOAT_RIGHT = [
+    [0, 5],
+    [1, 6],
+    [2, 7],
+    [3, 4],
+    [4, 9],
+    [5, 10],
+    [6, 11],
+    [7, 8],
+    [8, 13],
+    [9, 14],
+    [10, 15],
+    [11, 12],
+  ];
 
   /**
    * Construct a shape according to the build operations.
@@ -1251,10 +1291,71 @@ export class MyTmam {
    * After all the floats are passed down to their bottom layer,
    * all parts on each layer are stacked together (superparts).
    * Then all layers are stacked top-down (unless it can't).
+   * This version uses a build ops where each column is position (ESWN) and rows are layer pairs.
    * @param {number} goalShape
    * @param {Array<*>} ops
    */
   static makeShape(goalShape, ops) {
+    const FLOATS = {};
+    FLOATS[OPS.LEFT] = MyTmam.FLOAT_LEFT;
+    FLOATS[OPS.RIGHT] = MyTmam.FLOAT_RIGHT;
+
+    let result = 0;
+    const parts = [];
+    const layers = [];
+    for (let i = 0; i < 16; ++i) {
+      parts[i] = ((goalShape >>> i) & 1) << i % 4;
+    }
+    // console.log(Shape.pp(parts));
+    // Check for 5th layer
+    if (ops[4 * 3] == OPS.FIFTH) {
+      layers.push(...Shape.FLAT_4);
+    }
+
+    // Perform build ops
+    let pos, op, top, bot;
+    for (const layerNum of [2, 1, 0]) {
+      for (const quad of [0, 1, 2, 3]) {
+        pos = 4 * layerNum + quad;
+        op = ops[pos];
+        if (op == OPS.FLAT) continue;
+        [bot, top] = FLOATS[op][pos];
+        parts[bot] = MyTmam.simpleStack(parts[top], parts[bot]);
+        parts[top] = 0;
+      }
+    }
+
+    // Stack parts on each layer
+    let part, layerPart;
+    for (const layerNum of [3, 2, 1, 0]) {
+      layerPart = 0;
+      for (const quad of [0, 1, 2, 3]) {
+        pos = 4 * layerNum + quad;
+        part = parts[pos];
+        if (part == 0) continue;
+        layerPart = Shape.stackS1Code(part, layerPart);
+      }
+      layers.push(layerPart);
+    }
+
+    // Stack layers
+    // TODO: reorder parts if top-down stack does not work
+    console.log("Layers:", Shape.pp(layers));
+    result = layers.shift();
+    while (layers.length > 0) {
+      part = layers.shift();
+      result = Shape.stackS1Code(result, part);
+    }
+    return result;
+  }
+
+  static NEXT_LEFT = [, , , , 1, 2, 3, 0, 5, 6, 7, 4, 9, 10, 11, 8];
+  static NEXT_RIGHT = [, , , , 3, 0, 1, 2, 7, 4, 5, 6, 11, 8, 9, 10];
+
+  /**
+   * This version uses a build ops list where each position (0..11) is for a spot on the shape.
+   */
+  static makeShape0(goalShape, ops) {
     let result = 0;
     const parts = [];
     const layers = [];
@@ -1312,7 +1413,7 @@ export class MyTmam {
 
     const ROCKET = 0xfe1f;
     let ops1 = ALL_FLAT.slice();
-    ops1[5] = OPS.RIGHT;
+    ops1[4] = OPS.RIGHT;
     let ops2 = ALL_FLAT.slice();
     ops2[7] = OPS.LEFT;
 
@@ -1416,7 +1517,9 @@ export class MyTmam {
     // testShapes.push(0x1165, 0x1265);
     // testShapes.push(0x34c3);
     // testShapes.push(0x27c2, 0x2bc2);
-    testShapes.push(0x0138, 0x0178, 0x0192, 0x01d2);
+    // testShapes.push(0x0138, 0x0178, 0x0192, 0x01d2); // Testing ATMAM
+    // testShapes.push(0x0121, 0x0125, 0x0129, 0x012d); // Testing ATMAM
+    testShapes.push(0x0178, 0x0185, 0x0187, 0x0192); // Testing ATMAM
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     // complexShapes.forEach((code) => unknownShapes.set(code, { code }));

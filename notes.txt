@@ -3613,13 +3613,217 @@ FLOAT_H - Find floats on N/S halves.
 <exceptions - look at layer 3>
 
 Layer pair #2 (layers 2-3)
-Note: Flat is not a rule for pair #2. ?
+FLAT - Same as pair #1, but excludes some corners (like floats from below) and others?
 
 Layer pair #3 (layers 3-4)
 
 Layer #5
 <if there are corners on layer 4>
 
-
 LOGOS
 There are four positions 0..3 (ESWN), three sizes 2..4, and two orientations (left/right handed)
+
+With these 3 rules (FLAT, FLOAT_V, FLOAT_H) able to find solutions to 15016 out of 20320 complex shapes.
+
+Knowns: 15016
+Unknowns: 5304
+[0138,0178,0192,01d2,0234,0261,02b4,02e1,0361,0378,0392,03b4,03d2,03e1,...
+
+Tested the first 4 failures...
+
+00 - - - -   00 - - - -   00 - - - -   00 - - - - 
+01 O - - -   01 O - - -   01 O - - -   01 O - - - 
+03 O O - -   07 O O O -   09 O - - O   0d O - O O 
+08 - - - O   08 - - - O   02 - O - -   02 - O - - 
+
+0138 fails because it finds 18 but not 12, which is seated on top of 18.
+It doesn't look like a float, because it is seated.
+Which ARULE checks for this?
+I think rules for pair #2 start with ignoring the corner of the float from pair #1.
+I think the rules say that is ignored for both the FLAT and FLOAT rules on pair #2.
+The float from pair #1 (the choosen one) is passed if there is only one float found on pair #1.
+
+I added the removal of the passed float corner (but did not confirm with the document).
+Now there's only one of these four that fail...
+
+0178
+- - - -
+- - - -
+O - - -
+O O O -
+- - - O
+
+Passed: 0000
+Floats: [0048]
+Passed: 0048
+Passed: 0000
+Layers: [0000,0001,0003,0048]
+NOT FOUND 0178
+
+This fails because the float found on pair #1 is the wrong one.
+It is 48 on the West (vertical) and it should be choosing 18 on the North (horizontal).
+What is the rule for this?  It is probably an exception to FLOAT_V.
+
+There is a rule (3.2) that says if the horizontal float has a hat (and the vertical float has no hat), skip the FLOAT_V rule.
+Actually, it says activate the horizontal output.
+
+How do I make exceptions?
+Try making a separate rule for this, and adding it before the others so that it has priority.
+Or, add conditions to the exising rules that break out of them.
+
+Idea: Use patterns and masks for all rules, not just finding floats.
+It's not clear if the rules should be checking all 4 (or 8) variations of each pattern. Probably does check.
+Also - Might not need masks for some patterns, like just floats.  Will need masks for patterns that have missing corners.
+
+The result is simply float-left or float-right for each of the 4 quads per layer-pair.
+And those results are in 2 groups (maybe?): horizontal and vertical.
+
+Design ideas
+First find all the floats, in two sets: horiz and vertical.
+Then run the rules in order to determine which set to use.
+The first rule that passes wins and the other rules are not used.
+(or design the rules so that only one will win)
+
+Looking at the wires implementation...
+Looks like pair #1 float checking does not look for gaps, only for the 2 corners.
+Has a signal for each of the 8 possible 2-layer floats.
+It does find all possible 8 floats first, and then has gates to release either the H or V set.
+Each corner of the build ops is for one position of the logo (ESWN) and if it is the left or right handed variant
+(default = uncolored rectangle, right float = circle, left float = purple)
+What I'm currently using is each corner is the actual corner in the shape.
+It never will find both floats in the same position because float finding is disabled
+when there are corners on top of each other (flat/supported part).
+
+Note: If it's only H or V, then only need rules for one of them.
+Note: Might not need to find the floats, just need to make sure the quads that include them are part of the rule.
+(or since they are needed for all rules, they can be factored out, which is probably the way the wires work)
+
+1 2 3 4
+N - - N  4
+- - W W  3
+- S S -  2
+E E - -  1
+
+E S W N
+- - - -  5th layer
+- - - -  3-4
+- - - -  2-3
+- - - -  1-2
+
+fe1f    
+D D D D 
+- B C C 
+B - - - 
+A A A A 
+
+- - - -
+- - - -
+/ - - -
+- - - -
+
+fe1f    
+D D D D 
+- C C B 
+B - - - 
+A A A A 
+
+- - - -  5th layer
+- - - -  3-4
+- - - \  2-3
+- - - -  1-2
+
+A - - - 
+- A - -
+\ - - -
+
+A - - -
+- - - A
+- - - /
+
+- B - -
+- - B -
+- \ - -
+
+- B - -
+B - - -
+/ - - -
+
+- - - D
+D - - -
+- - - \
+
+I've changed makeShape to use a build ops that matches the wires.  The columns are float positions (ESWN).
+Might be more efficient the way I had it before where columns were shape quads.
+
+Design Ideas
+If there is a flat, skip float finding
+Find floats in two sets: floats-H and floats-V
+floats-V is default / fallback.  Rules will check to see if floats-H should be used.
+Basically - Use_H = Rule1 OR Rule2 OR ...
+If Use_H is true, then set build ops with floats-H, else use floats-V
+
+TODO: Use simple float finding - only the corners (mask = float).
+
+With just flat and NO_V...
+Knowns: 13472
+Unknowns: 6848
+
+That's less than before.  I don't know why, but there are newly not found...
+[0121,0125,0129,012d,0165,016d,0178,0181,0183,0185,0187,0212,0216,021a,021e,...
+
+0121
+- - - -
+- - - -
+O - - -
+- O - -
+O - - -
+
+Passed: 0000
+Floats: [0021]
+Passed: 0021
+Passed: 0000
+Layers: [0000,0001,0000,0021]
+NOT FOUND 0121
+
+How do I expect this to work?  Why did it work before?
+Pair #1 should find a right float in E position (21).
+There should be one passed passed float.
+Pair #2 should find a left float in E position (12).
+But probably does not because of part removal from the passed float.
+Which is why it worked before, becuase it did not have part removal yet.
+Removing the part removal makes these four work... 0121,0125,0129,012d
+
+So, how is it supposed to work?
+
+The text says that the upper corner of the passed float should be excluded from the float finding for the perpendicular positions.
+That is, if the passed float is E/W, then exclude the top corner when finding N/S floats.  and vice-versa.
+
+Added this, and the four shapes work.
+Try them all again...
+
+Knowns: 14384
+Unknowns: 5936
+[0178,0185,0187,0192,01d2,024a,024b,0261, ...
+
+More, but still not as many as before.
+
+0178
+- - - -
+- - - -
+O - - -
+O O O -
+- - - O
+
+Passed: 0000
+Floats: [0048]
+Passed: 0048
+Passed: 0000
+Layers: [0000,0001,0003,0048]
+NOT FOUND 0178
+
+This is where I left off before...
+This fails because the float found on pair #1 is the wrong one.
+It is 48 on the West (vertical) and it should be choosing 18 on the North (horizontal).
+
+There is a rule (3.2) that says if the horizontal float has a hat (and the vertical float has no hat),
+then activate the horizontal output.

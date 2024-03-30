@@ -30,7 +30,7 @@ function main() {
   // Spu.runSearch();
   // Ops.runMultiOps();
   // Ops.dbToText("data/db_no5.bin");
-  MyTmam.test();
+  // MyTmam.test();
   MyTmam.run();
   // Shape2.test();
   // Shape2.findKeys();

@@ -21,6 +21,8 @@ const RULE = {
 const ARULE = {
   FLAT: "--",
   NO_V: "XV",
+  HAT_H: "HH",
+  THREE_H: "3H",
 };
 
 const OPS = { EJECT: "@", FLAT: "-", STACK: "|", LEFT: "\\", RIGHT: "/", FIFTH: "+" };
@@ -43,46 +45,47 @@ export class MyTmam {
 
   /**
    * Make logo and mask constants.
-   * There are four positions 0..3 (ESWN), three sizes 2..4, and two orientations (right/left handed)
+   * There are four positions 0..3 (ESWN), three sizes 2..4, and two directions (right/left handed)
    */
   static makeLogos() {
-    const LOGO = [[], [], [0x21, 0x12], [0x121, 0x212], [0x2121, 0x1212]];
+    const FLOATS = [[], [], [0x21, 0x12], [0x121, 0x212], [0x2121, 0x1212]];
     const MASK_X = [[], [], [0x33, 0x33], [0x333, 0x333], [0x3333, 0x3333]];
     const MASK_Y = [[], [], [0x33, 0x33], [0x133, 0x233], [0x2333, 0x1333]];
     // const SEAT = [0x0361, 0x0392];
     // const MASK_Z = [0x07ff, 0x0bff];
 
-    MyTmam.LOGOS_X = MyTmam.makeLogoCodes(LOGO, MASK_X);
-    MyTmam.LOGOS_Y = MyTmam.makeLogoCodes(LOGO, MASK_Y);
+    MyTmam.FLOATS = MyTmam.makeLogoCodes(FLOATS, FLOATS);
+    MyTmam.LOGOS_X = MyTmam.makeLogoCodes(FLOATS, MASK_X);
+    MyTmam.LOGOS_Y = MyTmam.makeLogoCodes(FLOATS, MASK_Y);
     // MyTmam.SEATS = MyTmam.makeSeatCodes(SEAT, MASK_Z);
   }
 
   /**
-   * @param {number[][]} logos
+   * @param {number[][]} codes
    * @param {number[][]} masks
    * @returns {number[][][]}
    */
-  static makeLogoCodes(logos, masks) {
+  static makeLogoCodes(codes, masks) {
     const DIR = [OPS.RIGHT, OPS.LEFT];
-    const codes = [];
+    const result = [];
     let sizes, values;
     for (const pos of [0, 1, 2, 3]) {
       sizes = [];
       for (const size of [2, 3, 4]) {
         values = [];
-        for (const num of [0, 1]) {
+        for (const dir of [0, 1]) {
           values.push({
-            logo: Shape.rotateCode(logos[size][num], pos),
-            mask: Shape.rotateCode(masks[size][num], pos),
-            dir: DIR[num],
+            code: Shape.rotateCode(codes[size][dir], pos),
+            mask: Shape.rotateCode(masks[size][dir], pos),
+            dir: DIR[dir],
             pos,
           });
         }
         sizes[size] = values;
       }
-      codes[pos] = sizes;
+      result[pos] = sizes;
     }
-    return codes;
+    return result;
   }
 
   /**
@@ -1146,12 +1149,69 @@ export class MyTmam {
     const result = [];
     const FLOATS = [];
     const SIZE = 2;
-    // TODO: Use simple floats where mask = float (only the 2 corners)
-    positions.forEach((pos) => FLOATS.push(...MyTmam.LOGOS_X[pos][SIZE]));
-    for (const { logo, mask, dir, pos } of FLOATS) {
-      if ((shape & mask) == logo) result.push({ code: logo, dir, pos });
+    positions.forEach((pos) => FLOATS.push(...MyTmam.FLOATS[pos][SIZE]));
+    for (const { code, mask, dir, pos } of FLOATS) {
+      if ((shape & mask) == code) result.push({ code, dir, pos });
     }
     return result;
+  }
+
+  /**
+   * Makes four patterns, using mirror and rotate twice
+   * @param {number} code
+   * @param {number} mask
+   */
+  static makePatterns(code, mask) {
+    const mirrors = [];
+    mirrors.push({ code, mask });
+    mirrors.push({ code: Shape.mirrorCode(code), mask: Shape.mirrorCode(mask) });
+    const rotates = [];
+    for (let { code, mask } of mirrors) {
+      rotates.push({ code: Shape.rotateCode(code, 2), mask: Shape.rotateCode(mask, 2) });
+    }
+    return [...mirrors, ...rotates];
+  }
+
+  /**
+   * Checks if the shape has the pattern to solve 0178.
+   * - - - -
+   * O - X -
+   * O - O -
+   * - - - O
+   * @param {number} shape
+   */
+  static hatH(shape) {
+    const PATTERNS = MyTmam.makePatterns(0x0158, 0x0558);
+    for (let { code, mask } of PATTERNS) {
+      if ((shape & mask) == code) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Checks if the shape has the pattern to solve 0185.
+   * - - - -
+   * O - - -
+   * - - - O
+   * O - O -
+   *
+   * 024a
+   * - - - -
+   * - O - -
+   * - - O -
+   * - O - O
+   * @param {number} shape
+   */
+  static threeH(shape) {
+    const PATTERNS = MyTmam.makePatterns(0x0185, 0x0185);
+    for (let { code, mask } of PATTERNS) {
+      if ((shape & mask) == code) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -1179,17 +1239,15 @@ export class MyTmam {
     }
 
     const CONFIGS = [
-      [ARULE.FLAT, ARULE.NO_V],
+      [ARULE.FLAT, ARULE.NO_V, ARULE.HAT_H, ARULE.THREE_H],
       [ARULE.FLAT, ARULE.NO_V],
       [ARULE.FLAT, ARULE.NO_V],
     ];
 
     const layers = Shape.toLayers(goalShape);
-    let above, below, pair, pair_V, pair_H, part, done, use_H;
+    let above, below, pair, pair_V, pair_H, part, flat, use_H;
     let passedFloat = { code: 0 };
-    let floats,
-      floats_V = [],
-      floats_H = [];
+    let floats, floats_V, floats_H;
 
     for (const pairNum of [0, 1, 2]) {
       below = layers[pairNum] || 0;
@@ -1202,6 +1260,8 @@ export class MyTmam {
       // Exclude the corner from the passed float
       console.log("Passed:", Shape.pp(passedFloat.code));
       part = passedFloat.code >>> 4;
+      below = MyTmam.deletePart(below, part);
+      // TODO: Maybe this can be simpler, just delete the part?
       pair_V = passedFloat.pos == 1 || passedFloat.pos == 3 ? MyTmam.deletePart(pair, part) : pair;
       pair_H = passedFloat.pos == 0 || passedFloat.pos == 2 ? MyTmam.deletePart(pair, part) : pair;
       passedFloat.code = 0;
@@ -1211,24 +1271,29 @@ export class MyTmam {
       floats_H = MyTmam.findFloats(pair_H, [1, 3]);
 
       // Run the rules
+      flat = false;
       use_H = false;
-      done = false;
       for (const rule of CONFIGS[pairNum]) {
         switch (rule) {
           case ARULE.FLAT:
-            if (MyTmam.isStable(above, below)) done = true;
+            if (MyTmam.isStable(above, below)) flat = true;
             break;
           case ARULE.NO_V:
             use_H = floats_V.length == 0;
             break;
+          case ARULE.HAT_H:
+            use_H = MyTmam.hatH(goalShape);
+            break;
+          case ARULE.THREE_H:
+            use_H = MyTmam.threeH(goalShape);
+            break;
         }
-        if (use_H) done = true;
-        if (done) break;
+        if (flat || use_H) break;
       }
 
       // Update ops
       floats = use_H ? floats_H : floats_V;
-      if (floats.length == 0) continue;
+      if (flat || floats.length == 0) continue;
       console.log("Floats:", Shape.pp(floats.map((i) => i.code)));
       if (floats.length == 1) passedFloat = floats[0];
       for (let float of floats) {
@@ -1519,7 +1584,8 @@ export class MyTmam {
     // testShapes.push(0x27c2, 0x2bc2);
     // testShapes.push(0x0138, 0x0178, 0x0192, 0x01d2); // Testing ATMAM
     // testShapes.push(0x0121, 0x0125, 0x0129, 0x012d); // Testing ATMAM
-    testShapes.push(0x0178, 0x0185, 0x0187, 0x0192); // Testing ATMAM
+    // testShapes.push(0x0178, 0x0185, 0x0187, 0x0192); // Testing ATMAM
+    testShapes.push(0x024a, 0x024b, 0x02b4, 0x0361);
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     // complexShapes.forEach((code) => unknownShapes.set(code, { code }));

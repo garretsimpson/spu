@@ -3544,6 +3544,8 @@ All of these are even numbers (have pin on bottom layer).
 10 I - - -   10 I - - -   10 I - - -   10 I - - -   10 I - - -   10 I - - -   10 I - - -   11 X - - - 
 12 I O - -   14 I - O -   16 I O O -   18 I - - O   1a I O - O   1c I - O O   1e I O O O   10 I - - - 
 
+-----
+
 TMAM test shapes
 
 --Cw----:----CbCb:CgCgCg--:--Cr----
@@ -3825,5 +3827,222 @@ This is where I left off before...
 This fails because the float found on pair #1 is the wrong one.
 It is 48 on the West (vertical) and it should be choosing 18 on the North (horizontal).
 
-There is a rule (3.2) that says if the horizontal float has a hat (and the vertical float has no hat),
-then activate the horizontal output.
+There is a rule (3.2a) that says if the horizontal float has a hat (and the vertical float has no hat),
+then activate the horizontal output.  Shared bottom, with a hat.
+
+This is the inerted logo, with a hat.  The first floating shape I was wondering about.
+
+Need a name for this rule, and implement it using bit ops pattern matching.  I think I'll call it HAT_H for now.
+
+I want to have one function to check for patterns, and all paterns as simple data (bit strings).
+Perhaps patterns will have a number (maybe two numbers for pattern and mask).
+
+Added this...
+
+  static hatH(shape) {
+    const PATTERN = { code: 0x0158, mask: 0x0558 };
+    // TODO: Need rotations / mirrors of this probably
+    const { code, mask } = PATTERN;
+    return (shape & mask) == code;
+  }
+
+found it...
+
+0178
+- - - -
+- - - -
+O - - -
+O O O -
+- - - O
+
+Passed: 0000
+Floats: [0018]
+Passed: 0018
+Floats: [0012]
+Passed: 0012
+Layers: [0000,0000,0016,0018]
+FOUND 0178
+- - - -
+- - - -
+\ - - -
+- - - /
+
+Next shape...
+
+0185
+- - - -
+- - - -
+O - - -
+- - - O
+O - O -
+
+Passed: 0000
+Floats: [0084]
+Passed: 0084
+Passed: 0000
+Layers: [0000,0001,0000,0085]
+NOT FOUND 0185
+
+This also finds the wrong float.  But it's one with a shared top instead of a shared bottom.
+It find West 84 (vert) instead of North 81 (horz).  There's a 3-layer float 181 that needs it.
+This is 3.2b in the text.  Interesting how the text is in exactly the same order that I am finding them.
+Called this one THREE_H.
+
+Next...
+0192
+- - - -
+- - - -
+O - - -
+O - - O
+- O - -
+
+Passed: 0000
+Floats: [0012]
+Passed: 0012
+Passed: 0000
+Layers: [0000,0001,0008,0012]
+NOT FOUND 0192
+
+seat joint.  It finds the bottom float 12, but not the top float 18.
+Maybe because I'm using strict logo / floats with gaps.
+Need to use the simpler float finding that only looks for two corners.
+Okay, changed float finding to simple, but it still doesn't work.
+It's finding a flat on Pair #2.  The layer pair is 1 on top of 9.
+Should be excluding the top of the bottom float (1) from the bottom of pair #2.  Should be just 8.
+Modified the below part in the flat finding to remove the top of the passed float from pair #1.
+
+Now it works...
+
+0192
+- - - -
+- - - -
+O - - -
+O - - O
+- O - -
+
+Passed: 0000
+Floats: [0012]
+Passed: 0012
+Floats: [0018]
+Passed: 0018
+Layers: [0000,0000,0018,0012]
+FOUND 0192
+- - - -
+- - - -
+- - - /
+\ - - -
+
+Knowns: 8298
+Unknowns: 12022
+[0123,0127,012b,012f,013c,0163,0167, ...
+
+That's a lot worse.  Probably because it is using simple float finding now.
+
+0123
+- - - -
+- - - -
+O - - -
+- O - -
+O O - -
+
+Passed: 0000
+Floats: [0021]
+Passed: 0021
+Floats: [0012]
+Passed: 0012
+Layers: [0000,0000,0000,0321]
+NOT FOUND 0123
+
+It found the 2 floats correctly, but the layers are wierd (upside down).  Maybe it messed up the stacking?
+Actually, it should be a flat, with a float on top.
+Fixed a bug with finding flats.  It was always picking a float (if there was one) even if a flat was found.
+Now it skips picking a float if a flat is found.
+
+Knowns: 14921
+Unknowns: 5399
+[024a,024b,02b4,0361,0392,03b4,03d2,03e1, ...
+
+So a few more found, but still a lot to go.
+
+024a
+- - - -
+- - - -
+- O - -
+- - O -
+- O - O
+
+Passed: 0000
+Floats: [0048]
+Passed: 0048
+Passed: 0000
+Layers: [0000,0002,0000,004a]
+NOT FOUND 024a
+
+Pair #1 picks the wrong float.  It picks West 48, should pick South 42.
+Shared top, three-layer float should win.
+Same as 0185 I think, but this time the correct float is South 242 instead of North 181.
+I think that's a mirror and rotate twice.
+
+Shape.pp(Shape.rotateCode(Shape.mirrorCode(0x185), 2))
+'024a'
+
+Added makePatterns() which makes 4 patterns using the mirror and rotate twice of the code and mask.
+
+Found it...
+
+024a
+- - - -
+- - - -
+- O - -
+- - O -
+- O - O
+
+Passed: 0000
+Floats: [0042]
+Passed: 0042
+Floats: [0024]
+Passed: 0024
+Layers: [0000,0000,0000,024a]
+FOUND 024a
+- - - -
+- - - -
+- \ - -
+- / - -
+
+0361
+- - - -
+- - - -
+O O - -
+- O O -
+O - - -
+
+Passed: 0000
+Floats: [0021]
+Passed: 0021
+Floats: [0012]
+Passed: 0012
+Layers: [0000,0002,0004,0121]
+NOT FOUND 0361
+
+3-layer float with seated 2-layer float on Pair #2.
+Seems to find the 3-layer float, but not the 2-layer float.
+Needs to find East 12 and South 24 on Pair #2.  I don't know how it could if it only does horizontal or vertical floats.
+Seems Pair #2 allows for H and V floats at the same time.  But it's not clear what the restrictions are.
+
+The wires use 1 bit to determine which set of floats to allow for pair #1 and pair #3.  It is either H or V.
+For pair #2, the wires use 2 bits, so that's 4 sets of floats.  Floats with shared bottom corner are exclusive.
+One bit controls if it uses V or H with quad 1 or 3 on the bottom
+One bit controls if it uses V or H with quad 2 or 4 on the bottom.
+Another way of looking at it is that floats that have bottoms in opposite corners can only be parallel.
+If they were perpendicular, they would share a top piece.
+So for pair #2, it is possible to have H and V if the bottom quads are different and adjacent.
+(and they both have the same direction)
+
+It's difficult to make a general solution for every pair, when each pair has a different set of controls.
+I think the controls for pair #2 are the more general (superset) of the controls for pair #1 and #3.
+
+There are 8 possible 2-layer floats to find in each layer pair.  That's 8 bits of control needed, or 256 combos.
+Many of those combos are exclusive, because floats can't share bottoms or tops, and can't occupy the same position.
+And there's a max limit of 3(?) floats because 4 makes a box top, which is impossible to assemble.
+Seeems the wires reduce this down to 2 bits of control for pair #2.
+

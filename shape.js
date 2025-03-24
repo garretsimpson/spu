@@ -1393,10 +1393,27 @@ export class Shape {
 
     // All unique complex shapes with exactly 4 corners
     const foundShapes = keyShapes.filter((code) => complexShapes.includes(code) && Shape.countPieces(code) == 4);
-
     console.log("Number of found shapes", foundShapes.length);
 
     Ops.saveChart(foundShapes);
+
+    const complexKeyShapes = complexShapes.filter((code) => code == Shape.keyCode(code));
+    Shape.saveShapeList(complexKeyShapes);
+  }
+
+  /**
+   * @param {Array<number>} shapes
+   */
+  static saveShapeList(shapes) {
+    const EOL = "\n";
+    const LIST_FILE = "data/list.txt";
+    console.log("Saving shape list");
+
+    let data = "";
+    for (let code of shapes) {
+      data += Shape.codeToHex(code) + " " + Shape.toShape(code) + EOL;
+    }
+    Fileops.writeFile(LIST_FILE, data);
   }
 
   /**

@@ -21,7 +21,7 @@ function main() {
 
   // Shape.runTests();
   // Shape2.runTests();
-  // Shape.testAllShapes();
+  Shape.testAllShapes();
   // Shape.testPerf();
   // Shape.testLogo();
   // Shape.countParts();
@@ -31,7 +31,7 @@ function main() {
   // Ops.runMultiOps();
   // Ops.dbToText("data/db_no5.bin");
   // MyTmam.test();
-  MyTmam.run();
+  // MyTmam.run();
   // Shape2.test();
   // Shape2.findKeys();
 }

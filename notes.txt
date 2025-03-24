@@ -4046,3 +4046,9 @@ Many of those combos are exclusive, because floats can't share bottoms or tops, 
 And there's a max limit of 3(?) floats because 4 makes a box top, which is impossible to assemble.
 Seeems the wires reduce this down to 2 bits of control for pair #2.
 
+
+
+Blueprints
+
+#!/bin/bash
+echo -n "$1" | sed 's/^.\{10\}//' | base64 --decode | gunzip -c | jq

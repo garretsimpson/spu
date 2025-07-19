@@ -321,13 +321,13 @@ export class MyTmam {
   }
 
   /**
-   * Find half-logo parts that include the bottom layer.
+   * Find floating parts that include the bottom layer.
    * Return only the tallest part from each position.
    * @param {number} shape
    * @param {object} config
    * @returns {Array<number>}
    */
-  static findBigLogos(shape, config) {
+  static findBigFloats(shape, config) {
     const LOGOS = config.seat ? MyTmam.LOGOS_Y : MyTmam.LOGOS_X;
     const result = [];
     const found = [];
@@ -335,8 +335,8 @@ export class MyTmam {
     for (const pos of [2, 1, 0, 3]) {
       found.length = 0;
       for (const size of [4, 3, 2]) {
-        for (const { logo, mask } of LOGOS[pos][size]) {
-          if ((shape & mask) == logo) found.push(logo);
+        for (const { code, mask } of LOGOS[pos][size]) {
+          if ((shape & mask) == code) found.push(code);
         }
         if (found.length > 0) {
           result.push(found[0]);
@@ -463,14 +463,6 @@ export class MyTmam {
       ["0123+++", "012++3+", "01+23++"], // not used: 01+2+3+
       ["01234++++", "012++34++", "01+234+++"], // not used: 01+2+3+4+
     ];
-    const ORDERS3_NEW = [
-      [],
-      ["0"],
-      ["01+"],
-      ["012++", "01+2+"], // both are needed
-      ["0123+++", "012++3+", "01+23++"], // not used: 01+2+3+
-      ["01234++++", "01+234+++"], // not used: 01+2+3+4+, "012++34++"
-    ];
     // top-down with various part orders
     // Note: These are incomplete
     const ORDERS4 = [
@@ -483,7 +475,16 @@ export class MyTmam {
     ];
     // Used by superparts
     const ORDERS5 = [[], ["0"], ["01+"], ["012++", "01+2+"], ["0123+++"], ["01234++++"]];
-    const ORDERS = ORDERS3_NEW;
+    const ORDERS_MYTMAM = [
+      [],
+      ["0"],
+      ["01+"],
+      ["012++", "01+2+"], // both are needed
+      ["0123+++", "01+23++"],
+      ["01234++++", "012++34++", "01+234+++"],
+    ];
+    const ORDERS = ORDERS_MYTMAM;
+
     const num = data.parts.length;
     if (num >= ORDERS.length) {
       // console.error("too many parts");
@@ -607,7 +608,7 @@ export class MyTmam {
     console.log("Deconstruct");
     console.log(Shape.toShape(targetShape));
     console.log(Shape.pp(targetShape));
-    console.log(Shape.graph(targetShape));
+    console.log(Shape.graphS1(targetShape));
 
     const configs = [
       { seat: false, reverse: false },
@@ -621,7 +622,7 @@ export class MyTmam {
     const partList = [];
     let found = false;
     for (const config of configs) {
-      console.log("ROUND", ++num);
+      console.log("ROUND", ++num, config);
       shape = targetShape;
       if (!config.seat) {
         shape = MyTmam.add5th(shape);
@@ -635,7 +636,7 @@ export class MyTmam {
         if (MyTmam.isOneLayer(shape) || MyTmam.canStackBottom(shape)) {
           part = MyTmam.getBottom(shape);
           console.log("LAYER", Shape.pp(shape), Shape.pp([part]));
-        } else if ((logos = MyTmam.findBigLogos(shape, config)).length > 0) {
+        } else if ((logos = MyTmam.findBigFloats(shape, config)).length > 0) {
           console.log(">LOGO", Shape.pp(logos));
           if (config.reverse) {
             part = logos[logos.length - 1];
@@ -648,7 +649,7 @@ export class MyTmam {
           console.log("EXTRA", Shape.pp(shape), Shape.pp([part]));
         }
         partList.push(part);
-        result = { build: partList };
+        result = { parts: partList };
         found = MyTmam.tryBuild(targetShape, result);
         if (found) break;
         shape = MyTmam.deletePart(shape, part);
@@ -669,7 +670,7 @@ export class MyTmam {
     console.log("Deconstruct");
     console.log(Shape.toShape(targetShape));
     console.log(Shape.pp(targetShape));
-    console.log(Shape.graph(targetShape));
+    console.log(Shape.graphS1(targetShape));
 
     const layers = Shape.toLayers(targetShape);
 
@@ -1551,7 +1552,7 @@ export class MyTmam {
     const keyShapes = complexShapes.filter((code) => Shape.keyCode(code) == code);
 
     const testShapes = [];
-    // testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
+    testShapes.push(0x1, 0x21, 0x31, 0x5a5a); // basic test shapes
     // testShapes.push(0x000f, 0xffff); // test shapes
     // testShapes.push(0x004b, 0xfe1f); // logo and rocket
     // testShapes.push(0x3444); // 5th layer shapes
@@ -1585,7 +1586,8 @@ export class MyTmam {
     // testShapes.push(0x0138, 0x0178, 0x0192, 0x01d2); // Testing ATMAM
     // testShapes.push(0x0121, 0x0125, 0x0129, 0x012d); // Testing ATMAM
     // testShapes.push(0x0178, 0x0185, 0x0187, 0x0192); // Testing ATMAM
-    testShapes.push(0x024a, 0x024b, 0x02b4, 0x0361);
+    // testShapes.push(0x024a, 0x024b, 0x02b4, 0x0361);
+    testShapes.push(0x2cb4);
 
     // possibleShapes.forEach((code) => unknownShapes.set(code, { code }));
     // complexShapes.forEach((code) => unknownShapes.set(code, { code }));
@@ -1598,13 +1600,13 @@ export class MyTmam {
 
     for (let shape of Array.from(unknownShapes.keys())) {
       // let result = false;
-      let result = MyTmam.deconstruct5(shape);
+      let result = MyTmam.deconstruct1(shape);
       if (!result) {
         console.log("NOT FOUND", Shape.pp(shape));
       } else {
         if (result.parts != undefined) {
           console.log("FOUND", Shape.pp(shape), Shape.pp(result.parts), result.order);
-          console.log(Shape.graphParts(result.parts, result.offsets));
+          // console.log(Shape.graphParts(result.parts, result.offsets));
         }
         if (result.ops != undefined) {
           console.log("FOUND", Shape.pp(shape));

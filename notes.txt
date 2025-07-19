@@ -4052,3 +4052,62 @@ Blueprints
 
 #!/bin/bash
 echo -n "$1" | sed 's/^.\{10\}//' | base64 --decode | gunzip -c | jq
+
+
+--Cr----:Cg--CrCb:--CgCb--:Cg------
+
+B - - -
+- B C -
+B - A C
+- A - -
+
+G - - -
+- G B -
+G - R B
+- R - -
+
+0138
+16d2
+3424
+
+1b61
+B - - -
+A C - B
+- A C -
+A - - -
+
+Mari's last 3...
+1e78   
+- - - -
+C - - -
+- C D D
+B B A -
+- - - A
+
+1e78   
+- - - -
+C - - -
+- C B A
+C B A -
+- - - A
+
+1e78   
+- - - -
+D - - -
+- D C A
+B B A -
+- - - A
+
+2ac3   
+- - - -
+- D - -
+- A - C
+- - A B
+B A - -
+
+2cb4   
+- - - -
+- B - -
+- - B C
+C B - A
+- - A -
